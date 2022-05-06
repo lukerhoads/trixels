@@ -1,0 +1,12 @@
+{
+  "name": "trixels",
+  "version": "1.0.0",
+  "description": "Trixels is a semi-decentralized application that brings together the world through NFTs.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
