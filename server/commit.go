@@ -5,11 +5,11 @@ import (
 )
 
 type Commit struct {
-	CreatedAt time.Time
-	X uint16
-	Y uint16 
-	Color string 
-	Address string
+	CreatedAt time.Time `json:"-"`
+	X uint16 `json:"x"`
+	Y uint16 `json:"y"`
+	Color string `json:"color"`
+	Address string `json:"address"`
 }
 
 type Pixel struct {
