@@ -2,19 +2,22 @@ package main
 
 // Listener will listen to on-chain transactions and update the mysql database to reflect that
 
-type Listener struct {
+type Updater struct {
 	*Store
 }
 
-func NewListener(store *Store) *Listener {
+func NewUpdater(store *Store) *Updater {
 	return &Listener {
 		Store: store,
 	}
 }
 
-func (l *Listener) Start() {
+func (u *Updater) Start() {
+	// Setup ethereum event log/listener for an update transaction
+
 	for {
 
 		time.Sleep(100000)
 	}
 }
+

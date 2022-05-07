@@ -1,20 +1,35 @@
-pragma solidity ^0.8.0
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.6;
 
-
+import "./TrixelsNFT.sol";
+import "./ERC721.sol";
 
 contract Trixels {
-    address owner;
-    bytes8[200][200] colors;
-    address[200][200] lastEditors;
+    // Constants
+    uint constant DIMENSION = 200;
 
-    constructor(bytes8[] colors) {
+    // Other contracts
+    TrixelsNFT public trixels; 
+
+    address public owner;
+    bytes8[DIMENSION][DIMENSION] public colors;
+    address[DIMENSION][DIMENSION] public lastEditors;
+
+    struct Pixel {
+        uint16 x;
+        uint16 y;
+        bytes8 color;
+        address lastEditor;
+    }
+
+    constructor(bytes8[] memory newColors) {
         owner = msg.sender;
-        for (uint i=0; i<pixels.length; i++) {
-            for (uint j=0; i<pixels[0].length; j++) {
-                int index = (i * pixels.length) + j;
-                bytes8 memory color = "#000";
+        for (uint i=0; i<DIMENSION; i++) {
+            for (uint j=0; i<DIMENSION; j++) {
+                uint index = (i * DIMENSION) + j;
+                bytes8 color = "#000";
                 if (index < colors.length) {
-                    color = colors[index];
+                    color = newColors[index];
                 }
                 colors[i][j] = color;
                 lastEditors[i][j] = address(0);
@@ -22,38 +37,29 @@ contract Trixels {
         }
     }
 
-    function changePixel(int x, int y, bytes8 newColor) external {
+    function changePixel(uint x, uint y, bytes8 newColor) external {
         // Validate X, Y, and newColor
-        require(x < 200, "x coord invalid");
-        require(y < 200, "y coord invalid");
+        require(x < DIMENSION, "x coord invalid");
+        require(y < DIMENSION, "y coord invalid");
+        require(isValidHexCode(newColor), "hex code invalid");
         colors[x][y] = newColor;
         lastEditors[x][y] = msg.sender; 
     }
 
-    // use nouns contract for auction logic
-    function getPixels() external returns (bytes8[][]) {
-        return colors;
+    function massChangePixels(Pixel[] calldata newPixels) external onlyUpdater {
+        for (uint i=0; i<newPixels.length; i++) {
+            Pixel memory pixel = newPixels[i];
+            colors[pixel.x][pixel.y] = pixel.color;
+            lastEditors[pixel.x][pixel.y] = pixel.lastEditor;
+        }
     }
 
-    // Add auction functionality
-
-    modifier onlyUpdater {
+    modifier onlyOwner {
         require(msg.sender == owner);
         _;
     }    
 
-    struct Pixel {
-        int x;
-        int y;
-        bytes8 color;
-        address lastEditor;
-    }
-
-    function massUpdatePixels(Pixel[] newPixels) external onlyUpdater {
-        for (int i=0; i<newPixels.length; i++) {
-            Pixel pixel = newPixels[i];
-            colors[pixel.x][pixel.y] = pixel.color;
-            lastEditors[pixel.x][pixel.y] = pixel.lastEditor;
-        }
+    function isValidHexCode(bytes8 hexCode) private returns (bool) {
+        return true;
     }
 }
