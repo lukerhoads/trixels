@@ -4,12 +4,20 @@ import (
 	"time"
 	"os"
 	"log"
+
+	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/joho/godotenv"
+	"gorm.io/gorm"
+	"gorm.io/driver/mysql"
 )
 
 func main() {
+	godotenv.Load("../.env")
 	dayTicker := time.NewTicker(24 * time.Hour)
 	twoWeekTicker := time.NewTicker(14 * 24 * time.Hour)
 	devChan := make(chan string)
+	quit := make(chan struct{})
 
 	rpcUrl := os.Getenv("ETH_URL")
 	gasAccountPrivateKey := os.Getenv("GAS_ACCOUNT_PK")
@@ -22,23 +30,50 @@ func main() {
 		log.Fatal(err)
 	}
 
-	trixels := NewTrixels(client, trixelsAddress)
-	trixelsAuctionHouse := NewTrixelsAuctionHouse(client, trixelsAuctionHouseAddress)
-
-	store, err := NewStore(dsn)
+	trixels, err := NewTrixels(client, trixelsAddress)
 	if err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
+
+	trixelsAuctionHouse, err := NewTrixelsAuctionHouse(client, trixelsAuctionHouseAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	db.Table("pixels").AutoMigrate(&Pixel{})
+	// ensureTableExists(db)
+
+	// pixel := Pixel{
+	// 	ID: 0,
+	// 	X: 0,
+	// 	Y: 0,
+	// 	LastAddress: "",
+	// 	Color: "#000",
+	// }
+	// result := db.Create(&pixel)
+	// if result.Error != nil {
+	// 	log.Fatal(result.Error)
+	// }
+
+	log.Println("setting up app")
+	app := &App {
+		devChan: devChan,
+	}
+	app.Initialize(db)
+	app.Run(":8080")
 
 	privateKey, err := crypto.HexToECDSA(gasAccountPrivateKey)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	periodic := NewPeriodic(store, privateKey, client, trixels, trixelsAuctionHouse, dayTicker, twoWeekTicker, devChan)
-	go periodic.Start()
-	go periodic.StartUpdater()
 
-	router := NewRouter(store, devChan)
-	router.Start()
+	periodic := NewPeriodic(db, privateKey, client, trixels, trixelsAuctionHouse, dayTicker, twoWeekTicker, devChan, quit)
+	go periodic.Start()
+	// go periodic.StartUpdater(trixelsAddress)
 }
