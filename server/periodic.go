@@ -77,6 +77,7 @@ func (p *Periodic) StartUpdater() {
 		case err := <-sub.Err():
 		case vLog := <-logs:
 			// create a commit based off the transaction log
+			log.Println(vLog)
 		}
 	}
 }
@@ -85,32 +86,20 @@ func (p *Periodic) UpdatePixels() {
 	commits := p.Store.GetDayCommits()
 
 	// Write to the contract from a address with ETH
-	publicKey := p.privateKey.Public()
-	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-	if !ok {
-		log.Fatal("error casting public key to ECDSA")
-	}
+	keyedTransactor := p.GenKeyedTransactor()
 
-	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := p.client.PendingNonceAt(context.Background(), fromAddress)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	gasPrice, err := p.client.SuggestGasPrice(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	auth := bind.NewKeyedTransactor(p.privateKey)
-	auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = big.NewInt(0)     
-	auth.GasLimit = uint64(300000) 
-	auth.GasPrice = gasPrice
-
+	// Convert commits to new pixels
 	for _, c := range commits {
-		
+
 	}
+
+	tx, err := p.Trixels.MassChangePixels()
+	if err != nil {
+		return err 
+	}
+
+	log.Println(tx.Hash().Hex())
+	return nil
 }
 
 func (p *Periodic) MintAndStartAuction() error {
@@ -182,7 +171,42 @@ func (p *Periodic) MintAndStartAuction() error {
 		return err
 	}
 
+	skyNetId := metaUrl[strings.LastIndex(metaUrl, "/")+1:]
+	log.Println(skyNetId)
+	keyedTransactor := p.GenKeyedTransactor()
+	tx, err := p.TrixelsAuctionHouse.StartAuction(keyedTransactor, skyNetId)
+	if err != nil {
+		return err 
+	}
 
+	log.Println(tx.Hash().Hex())
+	return nil
+}
+
+func (p *Periodic) GenKeyedTransactor() *bind.TransactOpts {
+	publicKey := p.privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Fatal("error casting public key to ECDSA")
+	}
+
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+	nonce, err := p.client.PendingNonceAt(context.Background(), fromAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	gasPrice, err := p.client.SuggestGasPrice(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	auth := bind.NewKeyedTransactor(p.privateKey)
+	auth.Nonce = big.NewInt(int64(nonce))
+	auth.Value = big.NewInt(0)     
+	auth.GasLimit = uint64(300000) 
+	auth.GasPrice = gasPrice
+	return auth
 }
 
 func ParseHexColor(s string) (c color.RGBA, err error) {

@@ -7,6 +7,9 @@ pragma solidity ^0.8.6;
 import { PausableUpgradeable } from '@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol';
 import { ReentrancyGuardUpgradeable } from '@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol';
 import { OwnableUpgradeable } from '@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol';
+import "./TrixelsToken.sol";
+import { IERC20 } from '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import { IWETH } from './interfaces/IWETH.sol';
 
 interface ITrixelsAuctionHouse {
     struct Auction {
@@ -25,6 +28,14 @@ interface ITrixelsAuctionHouse {
     event AuctionExtended(uint256 indexed nounId, uint256 endTime);
 
     event AuctionSettled(uint256 indexed trixelId, address winner, uint256 amount);
+
+    event AuctionTimeBufferUpdated(uint256 timeBuffer);
+
+    event AuctionReservePriceUpdated(uint256 reservePrice);
+
+    event AuctionMinBidIncrementPercentageUpdated(uint256 minBidIncrementPercentage);
+
+    function initialize(TrixelsToken _trixels, uint256 _duration, uint256 _timeBuffer, uint256 _reservePrice, address _weth) external;
 }
 
 contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, ReentrancyGuardUpgradeable, OwnableUpgradeable {
@@ -32,22 +43,24 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
     uint256 public timeBuffer;
     uint8 public minBidIncrementPercentage;
     uint256 public reservePrice;
+    address public weth;
 
     ITrixelsAuctionHouse.Auction auction;
-    TrixelsNFT trixels;
+    TrixelsToken trixels;
 
-    constructor(TrixelsNFT _trixels, uint256 _duration, uint256 _timeBuffer, uint256 _reservePrice) {
+    function initialize(TrixelsToken _trixels, uint256 _duration, uint256 _timeBuffer, uint256 _reservePrice, address _weth) external initializer {
         __Pausable_init();
         __ReentrancyGuard_init();
         __Ownable_init();
         _pause();
+        weth = _weth;
         trixels = _trixels;
         timeBuffer = _timeBuffer;
         duration = _duration;
         reservePrice = _reservePrice;
     }
 
-    function startAuction(bytes skyNetID) external nonReentrant whenNotPaused {
+    function startAuction(bytes23 skyNetID) external nonReentrant whenNotPaused {
         _startAuction(skyNetID);
     }
 
@@ -56,7 +69,7 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
     }
 
     function createBid(uint256 trixelId) external payable nonReentrant {
-        INounsAuctionHouse.Auction memory _auction = auction;
+        ITrixelsAuctionHouse.Auction memory _auction = auction;
 
         require(_auction.trixelId == trixelId, 'Trixel not up for auction');
         require(block.timestamp < _auction.endTime, 'Auction expired');
@@ -82,14 +95,14 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
             auction.endTime = _auction.endTime = block.timestamp + timeBuffer;
         }
 
-        emit AuctionBid(_auction.nounId, msg.sender, msg.value, extended);
+        emit AuctionBid(_auction.trixelId, msg.sender, msg.value, extended);
 
         if (extended) {
-            emit AuctionExtended(_auction.nounId, _auction.endTime);
+            emit AuctionExtended(_auction.trixelId, _auction.endTime);
         }
     }   
 
-    function _startAuction(bytes skyNetID) internal {
+    function _startAuction(bytes23 skyNetID) internal {
         uint256 trixelId = trixels.mint(skyNetID);
         uint256 startTime = block.timestamp;
         uint256 endTime = startTime + duration;
@@ -116,9 +129,9 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
         auction.settled = true;
 
         if (_auction.bidder == address(0)) {
-            trixels.burn(_auction.nounId);
+            trixels.burn(_auction.trixelId);
         } else {
-            nouns.transferFrom(address(this), _auction.bidder, _auction.nounId);
+            trixels.transferFrom(address(this), _auction.bidder, _auction.trixelId);
         }
 
         if (_auction.amount > 0) {
@@ -128,27 +141,39 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
         emit AuctionSettled(_auction.trixelId, _auction.bidder, _auction.amount);
     }
 
-    function pause() external override onlyOwner {
+    function pause() external onlyOwner {
         _pause();
     }
 
-    function unpause() external override onlyOwner {
+    function unpause() external onlyOwner {
         _unpause();
 
-        if (auction.startTime == 0 || auction.settled) {
-            _createAuction();
-        }
+        // if (auction.startTime == 0 || auction.settled) {
+        //     _startAuction(skyNetID);();
+        // }
     }
 
-    function setTimeBuffer(uint256 _timeBuffer) external override onlyOwner {
+    function setTimeBuffer(uint256 _timeBuffer) external onlyOwner {
         timeBuffer = _timeBuffer;
 
         emit AuctionTimeBufferUpdated(_timeBuffer);
     }
 
-    function setReservePrice(uint256 _reservePrice) external override onlyOwner {
+    function setReservePrice(uint256 _reservePrice) external onlyOwner {
         reservePrice = _reservePrice;
 
         emit AuctionReservePriceUpdated(_reservePrice);
+    }
+
+    function _safeTransferETHWithFallback(address to, uint256 amount) internal {
+        if (!_safeTransferETH(to, amount)) {
+            IWETH(weth).deposit{ value: amount }();
+            IERC20(weth).transfer(to, amount);
+        }
+    }
+
+    function _safeTransferETH(address to, uint256 value) internal returns (bool) {
+        (bool success, ) = to.call{ value: value, gas: 30_000 }(new bytes(0));
+        return success;
     }
 }
