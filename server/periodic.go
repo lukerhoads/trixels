@@ -52,6 +52,7 @@ func NewPeriodic(db *gorm.DB, privateKey *ecdsa.PrivateKey, client *ethclient.Cl
 }
 
 func (p *Periodic) Start() {
+	log.Println("here")
 	for {
 		select {
 		case <-p.dayTicker.C:
@@ -64,6 +65,7 @@ func (p *Periodic) Start() {
 			} 
 		// Simply for demo purposes
 		case v := <-p.devChan:
+			log.Println("pulled off devchan")
 			if v == "mint" {
 				if err := p.MintAndStartAuction(); err != nil {
 					log.Panic(err)
@@ -142,6 +144,12 @@ func (p *Periodic) MintAndStartAuction() error {
 	upLeft := image.Point{0, 0}
 	lowRight := image.Point{30, 30}
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
+	for i := 0; i < 30; i++ {
+		for j := 0; j < 30; j++ {
+			img.Set(i, j, color.Black)
+		}
+	}
+
 	for i := 0; i < len(pixels); i++ {
 		color, err := ParseHexColor(pixels[i].Color)
 		if err != nil {
@@ -166,10 +174,10 @@ func (p *Periodic) MintAndStartAuction() error {
     }
 
 	// Delete image
-	err = os.Remove(path)
-	if err != nil {
-		return err
-	}
+	// err = os.Remove(path)
+	// if err != nil {
+	// 	return err
+	// }
 
 	// Mint NFT with metadata URL
 	metadata := Metadata{
@@ -196,13 +204,12 @@ func (p *Periodic) MintAndStartAuction() error {
     }
 
 	// Delete image
-	err = os.Remove(path)
+	err = os.Remove(metaPath)
 	if err != nil {
 		return err
 	}
 
 	skyNetId := metaUrl[strings.LastIndex(metaUrl, "/")+1:]
-	log.Println(skyNetId)
 	keyedTransactor := p.GenKeyedTransactor()
 	tx, err := p.TrixelsAuctionHouse.StartAuction(keyedTransactor, skyNetId)
 	if err != nil {

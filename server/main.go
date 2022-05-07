@@ -60,13 +60,6 @@ func main() {
 	// 	log.Fatal(result.Error)
 	// }
 
-	log.Println("setting up app")
-	app := &App {
-		devChan: devChan,
-	}
-	app.Initialize(db)
-	app.Run(":8080")
-
 	privateKey, err := crypto.HexToECDSA(gasAccountPrivateKey)
 	if err != nil {
 		log.Fatal(err)
@@ -75,5 +68,14 @@ func main() {
 
 	periodic := NewPeriodic(db, privateKey, client, trixels, trixelsAuctionHouse, dayTicker, twoWeekTicker, devChan, quit)
 	go periodic.Start()
+
+	log.Println("setting up app")
+	app := &App {
+		devChan: devChan,
+	}
+	app.Initialize(db)
+	app.Run(":8080")
+
+	
 	// go periodic.StartUpdater(trixelsAddress)
 }
