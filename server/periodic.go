@@ -11,19 +11,26 @@ import (
 type Periodic struct {
 	*Store
 	*Trixels
+	*TrixelsAuctionHouse
+	*ethclient.Client
 	dayTicker *time.Ticker 
 	twoWeekTicker *time.Ticker 
 	devChan chan string
 	quit chan struct{}
+	privateKey *ecdsa.PrivateKey
 }
 
-func NewPeriodic(store *Store, dayTicker *time.Ticker, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
+func NewPeriodic(store *Store, privateKey *ecdsa.PrivateKey, client *ethclient.Client, trixels *Trixels, trixelsAuctionHouse *TrixelsAuctionHouse, dayTicker *time.Ticker, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
 	return &Periodic{
 		Store: store,
+		Trixels: trixels,
+		TrixelsAuctionHouse: trixelsAuctionHouse,
+		Client: client,
 		dayTicker,
 		twoWeekTicker,
 		devChan,
 		quit,
+		privateKey,
 	}
 }
 
@@ -38,7 +45,7 @@ func (p *Periodic) Start() {
 				log.Panic(err)
 			}
 		// Simply for demo purposes
-		case v<-p.devChan:
+		case v := <-p.devChan:
 			if v == "mint" {
 				p.MintAndStartAuction()
 			} else if v == "updatepixels" {
@@ -51,11 +58,59 @@ func (p *Periodic) Start() {
 	}
 }
 
+func (p *Periodic) StartUpdater() {
+	// Setup ethereum event log/listener for an update transaction
+	contractAddress := common.HexToAddress(address)
+	query := ethereum.FilterQuery{
+		Addresses: []common.Address{contractAddress},
+		Topics: {{common.HexToHash("0xdfda710484c7dc3d855d2d80e0f7832b0f90247a4a297036e424961e0c590bee")}}
+	}
+
+	logs := make(chan types.Log)
+	sub, err := p.Client.SubscribeFilterLogs(context.Background(), query, logs)
+	if err != nil {
+		return err
+	}
+
+	for {
+		select {
+		case err := <-sub.Err():
+		case vLog := <-logs:
+			// create a commit based off the transaction log
+		}
+	}
+}
+
 func (p *Periodic) UpdatePixels() {
 	commits := p.Store.GetDayCommits()
 
 	// Write to the contract from a address with ETH
-	
+	publicKey := p.privateKey.Public()
+	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
+	if !ok {
+		log.Fatal("error casting public key to ECDSA")
+	}
+
+	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
+	nonce, err := p.client.PendingNonceAt(context.Background(), fromAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	gasPrice, err := p.client.SuggestGasPrice(context.Background())
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	auth := bind.NewKeyedTransactor(p.privateKey)
+	auth.Nonce = big.NewInt(int64(nonce))
+	auth.Value = big.NewInt(0)     
+	auth.GasLimit = uint64(300000) 
+	auth.GasPrice = gasPrice
+
+	for _, c := range commits {
+		
+	}
 }
 
 func (p *Periodic) MintAndStartAuction() error {

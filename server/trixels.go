@@ -12,7 +12,7 @@ type Trixels struct {
 	*trixels.Trixels
 }
 
-func NewTrixels(client *ethclient.Client, address string) (*Contract, error) {
+func NewTrixels(client *ethclient.Client, address string) (*Trixels, error) {
 	address := common.HexToAddress(address)
 	instance, err := trixels.NewTrixels(address, client)
 	if err != nil {
@@ -34,7 +34,7 @@ func (t *Trixels) GetPixels() ([][]Pixel, error) {
 	// Convert to pixel matrix
 	var pixels [][]Pixel 
 	for _, c := range colors {
-
+		log.Println(c)
 	}
 
 	return pixels, nil
@@ -45,14 +45,14 @@ type TrixelsAuctionHouse struct {
 	*trixels.TrixelsAuctionHouse
 }
 
-func NewTrixelsAuctionHouse(client *ethclient.Client, address string) (*Contract, error) {
+func NewTrixelsAuctionHouse(client *ethclient.Client, address string) (*TrixelsAuctionHouse, error) {
 	address := common.HexToAddress(address)
 	instance, err := trixels.NewTrixelsAuctionHouse(address, client)
 	if err != nil {
 		return nil, err 
 	}
 
-	return &Contract{
+	return &TrixelsAuctionHouse{
 		Client: client,
 		Trixels: instance,
 	}, nil

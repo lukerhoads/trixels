@@ -13,17 +13,31 @@ func main() {
 
 	rpcUrl := os.Getenv("ETH_URL")
 	gasAccountPrivateKey := os.Getenv("GAS_ACCOUNT_PK")
+	trixelsAddress := os.Getenv("TRIXELS_ADDRESS")
+	trixelsAuctionHouseAddress := os.Getenv("TRIXELS_AUCTION_ADDRESS")
 	dsn := os.Getenv("DB_DSN")
+
+	client, err := ethclient.Dial(rpcUrl)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	trixels := NewTrixels(client, trixelsAddress)
+	trixelsAuctionHouse := NewTrixelsAuctionHouse(client, trixelsAuctionHouseAddress)
+
 	store, err := NewStore(dsn)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	updater := NewUpdater(store)
-	go updater.Start()
+	privateKey, err := crypto.HexToECDSA(gasAccountPrivateKey)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	periodic := NewPeriodic(store, dayTicker, twoWeekTicker, devChan)
+	periodic := NewPeriodic(store, privateKey, client, trixels, trixelsAuctionHouse, dayTicker, twoWeekTicker, devChan)
 	go periodic.Start()
+	go periodic.StartUpdater()
 
 	router := NewRouter(store, devChan)
 	router.Start()
