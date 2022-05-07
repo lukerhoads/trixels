@@ -140,7 +140,7 @@ func (p *Periodic) MintAndStartAuction() error {
 
 	// Construct image from pixels
 	upLeft := image.Point{0, 0}
-	lowRight := image.Point{200, 200}
+	lowRight := image.Point{30, 30}
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
 	for i := 0; i < len(pixels); i++ {
 		color, err := ParseHexColor(pixels[i].Color)

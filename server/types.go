@@ -54,7 +54,7 @@ func (p *Pixel) UpdatePixel(db *gorm.DB) {
 // 0, 0 -> 0
 // 1, 20 -> 220
 func computeId(x uint16, y uint16) uint16 {
-	return (y * 200) + x
+	return (y * 30) + x
 }
 
 func (p *Pixel) validPixel() bool {

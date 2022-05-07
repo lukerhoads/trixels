@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"encoding/json"
 	"gorm.io/gorm"
+	"github.com/gorilla/handlers"
 )
 
 type App struct {
@@ -22,6 +23,7 @@ func (a *App) Initialize(db *gorm.DB) {
 }
 
 func (r *App) initializeRoutes() {
+	r.Router.Use(Middleware)
 	r.Router.HandleFunc("/pixels", r.GetPixels).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.UpdatePixel).Methods("POST")
 	r.Router.HandleFunc("/commit", r.CreateCommit).Methods("POST")
@@ -30,9 +32,19 @@ func (r *App) initializeRoutes() {
 	r.Router.HandleFunc("/trigger/reset", r.ResetDB).Methods("GET")
 }
 
+func Middleware(h http.Handler) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        w.Header().Set("Access-Control-Allow-Origin", "*")
+        h.ServeHTTP(w, r)
+    })
+}
+
 func (a *App) Run(addr string) {
 	log.Println("Listening...")
-	log.Fatal(http.ListenAndServe(addr, a.Router))
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	log.Fatal(http.ListenAndServe(addr, handlers.CORS(originsOk, headersOk, methodsOk)(a.Router)))
 }
 
 func (r *App) GetPixels(res http.ResponseWriter, req *http.Request) {
@@ -110,9 +122,9 @@ func clearTable(db *gorm.DB) {
 func (a *App) InitializePixels() {
 	// ensureTableExists(a.DB)
 
-	for i := 0; i < 200; i++ {
+	for i := 0; i < 30; i++ {
 		var pixels []Pixel
-		for j := 0; j < 200; j++ {
+		for j := 0; j < 30; j++ {
 			pixel := Pixel {
 				X: uint16(i),
 				Y: uint16(j),
