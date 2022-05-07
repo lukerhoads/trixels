@@ -13,14 +13,16 @@ type Periodic struct {
 	*Trixels
 	dayTicker *time.Ticker 
 	twoWeekTicker *time.Ticker 
+	devChan chan string
 	quit chan struct{}
 }
 
-func NewPeriodic(store *Store, dayTicker *time.Ticker, twoWeekTicker *time.Ticker, quit chan struct{}) *Periodic {
+func NewPeriodic(store *Store, dayTicker *time.Ticker, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
 	return &Periodic{
 		Store: store,
 		dayTicker,
 		twoWeekTicker,
+		devChan,
 		quit,
 	}
 }
@@ -34,6 +36,13 @@ func (p *Periodic) Start() {
 			err := p.MintAndStartAuction()
 			if err != nil {
 				log.Panic(err)
+			}
+		// Simply for demo purposes
+		case v<-p.devChan:
+			if v == "mint" {
+				p.MintAndStartAuction()
+			} else if v == "updatepixels" {
+				p.UpdatePixels()
 			}
 		case <-quit:
 			p.dayTicker.Stop()

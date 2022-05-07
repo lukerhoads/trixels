@@ -51,3 +51,11 @@ func (r *Router) HandleGetPixels(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(w).Encode(dimensionedPixels)
 	return
 }
+
+func (r *Router) HandleTriggerMint(res http.ResponseWriter, req *http.Request) {
+	r.devChan<-"mint"
+}
+
+func (r *Router) HandleTriggerMint(res http.ResponseWriter, req *http.Request) {
+	r.devChan<-"updatepixels"
+}

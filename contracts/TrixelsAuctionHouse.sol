@@ -47,7 +47,7 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
         reservePrice = _reservePrice;
     }
 
-    function startAuction(bytes64 skyNetID) external nonReentrant whenNotPaused {
+    function startAuction(bytes skyNetID) external nonReentrant whenNotPaused {
         _startAuction(skyNetID);
     }
 
@@ -89,7 +89,7 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
         }
     }   
 
-    function _startAuction(bytes64 skyNetID) internal {
+    function _startAuction(bytes skyNetID) internal {
         uint256 trixelId = trixels.mint(skyNetID);
         uint256 startTime = block.timestamp;
         uint256 endTime = startTime + duration;

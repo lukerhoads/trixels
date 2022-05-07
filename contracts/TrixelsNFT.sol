@@ -14,7 +14,7 @@ contract TrixelsNFT is ERC721 {
         _;
     }
 
-    function mint(bytes64 skyNetID) public onlyMinter returns (uint256) {
+    function mint(bytes skyNetID) public onlyMinter returns (uint256) {
         _mint(minter, _currentTrixelId++, skyNetID);
         return _currentTrixelId;
     }

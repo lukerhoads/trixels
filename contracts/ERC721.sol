@@ -2,8 +2,12 @@
 pragma solidity ^0.8.6;
 
 import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
-import '@openzeppelin/contracts/utils/introspection/ERC165.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol';
 import '@openzeppelin/contracts/token/ERC721/extensions/IERC721Metadata.sol';
+import '@openzeppelin/contracts/utils/Address.sol';
+import '@openzeppelin/contracts/utils/Context.sol';
+import '@openzeppelin/contracts/utils/Strings.sol';
+import '@openzeppelin/contracts/utils/introspection/ERC165.sol';
 
 contract ERC721 is ERC165, IERC721, IERC721Metadata {
     using Address for address;
@@ -18,7 +22,7 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
     // Mapping from token ID to owner address
     mapping(uint256 => address) private _owners;
 
-    mapping(uint256 => bytes64) private skynetIDs;
+    mapping(uint256 => bytes) private skynetIDs;
 
     // Mapping owner address to token count
     mapping(address => uint256) private _balances;
@@ -84,7 +88,7 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
     function tokenURI(uint256 tokenId) public view virtual override returns (string memory) {
         require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
 
-        bytes64 skyNetID = skynetIDs[tokenId];
+        bytes skyNetID = skynetIDs[tokenId];
         string memory baseURI = _baseURI();
         return bytes(baseURI).length > 0 ? string(abi.encodePacked(baseURI, string(skyNetID))) : "";
     }
@@ -237,7 +241,7 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
      *
      * Emits a {Transfer} event.
      */
-    function _safeMint(address to, uint256 tokenId, bytes64 skyNetID) internal virtual {
+    function _safeMint(address to, uint256 tokenId, bytes skyNetID) internal virtual {
         _safeMint(to, tokenId, skyNetID, "");
     }
 
@@ -248,7 +252,7 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
     function _safeMint(
         address to,
         uint256 tokenId,
-        bytes64 skyNetID,
+        bytes skyNetID,
         bytes memory data
     ) internal virtual {
         _mint(to, tokenId, skyNetID);
@@ -270,7 +274,7 @@ contract ERC721 is ERC165, IERC721, IERC721Metadata {
      *
      * Emits a {Transfer} event.
      */
-    function _mint(address to, uint256 tokenId, bytes64 skyNetID) internal virtual {
+    function _mint(address to, uint256 tokenId, bytes skyNetID) internal virtual {
         require(to != address(0), "ERC721: mint to the zero address");
         require(!_exists(tokenId), "ERC721: token already minted");
 
