@@ -174,10 +174,10 @@ func (p *Periodic) MintAndStartAuction() error {
     }
 
 	// Delete image
-	// err = os.Remove(path)
-	// if err != nil {
-	// 	return err
-	// }
+	err = os.Remove(path)
+	if err != nil {
+		return err
+	}
 
 	// Mint NFT with metadata URL
 	metadata := Metadata{
