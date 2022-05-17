@@ -40,7 +40,6 @@ contract Trixels is ITrixels, Ownable {
         // Validate X, Y, and newColor
         require(x < DIMENSION, "x coord invalid");
         require(y < DIMENSION, "y coord invalid");
-        // require(isValidHexCode(newColor), "hex code invalid");
         bytes3 oldColor = colors[x][y];
         colors[x][y] = newColor;
         lastEditors[x][y] = msg.sender; 
