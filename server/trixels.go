@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"github.com/ethereum/go-ethereum/ethclient"
