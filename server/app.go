@@ -1,18 +1,19 @@
 package server
 
 import (
-	"log"
-	"fmt"
-	"net/http"
-	"github.com/gorilla/mux"
 	"encoding/json"
-	"gorm.io/gorm"
+	"fmt"
+	"log"
+	"net/http"
+
 	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
 
 type App struct {
-	Router *mux.Router
-	DB *gorm.DB
+	Router  *mux.Router
+	DB      *gorm.DB
 	devChan chan string
 }
 
@@ -44,7 +45,7 @@ func (r *App) GetPixel(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
 	coord := vars["coord"]
 	xCoord, yCoord := DecodePixelValues(coord)
-	pixel := Pixel {
+	pixel := Pixel{
 		X: xCoord,
 		Y: yCoord,
 	}
@@ -61,31 +62,30 @@ func (r *App) GetPixels(res http.ResponseWriter, req *http.Request) {
 }
 
 func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
-	var pixel Pixel 
+	var pixel Pixel
 	err := json.NewDecoder(req.Body).Decode(&pixel)
-    if err != nil {
-        http.Error(res, err.Error(), http.StatusBadRequest)
-        return
-    }
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	pixel.UpdatePixel(r.DB)
-	fmt.Fprintf(res, "Success!") 
+	fmt.Fprintf(res, "Success!")
 	return
 }
 
 func (r *App) TriggerMint(res http.ResponseWriter, req *http.Request) {
-	r.devChan<-"mint"
+	r.devChan <- "mint"
 	return
 }
 
 func (r *App) TriggerUpdate(res http.ResponseWriter, req *http.Request) {
-	r.devChan<-"updatepixels"
+	r.devChan <- "updatepixels"
 	return
 }
 
 func (r *App) ResetDB(res http.ResponseWriter, req *http.Request) {
 	ClearTable(r.DB)
-	r.InitializePixels()
 	return
 }
 
@@ -105,17 +105,4 @@ func EnsureTableExists(db *gorm.DB) {
 
 func ClearTable(db *gorm.DB) {
 	db.Exec("DELETE FROM pixels")
-}
-
-func (a *App) InitializePixels() {
-	EnsureTableExists(a.DB)
-
-	for i := 0; i < 30; i++ {
-		var pixels []Pixel
-		for j := 0; j < 30; j++ {
-			pixels = append(pixels, *NewPixel(uint16(i), uint16(j)))
-		}
-
-		a.DB.Create(&pixels)
-	}
 }

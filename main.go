@@ -2,15 +2,15 @@ package main
 
 import (
 	// "time"
-	"os"
 	"log"
+	"os"
 
 	// "github.com/ethereum/go-ethereum/ethclient"
 	// "github.com/ethereum/go-ethereum/crypto"
 	"github.com/joho/godotenv"
-	"gorm.io/gorm"
-	"gorm.io/driver/mysql"
 	"github.com/lukerhoads/trixels/server"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
 )
 
 func main() {
@@ -18,9 +18,8 @@ func main() {
 	devChan := make(chan string)
 
 	// quit := make(chan struct{})
-	// dayTicker := time.NewTicker(24 * time.Hour)
 	// twoWeekTicker := time.NewTicker(14 * 24 * time.Hour)
-	
+
 	// gasAccountPrivateKey := os.Getenv("GAS_ACCOUNT_PK")
 	// trixelsAddress := os.Getenv("TRIXELS_ADDRESS")
 	// trixelsAuctionHouseAddress := os.Getenv("TRIXELS_AUCTION_ADDRESS")
@@ -68,7 +67,6 @@ func main() {
 	// 	log.Fatal(err)
 	// }
 
-
 	// periodic := server.NewPeriodic(db, privateKey, client, trixels, trixelsAuctionHouse, dayTicker, twoWeekTicker, devChan, quit)
 	// go periodic.Start()
 
@@ -77,6 +75,5 @@ func main() {
 	// app.InitializePixels()
 	app.Run(":8080")
 
-	
 	// go periodic.StartUpdater(trixelsAddress)
 }

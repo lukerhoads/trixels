@@ -9,38 +9,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
-type Trixels struct {
-	*ethclient.Client
-	*trixels.Trixels
-}
-
-func NewTrixels(client *ethclient.Client, addr string) (*Trixels, error) {
-	address := common.HexToAddress(addr)
-	instance, err := trixels.NewTrixels(address, client)
-	if err != nil {
-		return nil, err 
-	}
-
-	return &Trixels{
-		Client: client,
-		Trixels: instance,
-	}, nil
-}
-
-// func (t *Trixels) GetPixels() ([][]Pixel, error) {
-// 	colors, err := t.Trixels.Colors(nil)
-// 	if err != nil {
-// 		return nil, err
-// 	}
-
-// 	// Convert to pixel matrix
-// 	var pixels [][]Pixel 
-// 	for _, c := range colors {
-// 		log.Println(c)
-// 	}
-
-// 	return pixels, nil
-// }
 
 type TrixelsAuctionHouse struct {
 	*ethclient.Client
