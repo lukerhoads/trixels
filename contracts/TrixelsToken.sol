@@ -38,13 +38,13 @@ contract TrixelsToken is ITrixelsToken, ERC721, Ownable {
         _;
     }
 
-    function mint(bytes23 skyNetID) public onlyMinter returns (uint256) {
+    function mint(bytes23 skyNetID) public override onlyMinter returns (uint256) {
         _mint(minter, _currentTrixelId++, skyNetID);
         emit TrixelCreated(_currentTrixelId);
         return _currentTrixelId;
     }
 
-    function burn(uint256 trixelId) public onlyMinter {
+    function burn(uint256 trixelId) public override onlyMinter {
         _burn(trixelId);
         emit TrixelBurned(trixelId);
     }

@@ -48,7 +48,7 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
     ITrixelsAuctionHouse.Auction auction;
     TrixelsToken trixels;
 
-    function initialize(TrixelsToken _trixels, uint256 _duration, uint256 _timeBuffer, uint256 _reservePrice, address _weth) external initializer {
+    function initialize(TrixelsToken _trixels, uint256 _duration, uint256 _timeBuffer, uint256 _reservePrice, address _weth) external override initializer {
         __Pausable_init();
         __ReentrancyGuard_init();
         __Ownable_init();
@@ -147,10 +147,6 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
 
     function unpause() external onlyOwner {
         _unpause();
-
-        // if (auction.startTime == 0 || auction.settled) {
-        //     _startAuction(skyNetID);();
-        // }
     }
 
     function setTimeBuffer(uint256 _timeBuffer) external onlyOwner {
@@ -168,7 +164,7 @@ contract TrixelsAuctionHouse is ITrixelsAuctionHouse, PausableUpgradeable, Reent
     function _safeTransferETHWithFallback(address to, uint256 amount) internal {
         if (!_safeTransferETH(to, amount)) {
             IWETH(weth).deposit{ value: amount }();
-            IERC20(weth).transfer(to, amount);
+            IWETH(weth).transfer(to, amount);
         }
     }
 
