@@ -29,7 +29,6 @@ func (r *App) initializeRoutes() {
 	r.Router.HandleFunc("/pixels", r.GetPixels).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.UpdatePixel).Methods("POST")
 	r.Router.HandleFunc("/trigger/mint", r.TriggerMint).Methods("GET")
-	r.Router.HandleFunc("/trigger/update", r.TriggerUpdate).Methods("GET")
 	r.Router.HandleFunc("/trigger/reset", r.ResetDB).Methods("GET")
 }
 
@@ -51,14 +50,12 @@ func (r *App) GetPixel(res http.ResponseWriter, req *http.Request) {
 	}
 	pixel.GetPixel(r.DB)
 	json.NewEncoder(res).Encode(pixel)
-	return
 }
 
 func (r *App) GetPixels(res http.ResponseWriter, req *http.Request) {
 	var pixels Pixels
 	pixels.GetPixels(r.DB)
 	json.NewEncoder(res).Encode(pixels)
-	return
 }
 
 func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
@@ -71,22 +68,16 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 
 	pixel.UpdatePixel(r.DB)
 	fmt.Fprintf(res, "Success!")
-	return
 }
 
 func (r *App) TriggerMint(res http.ResponseWriter, req *http.Request) {
 	r.devChan <- "mint"
-	return
-}
-
-func (r *App) TriggerUpdate(res http.ResponseWriter, req *http.Request) {
-	r.devChan <- "updatepixels"
-	return
+	fmt.Fprintf(res, "Success!")
 }
 
 func (r *App) ResetDB(res http.ResponseWriter, req *http.Request) {
 	ClearTable(r.DB)
-	return
+	fmt.Fprintf(res, "Success!")
 }
 
 const tableCreationQuery = `CREATE TABLE IF NOT EXISTS pixels (

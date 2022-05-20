@@ -18,11 +18,10 @@ type Periodic struct {
 	*gorm.DB
 	*TrixelsAuctionHouse
 	*ethclient.Client
-	dayTicker     *time.Ticker
+	privateKey    *ecdsa.PrivateKey
 	twoWeekTicker *time.Ticker
 	devChan       chan string
 	quit          chan struct{}
-	privateKey    *ecdsa.PrivateKey
 }
 
 func NewPeriodic(db *gorm.DB, privateKey *ecdsa.PrivateKey, client *ethclient.Client, trixelsAuctionHouse *TrixelsAuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
@@ -51,7 +50,6 @@ func (p *Periodic) Start() {
 				}
 			}
 		case <-p.quit:
-			p.dayTicker.Stop()
 			p.twoWeekTicker.Stop()
 		}
 	}
@@ -140,7 +138,7 @@ func (p *Periodic) MintAndStartAuction() error {
 	// }
 
 	// log.Println(tx.Hash().Hex())
-	// return nil
+	return nil
 }
 
 func (p *Periodic) GenKeyedTransactor() *bind.TransactOpts {
