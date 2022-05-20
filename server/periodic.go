@@ -3,8 +3,12 @@ package server
 import (
 	"context"
 	"crypto/ecdsa"
+	"image"
+	"image/color"
+	"image/png"
 	"log"
 	"math/big"
+	"os"
 	"time"
 
 	"gorm.io/gorm"
@@ -56,54 +60,54 @@ func (p *Periodic) Start() {
 }
 
 func (p *Periodic) MintAndStartAuction() error {
-	log.Println("Starting auction")
+	log.Println("Starting auction...")
 
-	// var pixels Pixels
-	// pixels.GetPixels(p.DB)
+	var pixels Pixels
+	pixels.GetPixels(p.DB)
 
-	// // Construct image from pixels
-	// upLeft := image.Point{0, 0}
-	// lowRight := image.Point{30, 30}
-	// img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
-	// for i := 0; i < 30; i++ {
-	// 	for j := 0; j < 30; j++ {
-	// 		img.Set(i, j, color.Black)
-	// 	}
-	// }
+	// Construct image from pixels
+	upLeft := image.Point{0, 0}
+	lowRight := image.Point{500, 500}
+	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
+	for i := 0; i < 500; i++ {
+		for j := 0; j < 500; j++ {
+			img.Set(i, j, color.Black)
+		}
+	}
 
-	// for i := 0; i < len(pixels); i++ {
-	// 	color, err := ParseHexColor(pixels[i].Color)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	img.Set(int(pixels[i].X), int(pixels[i].Y), color)
-	// }
+	for i := 0; i < len(pixels); i++ {
+		color, err := ParseHexColor(pixels[i].Color)
+		if err != nil {
+			continue
+		}
+		img.Set(int(pixels[i].X), int(pixels[i].Y), color)
+	}
 
-	// path := "image.png"
-	// f, err := os.Create(path)
+	path := "image.png"
+	f, err := os.Create(path)
+	if err != nil {
+		return err
+	}
+
+	png.Encode(f, img)
+
+	// Put it on SkyNet, get CDN url
+	// client := skynet.New()
+	// url, err := client.UploadFile(path, skynet.DefaultUploadOptions)
 	// if err != nil {
 	// 	return err
 	// }
 
-	// png.Encode(f, img)
-
-	// // Put it on SkyNet, get CDN url
-	// client := skynet.New()
-	// url, err := client.UploadFile(path, skynet.DefaultUploadOptions)
-	// if err != nil {
-	//     return err
-	// }
-
-	// // Delete image
+	// Delete image
 	// err = os.Remove(path)
 	// if err != nil {
 	// 	return err
 	// }
 
-	// // Mint NFT with metadata URL
+	// Mint NFT with metadata URL
 	// metadata := Metadata{
-	// 	Name: time.Now().String(),
-	// 	Image: url,
+	// 	Name:        time.Now().String(),
+	// 	Image:       url,
 	// 	Description: "Trixels NFT",
 	// }
 
@@ -121,7 +125,7 @@ func (p *Periodic) MintAndStartAuction() error {
 	// // Begin auction on NFT
 	// metaUrl, err := client.UploadFile(metaPath, skynet.DefaultUploadOptions)
 	// if err != nil {
-	//     return err
+	// 	return err
 	// }
 
 	// // Delete image
