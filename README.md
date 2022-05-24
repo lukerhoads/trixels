@@ -12,13 +12,11 @@ Trixels is a semi-decentralized application that brings together the world throu
 - https://www.reddit.com/r/place/
 
 ## Todo
-- At the moment, the pixel values will have to be stored on a server
-- Figure out how to efficiently store hex values
-- Write code for DAO
+- Figure out a way to store onchain
 - Deploy frontend for auction
 - Add timeouts for pixel changes
 - Make a good GUI
-- Make URL forwarder
+- Write testing for contracts
 
 ## Design Notes
 - Pixel values are stored centrally
