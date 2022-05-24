@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./interfaces/IToken.sol";
 
+// Token is the underlying Trixels NFT contract that represents the sold NFTs
 contract Token is Ownable, ERC721, IToken {
     constructor() ERC721("Trixels", "TRIX") {}
 

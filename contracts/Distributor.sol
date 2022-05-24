@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IDistributor.sol";
 import "./utility/ETHMover.sol";
 
+// Distributor is the contract that distributes the partitioned sale price to contributors.
 contract Distributor is Ownable, ETHMover {
     uint constant TOTAL_CONTRIBS = 900; // 30 * 30
 

@@ -10,13 +10,17 @@ import "./interfaces/IDAO.sol";
 import "./interfaces/IDistributor.sol";
 import "./utility/ETHMover.sol";
 
+// AuctionHouse auctions off the latest Trixel
 contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     IToken public token;
     IDAO public dao;
     IDistributor public distributor;
     IAuctionHouse.Auction auction;
 
+    // The duration of every auction
     uint256 public duration;
+
+    // The reserve price of every auction
     uint256 public reservePrice;
     uint8 public minBidIncrementPercentage;
     uint8 public daoCut;
@@ -104,11 +108,27 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
         emit BidPlaced(msg.sender, msg.value);
     }
 
+    /*
+     * setDuration sets the auction duration to a new duration.
+     * @param _duration the new duration
+     */
+    function setDuration(uint256 _duration) external onlyOwner {
+        duration = _duration;
+    }
+
+    /*
+     * setDuration sets the auction duration to a new duration.
+     * @param _reservePrice the new reserve price 
+     */
     function setReservePrice(uint256 _reservePrice) external onlyOwner {
         reservePrice = _reservePrice;
     }
 
-    function setMinIncrementPercentage(uint256 _reservePrice) external onlyOwner {
-        reservePrice = _reservePrice;
+    /*
+     * setMinIncrementPercentage sets the minimum bid increment percentage.
+     * @param _minBidIncrementPercentage the new bid increment percentage
+     */
+    function setMinIncrementPercentage(uint _minBidIncrementPercentage) external onlyOwner {
+        minBidIncrementPercentage = _minBidIncrementPercentage;
     }
 }
