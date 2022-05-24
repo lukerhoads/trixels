@@ -14,16 +14,30 @@ contract Distributor is Ownable, ETHMover {
     constructor(address _weth) ETHMover(_weth) {
     }
 
-    function deposit(uint256 _tokenId) external payable {
-        sales[_tokenId] = msg.value;
+    /*
+     * deposit allows the AuctionHouse to deposit the distribution
+     *         for contributors
+     * @param _tokenID the token ID of the sale
+     */
+    function deposit(uint256 _tokenID) external payable {
+        sales[_tokenID] = msg.value;
     }
 
-    function distribute(IDistributor.Contributor[] memory _contributors, uint256 _salePrice) external onlyOwner {
+    /*
+     * distribute is the action performed by the server in order 
+     *            to distribute the sale price among contributors
+     * @param contributors the contributors of the sold token
+     * @param _tokenID the token ID of the distributing token
+     */
+    function distribute(IDistributor.Contributor[] memory _contributors, uint _tokenID) external onlyOwner {
         for (uint i = 0; i < _contributors.length; i++) {
-            balances[_contributors[i].addr] += (_contributors[i].numContribs / TOTAL_CONTRIBS) * _salePrice;
+            balances[_contributors[i].addr] += (_contributors[i].numContribs / TOTAL_CONTRIBS) * sales[_tokenID];
         }
     }
 
+    /*
+     * withdraw allows contributors to withdraw their cumulative earnings
+     */
     function withdraw() external {
         require(balances[msg.sender] > 0, "No balance to withdraw");
         _safeTransferETHWithFallback(msg.sender, balances[msg.sender]);
