@@ -5,14 +5,17 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "./interfaces/IAuctionHouse.sol";
 import "./interfaces/IToken.sol";
+import "./interfaces/IDAO.sol";
 
 contract AuctionHouse is Ownable, IAuctionHouse {
     IToken public token;
+    IDAO public dao;
     uint256 public duration;
     IAuctionHouse.Auction auction;
 
-    constructor(address _token, uint256 _duration) {
+    constructor(address _token, address _dao, uint256 _duration) {
         token = IToken(_token);
+        dao = IDAO(_dao);
         duration = _duration;
     }
 
@@ -43,9 +46,11 @@ contract AuctionHouse is Ownable, IAuctionHouse {
             token.burn(_auction.tokenId);
         } else {
             token.transferFrom(address(this), _auction.highestBidder, _auction.tokenId);
+
+            // Transfer ETH to DAO contract
         }
 
-        emit AuctionEnded(_auction.highestBidder);
+        emit AuctionEnded(_auction.highestBidder, _auction.highestBid);
     }
 
     function placeBid(uint256 tokenId) external payable {
