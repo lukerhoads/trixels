@@ -21,7 +21,12 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 )
 
+type PeriodicConfig struct {
+	url string
+}
+
 type Periodic struct {
+	*PeriodicConfig
 	*gorm.DB
 	*TrixelsAuctionHouse
 	*ethclient.Client
@@ -141,8 +146,9 @@ func (p *Periodic) MintAndStartAuction() error {
 	count := trixel.GetTrixelCount(p.DB)
 
 	// Add route53 rule to redirect (add to database)
+	newTokenId := uint64(count + 1)
 	newTrixel := &Trixel{
-		TokenID:     uint64(count + 1),
+		TokenID:     newTokenId,
 		MetadataUrl: metaUrl,
 	}
 
