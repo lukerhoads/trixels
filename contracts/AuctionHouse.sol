@@ -36,12 +36,10 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
      * startAuction enables the owner to start a new auction. 
      * @param _tokenID  the recipient of the proposal transaction
      */
-    function startAuction(uint256 _tokenID) external onlyOwner {
+    function startAuction() external onlyOwner {
         IAuctionHouse.Auction memory _auction = auction;
         require(_auction.settled, "Another auction has already been started");
-        address tokenOwner = token.ownerOf(_tokenID);
-        require(tokenOwner == address(this), "Auction house does not own desired token");
-
+        uint tokenID = token.mint(address(this));
         uint256 startDate = block.timestamp;
         uint256 endDate = startDate + duration;
         auction = IAuctionHouse.Auction({
@@ -49,11 +47,11 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
             endDate: endDate,
             highestBid: 0,
             highestBidder: payable(0),
-            tokenId: _tokenID,
+            tokenId: tokenID,
             settled: false
         });
 
-        emit AuctionStarted(_tokenID, startDate, endDate);
+        emit AuctionStarted(tokenID, startDate, endDate);
     }
 
     /*
@@ -128,7 +126,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
      * setMinIncrementPercentage sets the minimum bid increment percentage.
      * @param _minBidIncrementPercentage the new bid increment percentage
      */
-    function setMinIncrementPercentage(uint _minBidIncrementPercentage) external onlyOwner {
+    function setMinIncrementPercentage(uint8 _minBidIncrementPercentage) external onlyOwner {
         minBidIncrementPercentage = _minBidIncrementPercentage;
     }
 }

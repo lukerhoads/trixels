@@ -23,28 +23,28 @@ import (
 
 type PeriodicConfig struct {
 	url string
+	privateKey string
 }
 
 type Periodic struct {
-	*PeriodicConfig
+	config *PeriodicConfig
 	*gorm.DB
 	*TrixelsAuctionHouse
 	*ethclient.Client
-	privateKey    *ecdsa.PrivateKey
 	twoWeekTicker *time.Ticker
 	devChan       chan string
 	quit          chan struct{}
 }
 
-func NewPeriodic(db *gorm.DB, privateKey *ecdsa.PrivateKey, client *ethclient.Client, trixelsAuctionHouse *TrixelsAuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
+func NewPeriodic(config *PeriodicConfig, db *gorm.DB, client *ethclient.Client, trixelsAuctionHouse *TrixelsAuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
 	return &Periodic{
+		config: config,
 		DB:                  db,
 		TrixelsAuctionHouse: trixelsAuctionHouse,
 		Client:              client,
 		twoWeekTicker:       twoWeekTicker,
 		devChan:             devChan,
 		quit:                quit,
-		privateKey:          privateKey,
 	}
 }
 
@@ -67,85 +67,77 @@ func (p *Periodic) Start() {
 	}
 }
 
+// CreateImage takes the pixel list and 
+func CreateImage(pixels *Pixels) image.Image {
+	upLeft := image.Point{0, 0}
+	lowRight := image.Point{500, 500}
+	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
+	for i := 0; i < IMAGE_DIMENSIONS; i++ {
+		for j := 0; j < IMAGE_DIMENSIONS; j++ {
+			img.Set(i, j, color.Black)
+		}
+	}
+
+	for i := 0; i < len(*pixels); i++ {
+		color, err := ParseHexColor((*pixels)[i].Color)
+		if err != nil {
+			continue
+		}
+		img.Set(int((*pixels)[i].X), int((*pixels)[i].Y), color)
+	}
+
+	return img
+}
+
+// MintAndStartAuction takes the pixel color values, constructs an image, and submits it on-chain.
+// It returns an error if something occurs.
 func (p *Periodic) MintAndStartAuction() error {
 	log.Println("Starting auction...")
 
 	var pixels Pixels
 	pixels.GetPixels(p.DB)
-
-	// Construct image from pixels
-	upLeft := image.Point{0, 0}
-	lowRight := image.Point{500, 500}
-	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
-	for i := 0; i < 500; i++ {
-		for j := 0; j < 500; j++ {
-			img.Set(i, j, color.Black)
-		}
-	}
-
-	for i := 0; i < len(pixels); i++ {
-		color, err := ParseHexColor(pixels[i].Color)
-		if err != nil {
-			continue
-		}
-		img.Set(int(pixels[i].X), int(pixels[i].Y), color)
-	}
-
-	path := "image.png"
-	f, err := os.Create(path)
+	img := CreateImage(&pixels)
+	f, err := os.Create(IMAGE_PATH)
 	if err != nil {
 		return err
 	}
 
 	png.Encode(f, img)
-
-	// Put it on SkyNet, get CDN url
 	client := skynet.New()
-	url, err := client.UploadFile(path, skynet.DefaultUploadOptions)
+	url, err := client.UploadFile(IMAGE_PATH, skynet.DefaultUploadOptions)
 	if err != nil {
 		return err
 	}
 
 	// Delete image
-	err = os.Remove(path)
+	err = os.Remove(IMAGE_PATH)
 	if err != nil {
 		return err
 	}
 
-	// Mint NFT with metadata URL
-	metadata := Metadata{
-		Name:        time.Now().String(),
-		Image:       url,
-		Description: "Trixels NFT",
-	}
-
-	metaPath := "metadata.json"
+	metadata := NewMetadata(time.Now().String(), url, "Trixels NFT")
 	file, err := json.MarshalIndent(metadata, "", " ")
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(metaPath, file, 0644)
+	err = ioutil.WriteFile(METADATA_PATH, file, 0644)
 	if err != nil {
 		return err
 	}
 
-	// Begin auction on NFT
-	metaUrl, err := client.UploadFile(metaPath, skynet.DefaultUploadOptions)
+	metaUrl, err := client.UploadFile(METADATA_PATH, skynet.DefaultUploadOptions)
 	if err != nil {
 		return err
 	}
 
-	// Delete image
-	err = os.Remove(metaPath)
+	err = os.Remove(METADATA_PATH)
 	if err != nil {
 		return err
 	}
 
 	var trixel *Trixel
 	count := trixel.GetTrixelCount(p.DB)
-
-	// Add route53 rule to redirect (add to database)
 	newTokenId := uint64(count + 1)
 	newTrixel := &Trixel{
 		TokenID:     newTokenId,
@@ -165,7 +157,12 @@ func (p *Periodic) MintAndStartAuction() error {
 }
 
 func (p *Periodic) GenKeyedTransactor() *bind.TransactOpts {
-	publicKey := p.privateKey.Public()
+	privateKey, err := crypto.HexToECDSA(p.config.privateKey)
+	if err != nil {
+	  log.Fatal(err)
+	}
+
+	publicKey := privateKey.Public()
 	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
 	if !ok {
 		log.Fatal("error casting public key to ECDSA")
@@ -182,7 +179,7 @@ func (p *Periodic) GenKeyedTransactor() *bind.TransactOpts {
 		log.Fatal(err)
 	}
 
-	auth := bind.NewKeyedTransactor(p.privateKey)
+	auth := bind.NewKeyedTransactor(privateKey)
 	auth.Nonce = big.NewInt(int64(nonce))
 	auth.Value = big.NewInt(0)
 	auth.GasLimit = uint64(300000)

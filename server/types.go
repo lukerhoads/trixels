@@ -59,6 +59,14 @@ type Metadata struct {
 	Description string `json:"description"`
 }
 
+func NewMetadata(name string, image string, description string) *Metadata {
+	return &Metadata{
+		Name:     name,
+		Image: image,
+		Description: description,
+	}
+}
+
 type Trixel struct {
 	TokenID     uint64 `json:"token_id"`
 	MetadataUrl string `json:"metadata_url"`

@@ -7,12 +7,26 @@ import "./interfaces/IToken.sol";
 
 // Token is the underlying Trixels NFT contract that represents the sold NFTs
 contract Token is Ownable, ERC721, IToken {
-    constructor() ERC721("Trixels", "TRIX") {}
+    uint public tokenQuantity;
 
-    function mint(address to, uint256 tokenId) external onlyOwner {
-        return _safeMint(to, tokenId);
+    constructor() ERC721("Trixels", "TRIX") {
+        tokenQuantity = 0;
     }
 
+    /*
+     * mint mints a new token
+     * @return tokenID the ID of the minted token
+     */
+    function mint(address to) external onlyOwner returns (uint tokenID) {
+        tokenQuantity++;
+        _safeMint(to, tokenQuantity);
+        return tokenQuantity;
+    }
+
+    /*
+     * burn burns a token
+     * @param tokenID the ID of the token to burn
+     */
     function burn(uint256 tokenId) external onlyOwner {
         return _burn(tokenId);
     }
