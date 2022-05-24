@@ -8,9 +8,14 @@ import "./utility/ETHMover.sol";
 contract Distributor is Ownable, ETHMover {
     uint constant TOTAL_CONTRIBS = 900; // 30 * 30
 
+    mapping(uint256 => uint256) public sales;
     mapping(address => uint256) public balances;
 
     constructor(address _weth) ETHMover(_weth) {
+    }
+
+    function deposit(uint256 _tokenId) external payable {
+        sales[_tokenId] = msg.value;
     }
 
     function distribute(IDistributor.Contributor[] memory _contributors, uint256 _salePrice) external onlyOwner {

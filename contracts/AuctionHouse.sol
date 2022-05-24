@@ -7,11 +7,13 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IAuctionHouse.sol";
 import "./interfaces/IToken.sol";
 import "./interfaces/IDAO.sol";
+import "./interfaces/IDistributor.sol";
 import "./utility/ETHMover.sol";
 
 contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     IToken public token;
     IDAO public dao;
+    IDistributor public distributor;
     IAuctionHouse.Auction auction;
 
     uint256 public duration;
@@ -68,6 +70,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
 
         if (_auction.highestBid > 0) {
             // Send paycut to DAO
+            distributor.deposit{ value: _auction.highestBid }(_auction.tokenId, _auction.highestBid);
             require(_safeTransferETH(address(dao), _auction.highestBid), "Could not transfer to DAO contract");
         }
 
