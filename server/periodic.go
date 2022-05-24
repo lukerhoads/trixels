@@ -3,9 +3,11 @@ package server
 import (
 	"context"
 	"crypto/ecdsa"
+	"encoding/json"
 	"image"
 	"image/color"
 	"image/png"
+	"io/ioutil"
 	"log"
 	"math/big"
 	"os"
@@ -13,6 +15,7 @@ import (
 
 	"gorm.io/gorm"
 
+	"github.com/SkynetLabs/go-skynet/v2"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -92,49 +95,59 @@ func (p *Periodic) MintAndStartAuction() error {
 	png.Encode(f, img)
 
 	// Put it on SkyNet, get CDN url
-	// client := skynet.New()
-	// url, err := client.UploadFile(path, skynet.DefaultUploadOptions)
-	// if err != nil {
-	// 	return err
-	// }
+	client := skynet.New()
+	url, err := client.UploadFile(path, skynet.DefaultUploadOptions)
+	if err != nil {
+		return err
+	}
 
 	// Delete image
-	// err = os.Remove(path)
-	// if err != nil {
-	// 	return err
-	// }
+	err = os.Remove(path)
+	if err != nil {
+		return err
+	}
 
 	// Mint NFT with metadata URL
-	// metadata := Metadata{
-	// 	Name:        time.Now().String(),
-	// 	Image:       url,
-	// 	Description: "Trixels NFT",
-	// }
+	metadata := Metadata{
+		Name:        time.Now().String(),
+		Image:       url,
+		Description: "Trixels NFT",
+	}
 
-	// metaPath := "metadata.json"
-	// file, err := json.MarshalIndent(metadata, "", " ")
-	// if err != nil {
-	// 	return err
-	// }
+	metaPath := "metadata.json"
+	file, err := json.MarshalIndent(metadata, "", " ")
+	if err != nil {
+		return err
+	}
 
-	// err = ioutil.WriteFile(metaPath, file, 0644)
-	// if err != nil {
-	// 	return err
-	// }
+	err = ioutil.WriteFile(metaPath, file, 0644)
+	if err != nil {
+		return err
+	}
 
-	// // Begin auction on NFT
-	// metaUrl, err := client.UploadFile(metaPath, skynet.DefaultUploadOptions)
-	// if err != nil {
-	// 	return err
-	// }
+	// Begin auction on NFT
+	metaUrl, err := client.UploadFile(metaPath, skynet.DefaultUploadOptions)
+	if err != nil {
+		return err
+	}
 
-	// // Delete image
-	// err = os.Remove(metaPath)
-	// if err != nil {
-	// 	return err
-	// }
+	// Delete image
+	err = os.Remove(metaPath)
+	if err != nil {
+		return err
+	}
 
-	// skyNetId := metaUrl[strings.LastIndex(metaUrl, "/")+1:]
+	var trixel *Trixel
+	count := trixel.GetTrixelCount(p.DB)
+
+	// Add route53 rule to redirect (add to database)
+	newTrixel := &Trixel{
+		TokenID:     uint64(count + 1),
+		MetadataUrl: metaUrl,
+	}
+
+	newTrixel.AddTrixel(p.DB)
+
 	// keyedTransactor := p.GenKeyedTransactor()
 	// tx, err := p.TrixelsAuctionHouse.StartAuction(keyedTransactor, skyNetId)
 	// if err != nil {

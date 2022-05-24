@@ -1,15 +1,15 @@
 package server
 
 import (
-  	"gorm.io/gorm"
+	"gorm.io/gorm"
 )
 
 type Pixel struct {
-	ID uint `gorm:"primaryKey"`
-	Hash string `json:"hash" gorm:"type:varchar(64);"`
-	X uint16 `json:"x"`
-	Y uint16 `json:"y"`
-	Color string `json:"color" gorm:"type:varchar(8);"`
+	ID          uint   `gorm:"primaryKey"`
+	Hash        string `json:"hash" gorm:"type:varchar(64);"`
+	X           uint16 `json:"x"`
+	Y           uint16 `json:"y"`
+	Color       string `json:"color" gorm:"type:varchar(8);"`
 	LastAddress string `json:"last_address" gorm:"type:varchar(64);"`
 }
 
@@ -17,10 +17,10 @@ type Pixels []Pixel
 
 func NewPixel(x, y uint16) *Pixel {
 	return &Pixel{
-		Hash: ComputePixelHash(x, y),
-		X: x,
-		Y: y,
-		Color: "#000000",
+		Hash:        ComputePixelHash(x, y),
+		X:           x,
+		Y:           y,
+		Color:       "#000000",
 		LastAddress: "0x0000000000000000000000000000000000000000",
 	}
 }
@@ -54,7 +54,32 @@ func (p *Pixel) validPixel() bool {
 }
 
 type Metadata struct {
-	Name string `json:"name"`
-	Image string `json:"image"`
+	Name        string `json:"name"`
+	Image       string `json:"image"`
 	Description string `json:"description"`
+}
+
+type Trixel struct {
+	TokenID     uint64 `json:"token_id"`
+	MetadataUrl string `json:"metadata_url"`
+}
+
+func NewTrixel(tokenID uint64, metadataUrl string) *Trixel {
+	return &Trixel{
+		TokenID:     tokenID,
+		MetadataUrl: metadataUrl,
+	}
+}
+
+func (t *Trixel) GetTrixelCount(db *gorm.DB) (count int64) {
+	db.Model(&Trixel{}).Count(&count)
+	return
+}
+
+func (t *Trixel) GetTrixel(db *gorm.DB) {
+	db.First(&t, "token_id = ?", t.TokenID)
+}
+
+func (t *Trixel) AddTrixel(db *gorm.DB) error {
+	return db.Create(t).Error
 }
