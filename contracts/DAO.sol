@@ -24,7 +24,7 @@ contract DAO is IDAO, ETHMover {
     }
 
     /*
-     * onlyTokenHolders only allows users who hold a Trixel. 
+     * @notice only allows users who hold a Trixel. 
      */
     modifier onlyTokenHolders() {
         require(isMember(msg.sender), "Not part of DAO");
@@ -35,7 +35,8 @@ contract DAO is IDAO, ETHMover {
     }
 
     /*
-     * makeProposal enables DAO members to make a proposal to the DAO. 
+     * @notice enables DAO members to make a proposal to the DAO. 
+     * @dev only allows DAO members
      * @param _recipient  the recipient of the proposal transaction
      * @param _amount the amount to be sent on approval
      * @param _description description of the proposal
@@ -55,7 +56,8 @@ contract DAO is IDAO, ETHMover {
     }
 
     /*
-     * makeProposal enables DAO members to vote on an active proposal. 
+     * @notice enables DAO members to vote on an active proposal. 
+     * @dev only allows DAO members
      * @param _proposalID  the ID of the proposal to vote on
      * @param _inSupport whether the member supports the proposal
      */
@@ -73,7 +75,8 @@ contract DAO is IDAO, ETHMover {
     }
 
     /*
-     * makeProposal enables DAO members to unvote on an active proposal. 
+     * @notice enables DAO members to unvote on an active proposal.
+     * @dev only allows DAO members 
      * @param _proposalID  the ID of the proposal to vote on
      */
     function unVote(uint _proposalID) external onlyTokenHolders {
@@ -90,7 +93,8 @@ contract DAO is IDAO, ETHMover {
     }
 
     /*
-     * executeProposal enables DAO members to execute a proposal if approved. 
+     * @notice enables DAO members to execute a proposal if approved. 
+     * @dev only allows DAO members
      * @param _proposalID  the ID of the proposal to pass
      * @param _transactionData the transactionData previously entered
      * @return success whether the proposal could be successfully executed
@@ -106,7 +110,7 @@ contract DAO is IDAO, ETHMover {
     }
 
     /*
-     * checkProposalHash enables DAO members to check a proposals hash. 
+     * @notice enables DAO members to check a proposals hash. 
      * @param _proposalID  the ID of the proposal to check
      * @param _recipient the address of the proposal recipient
      * @param _amount the amount of the proposal

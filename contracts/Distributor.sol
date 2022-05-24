@@ -16,7 +16,7 @@ contract Distributor is Ownable, ETHMover {
     }
 
     /*
-     * deposit allows the AuctionHouse to deposit the distribution
+     * @notice allows the AuctionHouse to deposit the distribution
      *         for contributors
      * @param _tokenID the token ID of the sale
      */
@@ -25,8 +25,9 @@ contract Distributor is Ownable, ETHMover {
     }
 
     /*
-     * distribute is the action performed by the server in order 
+     * @notice is the action performed by the server in order 
      *            to distribute the sale price among contributors
+     * @dev only allows owner
      * @param contributors the contributors of the sold token
      * @param _tokenID the token ID of the distributing token
      */
@@ -37,7 +38,7 @@ contract Distributor is Ownable, ETHMover {
     }
 
     /*
-     * withdraw allows contributors to withdraw their cumulative earnings
+     * @notice allows contributors to withdraw their cumulative earnings
      */
     function withdraw() external {
         require(balances[msg.sender] > 0, "No balance to withdraw");

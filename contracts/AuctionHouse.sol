@@ -33,7 +33,8 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     }
 
     /*
-     * startAuction enables the owner to start a new auction. 
+     * @notice enables the owner to start a new auction. 
+     * @dev only callable by the owner
      * @param _tokenID  the recipient of the proposal transaction
      */
     function startAuction() external onlyOwner {
@@ -55,7 +56,8 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     }
 
     /*
-     * endAuction enables the owner to end an active auction.
+     * @notice enables the owner to end an active auction.
+     * @dev only callable by the owner
      */
     function endAuction() external onlyOwner {
         IAuctionHouse.Auction memory _auction = auction;
@@ -80,7 +82,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     }
 
     /*
-     * placeBid enables anyone to bid on an active auction.
+     * @notice enables anyone to bid on an active auction.
      * @param _tokenID  the recipient of the proposal transaction
      */
     function placeBid(uint256 _tokenID) external payable {
@@ -107,7 +109,8 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     }
 
     /*
-     * setDuration sets the auction duration to a new duration.
+     * @notice sets the auction duration to a new duration.
+     * @dev only callable by the owner
      * @param _duration the new duration
      */
     function setDuration(uint256 _duration) external onlyOwner {
@@ -115,7 +118,8 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     }
 
     /*
-     * setDuration sets the auction duration to a new duration.
+     * @notice sets the auction duration to a new duration.
+     * @dev only callable by the owner
      * @param _reservePrice the new reserve price 
      */
     function setReservePrice(uint256 _reservePrice) external onlyOwner {
@@ -123,7 +127,8 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     }
 
     /*
-     * setMinIncrementPercentage sets the minimum bid increment percentage.
+     * @notice sets the minimum bid increment percentage.
+     * @dev only callable by the owner
      * @param _minBidIncrementPercentage the new bid increment percentage
      */
     function setMinIncrementPercentage(uint8 _minBidIncrementPercentage) external onlyOwner {
