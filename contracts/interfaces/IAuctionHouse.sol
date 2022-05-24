@@ -6,7 +6,7 @@ interface IAuctionHouse {
         uint startDate;
         uint endDate;
         uint256 highestBid;
-        address highestBidder;
+        address payable highestBidder;
         uint256 tokenId;
         bool settled;
     }

@@ -3,6 +3,7 @@ pragma solidity ^0.8.6;
 
 interface IDAO {
     struct Proposal {
+        bytes32 proposalHash;
         address recipient;
         uint amount;
         string description;
@@ -15,13 +16,19 @@ interface IDAO {
         uint createdAt;
     }
 
-    function makeProposal(address _recipient, uint _amount, string calldata _description) external returns (uint proposalID);
+    function makeProposal(address _recipient, uint _amount, string calldata _description, bytes calldata _transactionData) external returns (uint proposalID);
 
     function vote(uint _proposalID, bool _inSupport) external;
 
-    event ProposalAdded(address recipient, uint amount, string description);
+    function unVote(uint _proposalID) external;
 
-    event Voted(uint indexed proposalID, bool inSupport, address voter);
+    function executeProposal(uint proposalID, bytes calldata transactionData) external returns (bool success);
 
-    event ProposalExecuted(uint indexed proposalID);
+    function proposalCount() external view returns (uint);
+
+    event ProposalAdded(uint indexed proposalID, address recipient, uint amount, string description);
+
+    event Voted(uint indexed proposalID, bool inSupport, address indexed voter);
+
+    event ProposalExecuted(uint indexed proposalID, bool result);
 }
