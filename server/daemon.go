@@ -28,20 +28,18 @@ type PeriodicConfig struct {
 
 type Periodic struct {
 	config *PeriodicConfig
+	*AuctionHouse
 	*gorm.DB
-	*TrixelsAuctionHouse
-	*ethclient.Client
 	twoWeekTicker *time.Ticker
 	devChan       chan string
 	quit          chan struct{}
 }
 
-func NewPeriodic(config *PeriodicConfig, db *gorm.DB, client *ethclient.Client, trixelsAuctionHouse *TrixelsAuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
+func NewPeriodic(config *PeriodicConfig, db *gorm.DB, auctionHouse *AuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
 	return &Periodic{
 		config: config,
 		DB:                  db,
-		TrixelsAuctionHouse: trixelsAuctionHouse,
-		Client:              client,
+		house: auctionHouse,
 		twoWeekTicker:       twoWeekTicker,
 		devChan:             devChan,
 		quit:                quit,
@@ -67,7 +65,8 @@ func (p *Periodic) Start() {
 	}
 }
 
-// CreateImage takes the pixel list and 
+// CreateImage takes pixel hex values and converts them to an image.
+// It returns the image.
 func CreateImage(pixels *Pixels) image.Image {
 	upLeft := image.Point{0, 0}
 	lowRight := image.Point{500, 500}
@@ -145,44 +144,10 @@ func (p *Periodic) MintAndStartAuction() error {
 	}
 
 	newTrixel.AddTrixel(p.DB)
+	err = p.house.StartAuction(newTokenId)
+	if err != nil {
+		return err
+	}
 
-	// keyedTransactor := p.GenKeyedTransactor()
-	// tx, err := p.TrixelsAuctionHouse.StartAuction(keyedTransactor, skyNetId)
-	// if err != nil {
-	// 	return err
-	// }
-
-	// log.Println(tx.Hash().Hex())
 	return nil
-}
-
-func (p *Periodic) GenKeyedTransactor() *bind.TransactOpts {
-	privateKey, err := crypto.HexToECDSA(p.config.privateKey)
-	if err != nil {
-	  log.Fatal(err)
-	}
-
-	publicKey := privateKey.Public()
-	publicKeyECDSA, ok := publicKey.(*ecdsa.PublicKey)
-	if !ok {
-		log.Fatal("error casting public key to ECDSA")
-	}
-
-	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := p.Client.PendingNonceAt(context.Background(), fromAddress)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	gasPrice, err := p.Client.SuggestGasPrice(context.Background())
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	auth := bind.NewKeyedTransactor(privateKey)
-	auth.Nonce = big.NewInt(int64(nonce))
-	auth.Value = big.NewInt(0)
-	auth.GasLimit = uint64(300000)
-	auth.GasPrice = gasPrice
-	return auth
 }

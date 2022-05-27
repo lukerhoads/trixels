@@ -14,7 +14,6 @@ Trixels is a semi-decentralized application that brings together the world throu
 ## Todo
 - Figure out a way to store onchain
 - Deploy frontend for auction
-- Add timeouts for pixel changes
 - Make a good GUI
 - Write testing for contracts
 
