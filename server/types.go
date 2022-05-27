@@ -1,11 +1,13 @@
 package server
 
 import (
+	"time"
 	"gorm.io/gorm"
 )
 
 type Pixel struct {
 	ID          uint   `gorm:"primaryKey"`
+	UpdatedAt 	time.Time `json:"updated_at"`
 	Hash        string `json:"hash" gorm:"type:varchar(64);"`
 	X           uint16 `json:"x"`
 	Y           uint16 `json:"y"`

@@ -6,3 +6,7 @@ const (
 
 	METADATA_PATH = "metadata.json"
 )
+
+var (
+	PixelUpdateTime = 5 * time.Minute
+)

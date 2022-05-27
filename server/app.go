@@ -1,6 +1,7 @@
 package server
 
 import (
+	"time"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -60,7 +61,21 @@ func (r *App) GetPixels(res http.ResponseWriter, req *http.Request) {
 	json.NewEncoder(res).Encode(pixels)
 }
 
+type ServerError struct {
+	message string
+}
+
 func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
+	var getPixel Pixel
+	getPixel.GetPixel(r.DB)
+	validUpdate := getPixel.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
+	if !validUpdate {
+		json.NewEncoder(res).Encode(ServerError {
+			message: "Cannot update, pixel has been updated in the last 5 minutes"
+		})
+		return
+	}
+
 	var pixel Pixel
 	err := json.NewDecoder(req.Body).Decode(&pixel)
 	if err != nil {
