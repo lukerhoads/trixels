@@ -1,6 +1,11 @@
 package server
 
 import (
+	"context"
+	"crypto/ecdsa"
+	"log"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
@@ -20,19 +25,19 @@ func NewAuctionHouse(rpcUrl string, privateKey string) (*AuctionHouse, error) {
 
 	return &AuctionHouse{
 		privateKey: privateKey,
-		Client: client,
-	}
+		Client:     client,
+	}, nil
 }
 
-func (a *AuctionHouse) StartAuction(int skyNetID) error {
-	_, err := a.TrixelsAuctionHouse.StartAuction(genKeyedTransactor(a.Client, a.privateKey), skyNetID)
-	return err
+func (a *AuctionHouse) StartAuction() (uint64, error) {
+	_, err := a.TrixelsAuctionHouse.StartAuction(genKeyedTransactor(a.Client, a.privateKey))
+	return 0, err
 }
 
-func genKeyedTransactor(client *ethclient.Client, privateKey string) *bind.TransactOpts {
-	privateKey, err := crypto.HexToECDSA(p.config.privateKey)
+func genKeyedTransactor(client *ethclient.Client, pKey string) *bind.TransactOpts {
+	privateKey, err := crypto.HexToECDSA(pKey)
 	if err != nil {
-	  log.Fatal(err)
+		log.Fatal(err)
 	}
 
 	publicKey := privateKey.Public()
@@ -42,12 +47,12 @@ func genKeyedTransactor(client *ethclient.Client, privateKey string) *bind.Trans
 	}
 
 	fromAddress := crypto.PubkeyToAddress(*publicKeyECDSA)
-	nonce, err := p.Client.PendingNonceAt(context.Background(), fromAddress)
+	nonce, err := client.PendingNonceAt(context.Background(), fromAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	gasPrice, err := p.Client.SuggestGasPrice(context.Background())
+	gasPrice, err := client.SuggestGasPrice(context.Background())
 	if err != nil {
 		log.Fatal(err)
 	}

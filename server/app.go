@@ -1,12 +1,12 @@
 package server
 
 import (
-	"time"
 	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
@@ -70,8 +70,8 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 	getPixel.GetPixel(r.DB)
 	validUpdate := getPixel.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
 	if !validUpdate {
-		json.NewEncoder(res).Encode(ServerError {
-			message: "Cannot update, pixel has been updated in the last 5 minutes"
+		json.NewEncoder(res).Encode(ServerError{
+			message: "Cannot update, pixel has been updated in the last 5 minutes",
 		})
 		return
 	}

@@ -35,9 +35,9 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     /*
      * @notice enables the owner to start a new auction. 
      * @dev only callable by the owner
-     * @param _tokenID  the recipient of the proposal transaction
+     * @return tokenID the token ID of the token being auctionned
      */
-    function startAuction() external onlyOwner {
+    function startAuction() external override onlyOwner returns (uint) {
         IAuctionHouse.Auction memory _auction = auction;
         require(_auction.settled, "Another auction has already been started");
         uint tokenID = token.mint(address(this));
@@ -53,13 +53,14 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
         });
 
         emit AuctionStarted(tokenID, startDate, endDate);
+        return tokenID;
     }
 
     /*
      * @notice enables the owner to end an active auction.
      * @dev only callable by the owner
      */
-    function endAuction() external onlyOwner {
+    function endAuction() external override onlyOwner {
         IAuctionHouse.Auction memory _auction = auction;
         require(_auction.startDate != 0, "Auction hasn't started");
         require(!_auction.settled, "Auction has already been settled");
@@ -85,7 +86,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
      * @notice enables anyone to bid on an active auction.
      * @param _tokenID  the recipient of the proposal transaction
      */
-    function placeBid(uint256 _tokenID) external payable {
+    function placeBid(uint256 _tokenID) external override payable {
         IAuctionHouse.Auction memory _auction = auction;
         require(_tokenID == _auction.tokenId, "Token not up for auction");
         require(msg.value > reservePrice, "Bid does not meet reserve price");

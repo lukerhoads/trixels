@@ -11,11 +11,11 @@ interface IAuctionHouse {
         bool settled;
     }
 
-    function startAuction(uint256 tokenId) external;
+    function startAuction() external returns (uint);
 
     function endAuction() external;
 
-    function placeBid(uint256 tokenId) external payable;
+    function placeBid(uint256 _tokenId) external payable;
 
     event AuctionStarted(uint256 tokenId, uint startDate, uint endDate);
 

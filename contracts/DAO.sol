@@ -19,7 +19,7 @@ contract DAO is IDAO, ETHMover {
         return token.balanceOf(person) > 0;
     }
 
-    function proposalCount() external view returns (uint) {
+    function proposalCount() external override view returns (uint) {
         return proposals.length;
     }
 
@@ -42,7 +42,7 @@ contract DAO is IDAO, ETHMover {
      * @param _description description of the proposal
      * @return proposalID the ID assigned to the proposal
      */
-    function makeProposal(address _recipient, uint256 _amount, string calldata _description, bytes calldata _transactionData) external onlyTokenHolders returns (uint proposalID) {
+    function makeProposal(address _recipient, uint256 _amount, string calldata _description, bytes calldata _transactionData) external override onlyTokenHolders returns (uint proposalID) {
         proposalID = proposals.length + 1;
         IDAO.Proposal storage p = proposals[proposalID];
         p.proposalHash = keccak256(abi.encodePacked(_recipient, _amount, _transactionData));
@@ -61,7 +61,7 @@ contract DAO is IDAO, ETHMover {
      * @param _proposalID  the ID of the proposal to vote on
      * @param _inSupport whether the member supports the proposal
      */
-    function vote(uint _proposalID, bool _inSupport) external onlyTokenHolders {
+    function vote(uint _proposalID, bool _inSupport) external override onlyTokenHolders {
         IDAO.Proposal storage p = proposals[_proposalID];
         if (_inSupport) {
             p.yay += token.balanceOf(msg.sender);
@@ -79,7 +79,7 @@ contract DAO is IDAO, ETHMover {
      * @dev only allows DAO members 
      * @param _proposalID  the ID of the proposal to vote on
      */
-    function unVote(uint _proposalID) external onlyTokenHolders {
+    function unVote(uint _proposalID) external override onlyTokenHolders {
         IDAO.Proposal storage p = proposals[_proposalID];
         if (p.votedFor[msg.sender]) {
             p.yay -= token.balanceOf(msg.sender);
@@ -99,7 +99,7 @@ contract DAO is IDAO, ETHMover {
      * @param _transactionData the transactionData previously entered
      * @return success whether the proposal could be successfully executed
      */
-    function executeProposal(uint _proposalID, bytes calldata _transactionData) external onlyTokenHolders returns (bool success) {
+    function executeProposal(uint _proposalID, bytes calldata _transactionData) external override onlyTokenHolders returns (bool success) {
         IDAO.Proposal storage p = proposals[_proposalID];
         require(p.createdAt + minProposalVotingPeriod < block.timestamp, "Cannot execute proposal, voting period has not ended");
         require(p.yay > p.nay, "Yay votes do not exceed Nay votes");

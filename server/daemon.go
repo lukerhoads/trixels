@@ -1,33 +1,21 @@
 package server
 
 import (
-	"context"
-	"crypto/ecdsa"
 	"encoding/json"
 	"image"
 	"image/color"
 	"image/png"
 	"io/ioutil"
 	"log"
-	"math/big"
 	"os"
 	"time"
 
 	"gorm.io/gorm"
 
 	"github.com/SkynetLabs/go-skynet/v2"
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/ethclient"
 )
 
-type PeriodicConfig struct {
-	url string
-	privateKey string
-}
-
-type Periodic struct {
-	config *PeriodicConfig
+type Daemon struct {
 	*AuctionHouse
 	*gorm.DB
 	twoWeekTicker *time.Ticker
@@ -35,18 +23,17 @@ type Periodic struct {
 	quit          chan struct{}
 }
 
-func NewPeriodic(config *PeriodicConfig, db *gorm.DB, auctionHouse *AuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Periodic {
-	return &Periodic{
-		config: config,
-		DB:                  db,
-		house: auctionHouse,
-		twoWeekTicker:       twoWeekTicker,
-		devChan:             devChan,
-		quit:                quit,
+func NewDaemon(db *gorm.DB, auctionHouse *AuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Daemon {
+	return &Daemon{
+		DB:            db,
+		AuctionHouse:  auctionHouse,
+		twoWeekTicker: twoWeekTicker,
+		devChan:       devChan,
+		quit:          quit,
 	}
 }
 
-func (p *Periodic) Start() {
+func (p *Daemon) Start() {
 	for {
 		select {
 		case <-p.twoWeekTicker.C:
@@ -90,7 +77,7 @@ func CreateImage(pixels *Pixels) image.Image {
 
 // MintAndStartAuction takes the pixel color values, constructs an image, and submits it on-chain.
 // It returns an error if something occurs.
-func (p *Periodic) MintAndStartAuction() error {
+func (p *Daemon) MintAndStartAuction() error {
 	log.Println("Starting auction...")
 
 	var pixels Pixels
@@ -135,19 +122,16 @@ func (p *Periodic) MintAndStartAuction() error {
 		return err
 	}
 
-	var trixel *Trixel
-	count := trixel.GetTrixelCount(p.DB)
-	newTokenId := uint64(count + 1)
-	newTrixel := &Trixel{
-		TokenID:     newTokenId,
-		MetadataUrl: metaUrl,
-	}
-
-	newTrixel.AddTrixel(p.DB)
-	err = p.house.StartAuction(newTokenId)
+	tokenID, err := p.AuctionHouse.StartAuction()
 	if err != nil {
 		return err
 	}
 
+	newTrixel := &Trixel{
+		TokenID:     tokenID,
+		MetadataUrl: metaUrl,
+	}
+
+	newTrixel.AddTrixel(p.DB)
 	return nil
 }
