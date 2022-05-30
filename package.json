@@ -4,8 +4,10 @@
   "description": "Trixels is a semi-decentralized application that brings together the world through NFTs.",
   "main": "index.js",
   "scripts": {
-    "test": "npx hardhat test",
-    "types": "npx hardhat typechain"
+    "test": "yarn hardhat test",
+    "types": "yarn hardhat typechain",
+    "compile": "yarn hardhat compile",
+    "abigen": "yarn truffle compile && yarn truffle run abigen"
   },
   "keywords": [],
   "author": "Luke Rhoads",
@@ -14,6 +16,7 @@
     "@openzeppelin/contracts": "^4.6.0"
   },
   "devDependencies": {
+    "@chainsafe/truffle-plugin-abigen": "^0.0.2",
     "@nomiclabs/hardhat-ethers": "^2.0.6",
     "@nomiclabs/hardhat-waffle": "^2.0.3",
     "@typechain/ethers-v5": "^10.0.0",
