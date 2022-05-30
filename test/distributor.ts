@@ -1,19 +1,55 @@
-import { ethers } from "hardhat";
-import { Signer } from "ethers";
+import { ethers, waffle } from "hardhat";
+import { BigNumber, Signer } from "ethers";
 import { expect } from "chai";
-import { deployContract } from "ethereum-waffle";
 
 import { Distributor, IDistributor } from '../typechain-types/contracts/Distributor'
-import DistributorArtifact from '../artifacts/contracts/Distributor.sol/Distributor.json'
+import { WETH } from '../typechain-types/contracts/WETH'
+import WETHArtifact from '../artifacts/contracts/WETH.sol/WETH.json'
+
+const { deployContract } = waffle
 
 describe("Distributor", () => {
     let accounts: Signer[]
+    let weth: WETH
     let distributor: Distributor
+
+    type TestContributor = {
+        accountIdx: number,
+        numContribs: number
+        expectedBalance: string
+    }
+
+    let contributors: TestContributor[]
+    let expectedBalances: number[]
 
     beforeEach(async () => {
         accounts = await ethers.getSigners()
-        distributor = (await deployContract(accounts[0], DistributorArtifact)) as Distributor
-    });
+        weth = (await deployContract(accounts[0], WETHArtifact)) as WETH
+        const distrib = await ethers.getContractFactory("Distributor")
+        distributor = await distrib.deploy(weth.address)
+        contributors =  [
+            {
+                accountIdx: 1,
+                numContribs: 10,
+                expectedBalance: "11111111111111111"
+            },
+            {
+                accountIdx: 2,
+                numContribs: 20,
+                expectedBalance: "22222222222222222"
+            },
+            {
+                accountIdx: 3,
+                numContribs: 40,
+                expectedBalance: "44444444444444444"
+            },
+            {
+                accountIdx: 4,
+                numContribs: 60,
+                expectedBalance: "66666666666666666"
+            }
+        ]
+    })
 
     const recordSale = async (tokenID: number, amt: string) => {
         let amount = ethers.utils.parseEther(amt)
@@ -21,54 +57,46 @@ describe("Distributor", () => {
         await depositTx.wait()
     }
 
-    const distributeToContributors = async () => {
-        const contributors: IDistributor.ContributorStruct[] = [
-            {
-                addr: await accounts[0].getAddress(),
-                numContribs: 10
-            },
-            {
-                addr: await accounts[1].getAddress(),
-                numContribs: 20
-            },
-            {
-                addr: await accounts[2].getAddress(),
-                numContribs: 40
-            },
-            {
-                addr: await accounts[3].getAddress(),
-                numContribs: 60
-            }
-        ]
+    const distributeToContributors = async (tokenID: number) => {
+        const convContributors: IDistributor.ContributorStruct[] = await Promise.all(contributors.map(async contributor => ({
+            addr: await accounts[contributor.accountIdx].getAddress(),
+            numContribs: contributor.numContribs,
+        })))
 
-        let distributeTx = await distributor.distribute(contributors, 1)
+        let distributeTx = await distributor.distribute(convContributors, tokenID)
         await distributeTx.wait()
     }
 
     describe("recordSale", async () => {
-        await recordSale(1, "1.0")
-        let balance = await distributor.sales(0)
-        expect(balance).to.eq("1.0")
+        it("should record sale", async () => {
+            await recordSale(1, "1.0")
+            let balance = await distributor.sales(1)
+            expect(balance).to.eq(ethers.utils.parseEther("1.0"))
+        })
     })
 
     describe("distribute", async () => {
-        // await deposit(1, "1.0")
-        let amount = ethers.utils.parseEther("1.0")
-        let depositTx = await distributor.recordSale(1, { value: amount })
-        await depositTx.wait()
-        // await distributeToContributors()
-        // let expectedBalances = [10, 10, 10, 10]
-        // contributors.forEach(async (contributor, idx) => {
-        //     let balance = await distributor.balances(contributor.addr)
-        //     expect(balance).to.eq(expectedBalances[idx])
-        // })
+        it("should properly distribute to contributors", async () => {
+            await recordSale(1, "1.0")
+            await distributeToContributors(1)
+            contributors.forEach(async (contributor, idx) => {
+                let balance = await distributor.balances(await accounts[contributor.accountIdx].getAddress())
+                expect(balance).to.eq(expectedBalances[idx])
+            })
+        })
     })
 
-    // describe("distrib", async () => {
-    //     // await deposit(1, "1.0")
-    // })
-
     describe("withdraw", async () => {
-
+        it("should enable contributors to withdraw their earnings", async () => {
+            await recordSale(1, "1.0")
+            await distributeToContributors(1)
+            contributors.forEach(async (contributor, idx) => {
+                const contract = distributor.connect(accounts[contributor.accountIdx])
+                let withdrawTx = await contract.withdraw()
+                await withdrawTx.wait()
+                const balance = await accounts[contributor.accountIdx].getBalance()
+                expect(balance.toString()).to.eq(expectedBalances[idx])
+            })
+        })
     })
 })

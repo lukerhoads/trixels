@@ -33,7 +33,7 @@ contract Distributor is Ownable, ETHMover {
      */
     function distribute(IDistributor.Contributor[] memory _contributors, uint _tokenID) external onlyOwner {
         for (uint i = 0; i < _contributors.length; i++) {
-            balances[_contributors[i].addr] += (_contributors[i].numContribs / TOTAL_CONTRIBS) * sales[_tokenID];
+            balances[_contributors[i].addr] += (_contributors[i].numContribs * sales[_tokenID]) / TOTAL_CONTRIBS;
         }
     }
 

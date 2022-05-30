@@ -1,10 +1,11 @@
-import { ethers, network } from "hardhat";
+import { ethers, network, waffle } from "hardhat";
 import { Signer } from "ethers";
 import { expect } from "chai";
-import { deployContract } from "ethereum-waffle";
 
 import { Token } from '../typechain-types/contracts/Token'
 import TokenArtifact from '../artifacts/contracts/Token.sol/Token.json'
+
+const { deployContract } = waffle
 
 describe("Token", () => {
     let accounts: Signer[]
@@ -13,7 +14,7 @@ describe("Token", () => {
     beforeEach(async () => {
         accounts = await ethers.getSigners()
         token = (await deployContract(accounts[0], TokenArtifact)) as Token
-    });
+    })
 
     const mint = async () => {
         let mintTx = await token.mint(await accounts[0].getAddress())
