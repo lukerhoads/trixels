@@ -11,7 +11,6 @@
   "author": "Luke Rhoads",
   "license": "ISC",
   "dependencies": {
-    "@chainsafe/truffle-plugin-abigen": "^0.0.2",
     "@openzeppelin/contracts": "^4.6.0"
   },
   "devDependencies": {

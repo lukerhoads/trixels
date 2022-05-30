@@ -22,7 +22,11 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
 
     // The reserve price of every auction
     uint256 public reservePrice;
+
+    // The minimum percentage a bid must add to the previous bid
     uint8 public minBidIncrementPercentage;
+
+    // The percentage of a sale that gets sent to the DAO
     uint8 public daoCut;
 
     constructor(address _token, address _dao, uint256 _duration, uint8 _minBidIncrementPercentage, uint8 _daoCut, address _weth) ETHMover(_weth) {
@@ -30,6 +34,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
         dao = IDAO(_dao);
         duration = _duration;
         minBidIncrementPercentage = _minBidIncrementPercentage;
+        daoCut = _daoCut;
     }
 
     /*
@@ -74,7 +79,6 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
         }
 
         if (_auction.highestBid > 0) {
-            // Send paycut to DAO
             distributor.deposit{ value: _auction.highestBid }(_auction.tokenId, _auction.highestBid);
             require(_safeTransferETH(address(dao), _auction.highestBid), "Could not transfer to DAO contract");
         }
@@ -101,7 +105,11 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
         address payable lastBidder = _auction.highestBidder;
         if (_auction.highestBidder != address(0)) {
             // Transfers cut to DAO
-            _safeTransferETHWithFallback(lastBidder, (daoCut * _auction.highestBid) / 100);
+            // Say 50 eth, 10 cut -> 5 eth for DAO
+
+            uint256 daoAmount = _auction.highestBid * daoCut / 100;
+            distributor.deposit{ value: _auction.highestBid - daoAmount }(_auction.tokenId, _auction.highestBid);
+            _safeTransferETHWithFallback(lastBidder, daoAmount);
         }
 
         auction.highestBid = msg.value;

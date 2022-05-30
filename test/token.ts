@@ -11,7 +11,7 @@ describe("Token", () => {
     let token: Token
 
     beforeEach(async () => {
-        accounts = await ethers.getSigners();
+        accounts = await ethers.getSigners()
         token = (await deployContract(accounts[0], TokenArtifact)) as Token
     });
 

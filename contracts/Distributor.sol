@@ -9,7 +9,7 @@ import "./utility/ETHMover.sol";
 contract Distributor is Ownable, ETHMover {
     uint constant TOTAL_CONTRIBS = 900; // 30 * 30
 
-    mapping(uint256 => uint256) public sales;
+    mapping(uint => uint256) public sales;
     mapping(address => uint256) public balances;
 
     constructor(address _weth) ETHMover(_weth) {
@@ -20,7 +20,7 @@ contract Distributor is Ownable, ETHMover {
      *         for contributors
      * @param _tokenID the token ID of the sale
      */
-    function deposit(uint256 _tokenID) external payable {
+    function recordSale(uint _tokenID) external payable {
         sales[_tokenID] = msg.value;
     }
 
