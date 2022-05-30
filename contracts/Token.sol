@@ -17,7 +17,7 @@ contract Token is Ownable, ERC721, IToken {
      * mint mints a new token
      * @return tokenID the ID of the minted token
      */
-    function mint(address to) external override onlyOwner returns (uint tokenID) {
+    function mint(address to) external override onlyOwner returns (uint) {
         tokenQuantity++;
         _safeMint(to, tokenQuantity);
         return tokenQuantity;
@@ -28,6 +28,7 @@ contract Token is Ownable, ERC721, IToken {
      * @param tokenID the ID of the token to burn
      */
     function burn(uint256 tokenId) external override onlyOwner {
+        tokenQuantity--;
         return _burn(tokenId);
     }
 

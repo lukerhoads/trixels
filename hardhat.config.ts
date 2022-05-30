@@ -9,7 +9,6 @@ import { HardhatUserConfig } from 'hardhat/types';
 const config: HardhatUserConfig = {
   solidity: "0.8.6",
   typechain: {
-    outDir: 'test/bindings',
     target: 'ethers-v5',
   }
 };
