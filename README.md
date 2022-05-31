@@ -13,9 +13,8 @@ Trixels is a semi-decentralized application that brings together the world throu
 
 ## Todo
 - Figure out a way to store onchain
-- Deploy frontend for auction
 - Make a good GUI
-- Write testing for contracts
+- Write tests for server
 
 ## Design Notes
 - Pixel values are stored centrally
@@ -28,5 +27,5 @@ Trixels is a semi-decentralized application that brings together the world throu
 - values are hex color, last editor address, last edited time
 
 ## Frontend process
-- sign in with metamask, get address
-- edit pixel with address
+- Sign in with metamask, get address
+- Edit pixel with address
