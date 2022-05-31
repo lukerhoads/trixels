@@ -1,5 +1,5 @@
 import { ethers, waffle } from "hardhat";
-import { BigNumber, Signer } from "ethers";
+import { Signer } from "ethers";
 import { expect } from "chai";
 
 import { Distributor, IDistributor } from '../typechain-types/contracts/Distributor'
@@ -25,8 +25,8 @@ describe("Distributor", () => {
     beforeEach(async () => {
         accounts = await ethers.getSigners()
         weth = (await deployContract(accounts[0], WETHArtifact)) as WETH
-        const distrib = await ethers.getContractFactory("Distributor")
-        distributor = await distrib.deploy(weth.address)
+        const distributorContract = await ethers.getContractFactory("Distributor")
+        distributor = await distributorContract.deploy(weth.address)
         contributors =  [
             {
                 accountIdx: 1,

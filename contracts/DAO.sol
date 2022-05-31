@@ -9,19 +9,21 @@ contract DAO is IDAO, ETHMover {
     uint constant minProposalVotingPeriod = 2 weeks;
 
     IToken public token;
-    IDAO.Proposal[] public proposals;
+    uint public numProposals;
+    mapping(uint => IDAO.Proposal) public proposals;
 
     constructor(address _token, address _weth) ETHMover(_weth) {
         token = IToken(_token);
+        numProposals = 0;
     }
 
     function isMember(address person) public view returns (bool) {
         return token.balanceOf(person) > 0;
     }
 
-    function proposalCount() external override view returns (uint) {
-        return proposals.length;
-    }
+    // function proposalCount() external override view returns (uint) {
+    //     return numProposals;
+    // }
 
     /*
      * @notice only allows users who hold a Trixel. 
@@ -43,8 +45,7 @@ contract DAO is IDAO, ETHMover {
      * @return proposalID the ID assigned to the proposal
      */
     function makeProposal(address _recipient, uint256 _amount, string calldata _description, bytes calldata _transactionData) external override onlyTokenHolders returns (uint proposalID) {
-        proposalID = proposals.length + 1;
-        IDAO.Proposal storage p = proposals[proposalID];
+        IDAO.Proposal storage p = proposals[numProposals++];
         p.proposalHash = keccak256(abi.encodePacked(_recipient, _amount, _transactionData));
         p.recipient = _recipient;
         p.amount = _amount;
@@ -104,6 +105,7 @@ contract DAO is IDAO, ETHMover {
         require(p.createdAt + minProposalVotingPeriod < block.timestamp, "Cannot execute proposal, voting period has not ended");
         require(p.yay > p.nay, "Yay votes do not exceed Nay votes");
         require(!p.passed, "Proposal has already been passed");
+        require(address(this).balance >= p.amount, "DAO does not have enough to execute proposal");
         require(checkProposalHash(_proposalID, p.recipient, p.amount, _transactionData), "Invalid transaction data");
         success = _safeTransferETHWithData(p.recipient, p.amount, _transactionData);
         emit ProposalExecuted(_proposalID, success);

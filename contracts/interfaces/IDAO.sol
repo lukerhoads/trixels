@@ -24,8 +24,6 @@ interface IDAO {
 
     function executeProposal(uint proposalID, bytes calldata transactionData) external returns (bool success);
 
-    function proposalCount() external view returns (uint);
-
     event ProposalAdded(uint indexed proposalID, address recipient, uint amount, string description);
 
     event Voted(uint indexed proposalID, bool inSupport, address indexed voter);
