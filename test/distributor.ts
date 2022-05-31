@@ -2,8 +2,7 @@ import { ethers, waffle } from "hardhat";
 import { Signer } from "ethers";
 import { expect } from "chai";
 
-import { Distributor, IDistributor } from '../typechain-types/contracts/Distributor'
-import { WETH } from '../typechain-types/contracts/WETH'
+import { Distributor, IDistributor, WETH } from '../typechain-types'
 import WETHArtifact from '../artifacts/contracts/WETH.sol/WETH.json'
 
 const { deployContract } = waffle

@@ -1,13 +1,9 @@
 import { ethers, waffle } from "hardhat";
-import { BigNumber, Signer } from "ethers";
+import { Signer } from "ethers";
 import { expect } from "chai";
-import { solidityKeccak256 } from "ethers/lib/utils";
 
-import { DAO } from '../typechain-types/contracts/DAO'
-import { IDAO } from "../typechain-types/contracts/interfaces/IDAO";
-import { Token } from '../typechain-types/contracts/Token'
+import { DAO, Token, WETH } from '../typechain-types'
 import TokenArtifact from '../artifacts/contracts/Token.sol/Token.json'
-import { WETH } from '../typechain-types/contracts/WETH'
 import WETHArtifact from '../artifacts/contracts/WETH.sol/WETH.json'
 
 const { deployContract } = waffle

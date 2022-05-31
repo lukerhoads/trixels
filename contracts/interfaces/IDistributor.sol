@@ -7,7 +7,7 @@ interface IDistributor {
         uint numContribs;
     }
 
-    function deposit(uint256 _tokenId, uint256 _salePrice) external payable;
+    function recordSale(uint256 _tokenId) external payable;
 
     function distribute(Contributor[] memory _contributors, uint256 _salePrice) external;
 

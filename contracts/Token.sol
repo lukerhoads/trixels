@@ -9,15 +9,26 @@ import "./interfaces/IToken.sol";
 contract Token is Ownable, ERC721, IToken {
     uint public tokenQuantity;
 
+    address public auctionHouse;
+
     constructor() ERC721("Trixels", "TRIX") {
         tokenQuantity = 0;
+    }
+
+    modifier onlyAuctionHouse() {
+        require(msg.sender == auctionHouse, "Sender not auction house");
+        _;
+    }
+
+    function setAuctionHouse(address _auctionHouse) external override onlyOwner {
+        auctionHouse = _auctionHouse;
     }
 
     /*
      * mint mints a new token
      * @return tokenID the ID of the minted token
      */
-    function mint(address to) external override onlyOwner returns (uint) {
+    function mint(address to) external override onlyAuctionHouse returns (uint) {
         tokenQuantity++;
         _safeMint(to, tokenQuantity);
         return tokenQuantity;
@@ -27,7 +38,7 @@ contract Token is Ownable, ERC721, IToken {
      * burn burns a token
      * @param tokenID the ID of the token to burn
      */
-    function burn(uint256 tokenId) external override onlyOwner {
+    function burn(uint256 tokenId) external override onlyAuctionHouse {
         tokenQuantity--;
         return _burn(tokenId);
     }

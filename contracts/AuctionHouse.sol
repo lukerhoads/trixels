@@ -3,6 +3,7 @@ pragma solidity ^0.8.6;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./interfaces/IAuctionHouse.sol";
 import "./interfaces/IToken.sol";
@@ -11,11 +12,11 @@ import "./interfaces/IDistributor.sol";
 import "./utility/ETHMover.sol";
 
 // AuctionHouse auctions off the latest Trixel
-contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
+contract AuctionHouse is Ownable, IAuctionHouse, ETHMover, IERC721Receiver {
     IToken public token;
     IDAO public dao;
     IDistributor public distributor;
-    IAuctionHouse.Auction auction;
+    IAuctionHouse.Auction public auction;
 
     // The duration of every auction
     uint256 public duration;
@@ -29,12 +30,21 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
     // The percentage of a sale that gets sent to the DAO
     uint8 public daoCut;
 
-    constructor(address _token, address _dao, uint256 _duration, uint8 _minBidIncrementPercentage, uint8 _daoCut, address _weth) ETHMover(_weth) {
+    constructor(address _token, address _dao, address _distributor, address _weth, uint256 _duration, uint8 _minBidIncrementPercentage, uint8 _daoCut) ETHMover(_weth) {
         token = IToken(_token);
         dao = IDAO(_dao);
+        distributor = IDistributor(_distributor);
         duration = _duration;
         minBidIncrementPercentage = _minBidIncrementPercentage;
         daoCut = _daoCut;
+        auction = IAuctionHouse.Auction({
+            startDate: 0,
+            endDate: 0,
+            highestBid: 0,
+            highestBidder: payable(0),
+            tokenId: 0,
+            settled: true
+        });
     }
 
     /*
@@ -79,8 +89,9 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
         }
 
         if (_auction.highestBid > 0) {
-            distributor.deposit{ value: _auction.highestBid }(_auction.tokenId, _auction.highestBid);
-            require(_safeTransferETH(address(dao), _auction.highestBid), "Could not transfer to DAO contract");
+            uint256 daoAmount = _auction.highestBid * daoCut / 100;
+            distributor.recordSale{ value: _auction.highestBid - daoAmount }(_auction.tokenId);
+            require(_safeTransferETH(address(dao), daoAmount), "Could not transfer to DAO contract");
         }
 
         emit AuctionEnded(_auction.highestBidder, _auction.highestBid);
@@ -104,17 +115,19 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover {
 
         address payable lastBidder = _auction.highestBidder;
         if (_auction.highestBidder != address(0)) {
-            // Transfers cut to DAO
-            // Say 50 eth, 10 cut -> 5 eth for DAO
-
-            uint256 daoAmount = _auction.highestBid * daoCut / 100;
-            distributor.deposit{ value: _auction.highestBid - daoAmount }(_auction.tokenId, _auction.highestBid);
-            _safeTransferETHWithFallback(lastBidder, daoAmount);
+            _safeTransferETHWithFallback(lastBidder, auction.highestBid);
         }
 
         auction.highestBid = msg.value;
         auction.highestBidder = payable(msg.sender);
         emit BidPlaced(msg.sender, msg.value);
+    }
+
+    /*
+     * @notice implements IERC721Receiver in order to receive tokens via safeTransfer
+     */
+    function onERC721Received(address operator, address from, uint256 tokenId, bytes calldata data) external override returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 
     /*
