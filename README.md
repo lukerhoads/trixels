@@ -15,6 +15,8 @@ Trixels is a semi-decentralized application that brings together the world throu
 - Figure out a way to store onchain
 - Make a good GUI
 - Write tests for server
+- Dockerize server
+- Clean up server error handling and logging
 
 ## Design Notes
 - Pixel values are stored centrally
