@@ -36,7 +36,7 @@ func (r *App) initializeRoutes() {
 }
 
 func (a *App) Run(addr string) {
-	log.Println("Listening...")
+	log.Println("Listening on ", addr)
 	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
@@ -62,7 +62,7 @@ func (r *App) GetPixels(res http.ResponseWriter, req *http.Request) {
 }
 
 type ServerError struct {
-	message string
+	Message string `json:"message"`
 }
 
 func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
@@ -71,7 +71,7 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 	validUpdate := getPixel.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
 	if !validUpdate {
 		json.NewEncoder(res).Encode(ServerError{
-			message: "Cannot update, pixel has been updated in the last 5 minutes",
+			Message: "Cannot update, pixel has been updated in the last 5 minutes",
 		})
 		return
 	}
@@ -80,6 +80,14 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(req.Body).Decode(&pixel)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	matched := HexVerificationRegexp.MatchString(pixel.Color)
+	if !matched {
+		json.NewEncoder(res).Encode(ServerError{
+			Message: "Invalid hex code",
+		})
 		return
 	}
 

@@ -1,7 +1,7 @@
 // Code generated - DO NOT EDIT.
 // This file is a generated binding and any manual changes will be lost.
 
-package abigen
+package IDAO
 
 import (
 	"errors"
@@ -28,113 +28,113 @@ var (
 	_ = event.NewSubscription
 )
 
-// AbigenMetaData contains all meta data concerning the Abigen contract.
-var AbigenMetaData = &bind.MetaData{
+// IDAOMetaData contains all meta data concerning the IDAO contract.
+var IDAOMetaData = &bind.MetaData{
 	ABI: "[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"proposalID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"address\",\"name\":\"recipient\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"description\",\"type\":\"string\"}],\"name\":\"ProposalAdded\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"proposalID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"result\",\"type\":\"bool\"}],\"name\":\"ProposalExecuted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"proposalID\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"inSupport\",\"type\":\"bool\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"voter\",\"type\":\"address\"}],\"name\":\"Voted\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_recipient\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"_amount\",\"type\":\"uint256\"},{\"internalType\":\"string\",\"name\":\"_description\",\"type\":\"string\"},{\"internalType\":\"bytes\",\"name\":\"_transactionData\",\"type\":\"bytes\"}],\"name\":\"makeProposal\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalID\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_proposalID\",\"type\":\"uint256\"},{\"internalType\":\"bool\",\"name\":\"_inSupport\",\"type\":\"bool\"}],\"name\":\"vote\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_proposalID\",\"type\":\"uint256\"}],\"name\":\"unVote\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"proposalID\",\"type\":\"uint256\"},{\"internalType\":\"bytes\",\"name\":\"transactionData\",\"type\":\"bytes\"}],\"name\":\"executeProposal\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"success\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]",
 }
 
-// AbigenABI is the input ABI used to generate the binding from.
-// Deprecated: Use AbigenMetaData.ABI instead.
-var AbigenABI = AbigenMetaData.ABI
+// IDAOABI is the input ABI used to generate the binding from.
+// Deprecated: Use IDAOMetaData.ABI instead.
+var IDAOABI = IDAOMetaData.ABI
 
-// Abigen is an auto generated Go binding around an Ethereum contract.
-type Abigen struct {
-	AbigenCaller     // Read-only binding to the contract
-	AbigenTransactor // Write-only binding to the contract
-	AbigenFilterer   // Log filterer for contract events
+// IDAO is an auto generated Go binding around an Ethereum contract.
+type IDAO struct {
+	IDAOCaller     // Read-only binding to the contract
+	IDAOTransactor // Write-only binding to the contract
+	IDAOFilterer   // Log filterer for contract events
 }
 
-// AbigenCaller is an auto generated read-only Go binding around an Ethereum contract.
-type AbigenCaller struct {
+// IDAOCaller is an auto generated read-only Go binding around an Ethereum contract.
+type IDAOCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// AbigenTransactor is an auto generated write-only Go binding around an Ethereum contract.
-type AbigenTransactor struct {
+// IDAOTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type IDAOTransactor struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// AbigenFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
-type AbigenFilterer struct {
+// IDAOFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type IDAOFilterer struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
 
-// AbigenSession is an auto generated Go binding around an Ethereum contract,
+// IDAOSession is an auto generated Go binding around an Ethereum contract,
 // with pre-set call and transact options.
-type AbigenSession struct {
-	Contract     *Abigen           // Generic contract binding to set the session for
+type IDAOSession struct {
+	Contract     *IDAO             // Generic contract binding to set the session for
 	CallOpts     bind.CallOpts     // Call options to use throughout this session
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// AbigenCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// IDAOCallerSession is an auto generated read-only Go binding around an Ethereum contract,
 // with pre-set call options.
-type AbigenCallerSession struct {
-	Contract *AbigenCaller // Generic contract caller binding to set the session for
+type IDAOCallerSession struct {
+	Contract *IDAOCaller   // Generic contract caller binding to set the session for
 	CallOpts bind.CallOpts // Call options to use throughout this session
 }
 
-// AbigenTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// IDAOTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
 // with pre-set transact options.
-type AbigenTransactorSession struct {
-	Contract     *AbigenTransactor // Generic contract transactor binding to set the session for
+type IDAOTransactorSession struct {
+	Contract     *IDAOTransactor   // Generic contract transactor binding to set the session for
 	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
 }
 
-// AbigenRaw is an auto generated low-level Go binding around an Ethereum contract.
-type AbigenRaw struct {
-	Contract *Abigen // Generic contract binding to access the raw methods on
+// IDAORaw is an auto generated low-level Go binding around an Ethereum contract.
+type IDAORaw struct {
+	Contract *IDAO // Generic contract binding to access the raw methods on
 }
 
-// AbigenCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
-type AbigenCallerRaw struct {
-	Contract *AbigenCaller // Generic read-only contract binding to access the raw methods on
+// IDAOCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type IDAOCallerRaw struct {
+	Contract *IDAOCaller // Generic read-only contract binding to access the raw methods on
 }
 
-// AbigenTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
-type AbigenTransactorRaw struct {
-	Contract *AbigenTransactor // Generic write-only contract binding to access the raw methods on
+// IDAOTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type IDAOTransactorRaw struct {
+	Contract *IDAOTransactor // Generic write-only contract binding to access the raw methods on
 }
 
-// NewAbigen creates a new instance of Abigen, bound to a specific deployed contract.
-func NewAbigen(address common.Address, backend bind.ContractBackend) (*Abigen, error) {
-	contract, err := bindAbigen(address, backend, backend, backend)
+// NewIDAO creates a new instance of IDAO, bound to a specific deployed contract.
+func NewIDAO(address common.Address, backend bind.ContractBackend) (*IDAO, error) {
+	contract, err := bindIDAO(address, backend, backend, backend)
 	if err != nil {
 		return nil, err
 	}
-	return &Abigen{AbigenCaller: AbigenCaller{contract: contract}, AbigenTransactor: AbigenTransactor{contract: contract}, AbigenFilterer: AbigenFilterer{contract: contract}}, nil
+	return &IDAO{IDAOCaller: IDAOCaller{contract: contract}, IDAOTransactor: IDAOTransactor{contract: contract}, IDAOFilterer: IDAOFilterer{contract: contract}}, nil
 }
 
-// NewAbigenCaller creates a new read-only instance of Abigen, bound to a specific deployed contract.
-func NewAbigenCaller(address common.Address, caller bind.ContractCaller) (*AbigenCaller, error) {
-	contract, err := bindAbigen(address, caller, nil, nil)
+// NewIDAOCaller creates a new read-only instance of IDAO, bound to a specific deployed contract.
+func NewIDAOCaller(address common.Address, caller bind.ContractCaller) (*IDAOCaller, error) {
+	contract, err := bindIDAO(address, caller, nil, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &AbigenCaller{contract: contract}, nil
+	return &IDAOCaller{contract: contract}, nil
 }
 
-// NewAbigenTransactor creates a new write-only instance of Abigen, bound to a specific deployed contract.
-func NewAbigenTransactor(address common.Address, transactor bind.ContractTransactor) (*AbigenTransactor, error) {
-	contract, err := bindAbigen(address, nil, transactor, nil)
+// NewIDAOTransactor creates a new write-only instance of IDAO, bound to a specific deployed contract.
+func NewIDAOTransactor(address common.Address, transactor bind.ContractTransactor) (*IDAOTransactor, error) {
+	contract, err := bindIDAO(address, nil, transactor, nil)
 	if err != nil {
 		return nil, err
 	}
-	return &AbigenTransactor{contract: contract}, nil
+	return &IDAOTransactor{contract: contract}, nil
 }
 
-// NewAbigenFilterer creates a new log filterer instance of Abigen, bound to a specific deployed contract.
-func NewAbigenFilterer(address common.Address, filterer bind.ContractFilterer) (*AbigenFilterer, error) {
-	contract, err := bindAbigen(address, nil, nil, filterer)
+// NewIDAOFilterer creates a new log filterer instance of IDAO, bound to a specific deployed contract.
+func NewIDAOFilterer(address common.Address, filterer bind.ContractFilterer) (*IDAOFilterer, error) {
+	contract, err := bindIDAO(address, nil, nil, filterer)
 	if err != nil {
 		return nil, err
 	}
-	return &AbigenFilterer{contract: contract}, nil
+	return &IDAOFilterer{contract: contract}, nil
 }
 
-// bindAbigen binds a generic wrapper to an already deployed contract.
-func bindAbigen(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
-	parsed, err := abi.JSON(strings.NewReader(AbigenABI))
+// bindIDAO binds a generic wrapper to an already deployed contract.
+func bindIDAO(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(IDAOABI))
 	if err != nil {
 		return nil, err
 	}
@@ -145,127 +145,127 @@ func bindAbigen(address common.Address, caller bind.ContractCaller, transactor b
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Abigen *AbigenRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _Abigen.Contract.AbigenCaller.contract.Call(opts, result, method, params...)
+func (_IDAO *IDAORaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _IDAO.Contract.IDAOCaller.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Abigen *AbigenRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Abigen.Contract.AbigenTransactor.contract.Transfer(opts)
+func (_IDAO *IDAORaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _IDAO.Contract.IDAOTransactor.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Abigen *AbigenRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _Abigen.Contract.AbigenTransactor.contract.Transact(opts, method, params...)
+func (_IDAO *IDAORaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _IDAO.Contract.IDAOTransactor.contract.Transact(opts, method, params...)
 }
 
 // Call invokes the (constant) contract method with params as input values and
 // sets the output to result. The result type might be a single field for simple
 // returns, a slice of interfaces for anonymous returns and a struct for named
 // returns.
-func (_Abigen *AbigenCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
-	return _Abigen.Contract.contract.Call(opts, result, method, params...)
+func (_IDAO *IDAOCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
+	return _IDAO.Contract.contract.Call(opts, result, method, params...)
 }
 
 // Transfer initiates a plain transaction to move funds to the contract, calling
 // its default method if one is available.
-func (_Abigen *AbigenTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
-	return _Abigen.Contract.contract.Transfer(opts)
+func (_IDAO *IDAOTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _IDAO.Contract.contract.Transfer(opts)
 }
 
 // Transact invokes the (paid) contract method with params as input values.
-func (_Abigen *AbigenTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
-	return _Abigen.Contract.contract.Transact(opts, method, params...)
+func (_IDAO *IDAOTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _IDAO.Contract.contract.Transact(opts, method, params...)
 }
 
 // ExecuteProposal is a paid mutator transaction binding the contract method 0x237e9492.
 //
 // Solidity: function executeProposal(uint256 proposalID, bytes transactionData) returns(bool success)
-func (_Abigen *AbigenTransactor) ExecuteProposal(opts *bind.TransactOpts, proposalID *big.Int, transactionData []byte) (*types.Transaction, error) {
-	return _Abigen.contract.Transact(opts, "executeProposal", proposalID, transactionData)
+func (_IDAO *IDAOTransactor) ExecuteProposal(opts *bind.TransactOpts, proposalID *big.Int, transactionData []byte) (*types.Transaction, error) {
+	return _IDAO.contract.Transact(opts, "executeProposal", proposalID, transactionData)
 }
 
 // ExecuteProposal is a paid mutator transaction binding the contract method 0x237e9492.
 //
 // Solidity: function executeProposal(uint256 proposalID, bytes transactionData) returns(bool success)
-func (_Abigen *AbigenSession) ExecuteProposal(proposalID *big.Int, transactionData []byte) (*types.Transaction, error) {
-	return _Abigen.Contract.ExecuteProposal(&_Abigen.TransactOpts, proposalID, transactionData)
+func (_IDAO *IDAOSession) ExecuteProposal(proposalID *big.Int, transactionData []byte) (*types.Transaction, error) {
+	return _IDAO.Contract.ExecuteProposal(&_IDAO.TransactOpts, proposalID, transactionData)
 }
 
 // ExecuteProposal is a paid mutator transaction binding the contract method 0x237e9492.
 //
 // Solidity: function executeProposal(uint256 proposalID, bytes transactionData) returns(bool success)
-func (_Abigen *AbigenTransactorSession) ExecuteProposal(proposalID *big.Int, transactionData []byte) (*types.Transaction, error) {
-	return _Abigen.Contract.ExecuteProposal(&_Abigen.TransactOpts, proposalID, transactionData)
+func (_IDAO *IDAOTransactorSession) ExecuteProposal(proposalID *big.Int, transactionData []byte) (*types.Transaction, error) {
+	return _IDAO.Contract.ExecuteProposal(&_IDAO.TransactOpts, proposalID, transactionData)
 }
 
 // MakeProposal is a paid mutator transaction binding the contract method 0x909d02ad.
 //
 // Solidity: function makeProposal(address _recipient, uint256 _amount, string _description, bytes _transactionData) returns(uint256 proposalID)
-func (_Abigen *AbigenTransactor) MakeProposal(opts *bind.TransactOpts, _recipient common.Address, _amount *big.Int, _description string, _transactionData []byte) (*types.Transaction, error) {
-	return _Abigen.contract.Transact(opts, "makeProposal", _recipient, _amount, _description, _transactionData)
+func (_IDAO *IDAOTransactor) MakeProposal(opts *bind.TransactOpts, _recipient common.Address, _amount *big.Int, _description string, _transactionData []byte) (*types.Transaction, error) {
+	return _IDAO.contract.Transact(opts, "makeProposal", _recipient, _amount, _description, _transactionData)
 }
 
 // MakeProposal is a paid mutator transaction binding the contract method 0x909d02ad.
 //
 // Solidity: function makeProposal(address _recipient, uint256 _amount, string _description, bytes _transactionData) returns(uint256 proposalID)
-func (_Abigen *AbigenSession) MakeProposal(_recipient common.Address, _amount *big.Int, _description string, _transactionData []byte) (*types.Transaction, error) {
-	return _Abigen.Contract.MakeProposal(&_Abigen.TransactOpts, _recipient, _amount, _description, _transactionData)
+func (_IDAO *IDAOSession) MakeProposal(_recipient common.Address, _amount *big.Int, _description string, _transactionData []byte) (*types.Transaction, error) {
+	return _IDAO.Contract.MakeProposal(&_IDAO.TransactOpts, _recipient, _amount, _description, _transactionData)
 }
 
 // MakeProposal is a paid mutator transaction binding the contract method 0x909d02ad.
 //
 // Solidity: function makeProposal(address _recipient, uint256 _amount, string _description, bytes _transactionData) returns(uint256 proposalID)
-func (_Abigen *AbigenTransactorSession) MakeProposal(_recipient common.Address, _amount *big.Int, _description string, _transactionData []byte) (*types.Transaction, error) {
-	return _Abigen.Contract.MakeProposal(&_Abigen.TransactOpts, _recipient, _amount, _description, _transactionData)
+func (_IDAO *IDAOTransactorSession) MakeProposal(_recipient common.Address, _amount *big.Int, _description string, _transactionData []byte) (*types.Transaction, error) {
+	return _IDAO.Contract.MakeProposal(&_IDAO.TransactOpts, _recipient, _amount, _description, _transactionData)
 }
 
 // UnVote is a paid mutator transaction binding the contract method 0x9fd6adb3.
 //
 // Solidity: function unVote(uint256 _proposalID) returns()
-func (_Abigen *AbigenTransactor) UnVote(opts *bind.TransactOpts, _proposalID *big.Int) (*types.Transaction, error) {
-	return _Abigen.contract.Transact(opts, "unVote", _proposalID)
+func (_IDAO *IDAOTransactor) UnVote(opts *bind.TransactOpts, _proposalID *big.Int) (*types.Transaction, error) {
+	return _IDAO.contract.Transact(opts, "unVote", _proposalID)
 }
 
 // UnVote is a paid mutator transaction binding the contract method 0x9fd6adb3.
 //
 // Solidity: function unVote(uint256 _proposalID) returns()
-func (_Abigen *AbigenSession) UnVote(_proposalID *big.Int) (*types.Transaction, error) {
-	return _Abigen.Contract.UnVote(&_Abigen.TransactOpts, _proposalID)
+func (_IDAO *IDAOSession) UnVote(_proposalID *big.Int) (*types.Transaction, error) {
+	return _IDAO.Contract.UnVote(&_IDAO.TransactOpts, _proposalID)
 }
 
 // UnVote is a paid mutator transaction binding the contract method 0x9fd6adb3.
 //
 // Solidity: function unVote(uint256 _proposalID) returns()
-func (_Abigen *AbigenTransactorSession) UnVote(_proposalID *big.Int) (*types.Transaction, error) {
-	return _Abigen.Contract.UnVote(&_Abigen.TransactOpts, _proposalID)
+func (_IDAO *IDAOTransactorSession) UnVote(_proposalID *big.Int) (*types.Transaction, error) {
+	return _IDAO.Contract.UnVote(&_IDAO.TransactOpts, _proposalID)
 }
 
 // Vote is a paid mutator transaction binding the contract method 0xc9d27afe.
 //
 // Solidity: function vote(uint256 _proposalID, bool _inSupport) returns()
-func (_Abigen *AbigenTransactor) Vote(opts *bind.TransactOpts, _proposalID *big.Int, _inSupport bool) (*types.Transaction, error) {
-	return _Abigen.contract.Transact(opts, "vote", _proposalID, _inSupport)
+func (_IDAO *IDAOTransactor) Vote(opts *bind.TransactOpts, _proposalID *big.Int, _inSupport bool) (*types.Transaction, error) {
+	return _IDAO.contract.Transact(opts, "vote", _proposalID, _inSupport)
 }
 
 // Vote is a paid mutator transaction binding the contract method 0xc9d27afe.
 //
 // Solidity: function vote(uint256 _proposalID, bool _inSupport) returns()
-func (_Abigen *AbigenSession) Vote(_proposalID *big.Int, _inSupport bool) (*types.Transaction, error) {
-	return _Abigen.Contract.Vote(&_Abigen.TransactOpts, _proposalID, _inSupport)
+func (_IDAO *IDAOSession) Vote(_proposalID *big.Int, _inSupport bool) (*types.Transaction, error) {
+	return _IDAO.Contract.Vote(&_IDAO.TransactOpts, _proposalID, _inSupport)
 }
 
 // Vote is a paid mutator transaction binding the contract method 0xc9d27afe.
 //
 // Solidity: function vote(uint256 _proposalID, bool _inSupport) returns()
-func (_Abigen *AbigenTransactorSession) Vote(_proposalID *big.Int, _inSupport bool) (*types.Transaction, error) {
-	return _Abigen.Contract.Vote(&_Abigen.TransactOpts, _proposalID, _inSupport)
+func (_IDAO *IDAOTransactorSession) Vote(_proposalID *big.Int, _inSupport bool) (*types.Transaction, error) {
+	return _IDAO.Contract.Vote(&_IDAO.TransactOpts, _proposalID, _inSupport)
 }
 
-// AbigenProposalAddedIterator is returned from FilterProposalAdded and is used to iterate over the raw logs and unpacked data for ProposalAdded events raised by the Abigen contract.
-type AbigenProposalAddedIterator struct {
-	Event *AbigenProposalAdded // Event containing the contract specifics and raw log
+// IDAOProposalAddedIterator is returned from FilterProposalAdded and is used to iterate over the raw logs and unpacked data for ProposalAdded events raised by the IDAO contract.
+type IDAOProposalAddedIterator struct {
+	Event *IDAOProposalAdded // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -279,7 +279,7 @@ type AbigenProposalAddedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *AbigenProposalAddedIterator) Next() bool {
+func (it *IDAOProposalAddedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -288,7 +288,7 @@ func (it *AbigenProposalAddedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(AbigenProposalAdded)
+			it.Event = new(IDAOProposalAdded)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -303,7 +303,7 @@ func (it *AbigenProposalAddedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(AbigenProposalAdded)
+		it.Event = new(IDAOProposalAdded)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -319,19 +319,19 @@ func (it *AbigenProposalAddedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *AbigenProposalAddedIterator) Error() error {
+func (it *IDAOProposalAddedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *AbigenProposalAddedIterator) Close() error {
+func (it *IDAOProposalAddedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// AbigenProposalAdded represents a ProposalAdded event raised by the Abigen contract.
-type AbigenProposalAdded struct {
+// IDAOProposalAdded represents a ProposalAdded event raised by the IDAO contract.
+type IDAOProposalAdded struct {
 	ProposalID  *big.Int
 	Recipient   common.Address
 	Amount      *big.Int
@@ -342,31 +342,31 @@ type AbigenProposalAdded struct {
 // FilterProposalAdded is a free log retrieval operation binding the contract event 0x646fec02522b41e7125cfc859a64fd4f4cefd5dc3b6237ca0abe251ded1fa881.
 //
 // Solidity: event ProposalAdded(uint256 indexed proposalID, address recipient, uint256 amount, string description)
-func (_Abigen *AbigenFilterer) FilterProposalAdded(opts *bind.FilterOpts, proposalID []*big.Int) (*AbigenProposalAddedIterator, error) {
+func (_IDAO *IDAOFilterer) FilterProposalAdded(opts *bind.FilterOpts, proposalID []*big.Int) (*IDAOProposalAddedIterator, error) {
 
 	var proposalIDRule []interface{}
 	for _, proposalIDItem := range proposalID {
 		proposalIDRule = append(proposalIDRule, proposalIDItem)
 	}
 
-	logs, sub, err := _Abigen.contract.FilterLogs(opts, "ProposalAdded", proposalIDRule)
+	logs, sub, err := _IDAO.contract.FilterLogs(opts, "ProposalAdded", proposalIDRule)
 	if err != nil {
 		return nil, err
 	}
-	return &AbigenProposalAddedIterator{contract: _Abigen.contract, event: "ProposalAdded", logs: logs, sub: sub}, nil
+	return &IDAOProposalAddedIterator{contract: _IDAO.contract, event: "ProposalAdded", logs: logs, sub: sub}, nil
 }
 
 // WatchProposalAdded is a free log subscription operation binding the contract event 0x646fec02522b41e7125cfc859a64fd4f4cefd5dc3b6237ca0abe251ded1fa881.
 //
 // Solidity: event ProposalAdded(uint256 indexed proposalID, address recipient, uint256 amount, string description)
-func (_Abigen *AbigenFilterer) WatchProposalAdded(opts *bind.WatchOpts, sink chan<- *AbigenProposalAdded, proposalID []*big.Int) (event.Subscription, error) {
+func (_IDAO *IDAOFilterer) WatchProposalAdded(opts *bind.WatchOpts, sink chan<- *IDAOProposalAdded, proposalID []*big.Int) (event.Subscription, error) {
 
 	var proposalIDRule []interface{}
 	for _, proposalIDItem := range proposalID {
 		proposalIDRule = append(proposalIDRule, proposalIDItem)
 	}
 
-	logs, sub, err := _Abigen.contract.WatchLogs(opts, "ProposalAdded", proposalIDRule)
+	logs, sub, err := _IDAO.contract.WatchLogs(opts, "ProposalAdded", proposalIDRule)
 	if err != nil {
 		return nil, err
 	}
@@ -376,8 +376,8 @@ func (_Abigen *AbigenFilterer) WatchProposalAdded(opts *bind.WatchOpts, sink cha
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(AbigenProposalAdded)
-				if err := _Abigen.contract.UnpackLog(event, "ProposalAdded", log); err != nil {
+				event := new(IDAOProposalAdded)
+				if err := _IDAO.contract.UnpackLog(event, "ProposalAdded", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -401,18 +401,18 @@ func (_Abigen *AbigenFilterer) WatchProposalAdded(opts *bind.WatchOpts, sink cha
 // ParseProposalAdded is a log parse operation binding the contract event 0x646fec02522b41e7125cfc859a64fd4f4cefd5dc3b6237ca0abe251ded1fa881.
 //
 // Solidity: event ProposalAdded(uint256 indexed proposalID, address recipient, uint256 amount, string description)
-func (_Abigen *AbigenFilterer) ParseProposalAdded(log types.Log) (*AbigenProposalAdded, error) {
-	event := new(AbigenProposalAdded)
-	if err := _Abigen.contract.UnpackLog(event, "ProposalAdded", log); err != nil {
+func (_IDAO *IDAOFilterer) ParseProposalAdded(log types.Log) (*IDAOProposalAdded, error) {
+	event := new(IDAOProposalAdded)
+	if err := _IDAO.contract.UnpackLog(event, "ProposalAdded", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// AbigenProposalExecutedIterator is returned from FilterProposalExecuted and is used to iterate over the raw logs and unpacked data for ProposalExecuted events raised by the Abigen contract.
-type AbigenProposalExecutedIterator struct {
-	Event *AbigenProposalExecuted // Event containing the contract specifics and raw log
+// IDAOProposalExecutedIterator is returned from FilterProposalExecuted and is used to iterate over the raw logs and unpacked data for ProposalExecuted events raised by the IDAO contract.
+type IDAOProposalExecutedIterator struct {
+	Event *IDAOProposalExecuted // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -426,7 +426,7 @@ type AbigenProposalExecutedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *AbigenProposalExecutedIterator) Next() bool {
+func (it *IDAOProposalExecutedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -435,7 +435,7 @@ func (it *AbigenProposalExecutedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(AbigenProposalExecuted)
+			it.Event = new(IDAOProposalExecuted)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -450,7 +450,7 @@ func (it *AbigenProposalExecutedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(AbigenProposalExecuted)
+		it.Event = new(IDAOProposalExecuted)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -466,19 +466,19 @@ func (it *AbigenProposalExecutedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *AbigenProposalExecutedIterator) Error() error {
+func (it *IDAOProposalExecutedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *AbigenProposalExecutedIterator) Close() error {
+func (it *IDAOProposalExecutedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// AbigenProposalExecuted represents a ProposalExecuted event raised by the Abigen contract.
-type AbigenProposalExecuted struct {
+// IDAOProposalExecuted represents a ProposalExecuted event raised by the IDAO contract.
+type IDAOProposalExecuted struct {
 	ProposalID *big.Int
 	Result     bool
 	Raw        types.Log // Blockchain specific contextual infos
@@ -487,31 +487,31 @@ type AbigenProposalExecuted struct {
 // FilterProposalExecuted is a free log retrieval operation binding the contract event 0x948f4a9cd986f1118c3fbd459f7a22b23c0693e1ca3ef06a6a8be5aa7d39cc03.
 //
 // Solidity: event ProposalExecuted(uint256 indexed proposalID, bool result)
-func (_Abigen *AbigenFilterer) FilterProposalExecuted(opts *bind.FilterOpts, proposalID []*big.Int) (*AbigenProposalExecutedIterator, error) {
+func (_IDAO *IDAOFilterer) FilterProposalExecuted(opts *bind.FilterOpts, proposalID []*big.Int) (*IDAOProposalExecutedIterator, error) {
 
 	var proposalIDRule []interface{}
 	for _, proposalIDItem := range proposalID {
 		proposalIDRule = append(proposalIDRule, proposalIDItem)
 	}
 
-	logs, sub, err := _Abigen.contract.FilterLogs(opts, "ProposalExecuted", proposalIDRule)
+	logs, sub, err := _IDAO.contract.FilterLogs(opts, "ProposalExecuted", proposalIDRule)
 	if err != nil {
 		return nil, err
 	}
-	return &AbigenProposalExecutedIterator{contract: _Abigen.contract, event: "ProposalExecuted", logs: logs, sub: sub}, nil
+	return &IDAOProposalExecutedIterator{contract: _IDAO.contract, event: "ProposalExecuted", logs: logs, sub: sub}, nil
 }
 
 // WatchProposalExecuted is a free log subscription operation binding the contract event 0x948f4a9cd986f1118c3fbd459f7a22b23c0693e1ca3ef06a6a8be5aa7d39cc03.
 //
 // Solidity: event ProposalExecuted(uint256 indexed proposalID, bool result)
-func (_Abigen *AbigenFilterer) WatchProposalExecuted(opts *bind.WatchOpts, sink chan<- *AbigenProposalExecuted, proposalID []*big.Int) (event.Subscription, error) {
+func (_IDAO *IDAOFilterer) WatchProposalExecuted(opts *bind.WatchOpts, sink chan<- *IDAOProposalExecuted, proposalID []*big.Int) (event.Subscription, error) {
 
 	var proposalIDRule []interface{}
 	for _, proposalIDItem := range proposalID {
 		proposalIDRule = append(proposalIDRule, proposalIDItem)
 	}
 
-	logs, sub, err := _Abigen.contract.WatchLogs(opts, "ProposalExecuted", proposalIDRule)
+	logs, sub, err := _IDAO.contract.WatchLogs(opts, "ProposalExecuted", proposalIDRule)
 	if err != nil {
 		return nil, err
 	}
@@ -521,8 +521,8 @@ func (_Abigen *AbigenFilterer) WatchProposalExecuted(opts *bind.WatchOpts, sink 
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(AbigenProposalExecuted)
-				if err := _Abigen.contract.UnpackLog(event, "ProposalExecuted", log); err != nil {
+				event := new(IDAOProposalExecuted)
+				if err := _IDAO.contract.UnpackLog(event, "ProposalExecuted", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -546,18 +546,18 @@ func (_Abigen *AbigenFilterer) WatchProposalExecuted(opts *bind.WatchOpts, sink 
 // ParseProposalExecuted is a log parse operation binding the contract event 0x948f4a9cd986f1118c3fbd459f7a22b23c0693e1ca3ef06a6a8be5aa7d39cc03.
 //
 // Solidity: event ProposalExecuted(uint256 indexed proposalID, bool result)
-func (_Abigen *AbigenFilterer) ParseProposalExecuted(log types.Log) (*AbigenProposalExecuted, error) {
-	event := new(AbigenProposalExecuted)
-	if err := _Abigen.contract.UnpackLog(event, "ProposalExecuted", log); err != nil {
+func (_IDAO *IDAOFilterer) ParseProposalExecuted(log types.Log) (*IDAOProposalExecuted, error) {
+	event := new(IDAOProposalExecuted)
+	if err := _IDAO.contract.UnpackLog(event, "ProposalExecuted", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
 	return event, nil
 }
 
-// AbigenVotedIterator is returned from FilterVoted and is used to iterate over the raw logs and unpacked data for Voted events raised by the Abigen contract.
-type AbigenVotedIterator struct {
-	Event *AbigenVoted // Event containing the contract specifics and raw log
+// IDAOVotedIterator is returned from FilterVoted and is used to iterate over the raw logs and unpacked data for Voted events raised by the IDAO contract.
+type IDAOVotedIterator struct {
+	Event *IDAOVoted // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -571,7 +571,7 @@ type AbigenVotedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *AbigenVotedIterator) Next() bool {
+func (it *IDAOVotedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -580,7 +580,7 @@ func (it *AbigenVotedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(AbigenVoted)
+			it.Event = new(IDAOVoted)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -595,7 +595,7 @@ func (it *AbigenVotedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(AbigenVoted)
+		it.Event = new(IDAOVoted)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -611,19 +611,19 @@ func (it *AbigenVotedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *AbigenVotedIterator) Error() error {
+func (it *IDAOVotedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *AbigenVotedIterator) Close() error {
+func (it *IDAOVotedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// AbigenVoted represents a Voted event raised by the Abigen contract.
-type AbigenVoted struct {
+// IDAOVoted represents a Voted event raised by the IDAO contract.
+type IDAOVoted struct {
 	ProposalID *big.Int
 	InSupport  bool
 	Voter      common.Address
@@ -633,7 +633,7 @@ type AbigenVoted struct {
 // FilterVoted is a free log retrieval operation binding the contract event 0x86abfce99b7dd908bec0169288797f85049ec73cbe046ed9de818fab3a497ae0.
 //
 // Solidity: event Voted(uint256 indexed proposalID, bool inSupport, address indexed voter)
-func (_Abigen *AbigenFilterer) FilterVoted(opts *bind.FilterOpts, proposalID []*big.Int, voter []common.Address) (*AbigenVotedIterator, error) {
+func (_IDAO *IDAOFilterer) FilterVoted(opts *bind.FilterOpts, proposalID []*big.Int, voter []common.Address) (*IDAOVotedIterator, error) {
 
 	var proposalIDRule []interface{}
 	for _, proposalIDItem := range proposalID {
@@ -645,17 +645,17 @@ func (_Abigen *AbigenFilterer) FilterVoted(opts *bind.FilterOpts, proposalID []*
 		voterRule = append(voterRule, voterItem)
 	}
 
-	logs, sub, err := _Abigen.contract.FilterLogs(opts, "Voted", proposalIDRule, voterRule)
+	logs, sub, err := _IDAO.contract.FilterLogs(opts, "Voted", proposalIDRule, voterRule)
 	if err != nil {
 		return nil, err
 	}
-	return &AbigenVotedIterator{contract: _Abigen.contract, event: "Voted", logs: logs, sub: sub}, nil
+	return &IDAOVotedIterator{contract: _IDAO.contract, event: "Voted", logs: logs, sub: sub}, nil
 }
 
 // WatchVoted is a free log subscription operation binding the contract event 0x86abfce99b7dd908bec0169288797f85049ec73cbe046ed9de818fab3a497ae0.
 //
 // Solidity: event Voted(uint256 indexed proposalID, bool inSupport, address indexed voter)
-func (_Abigen *AbigenFilterer) WatchVoted(opts *bind.WatchOpts, sink chan<- *AbigenVoted, proposalID []*big.Int, voter []common.Address) (event.Subscription, error) {
+func (_IDAO *IDAOFilterer) WatchVoted(opts *bind.WatchOpts, sink chan<- *IDAOVoted, proposalID []*big.Int, voter []common.Address) (event.Subscription, error) {
 
 	var proposalIDRule []interface{}
 	for _, proposalIDItem := range proposalID {
@@ -667,7 +667,7 @@ func (_Abigen *AbigenFilterer) WatchVoted(opts *bind.WatchOpts, sink chan<- *Abi
 		voterRule = append(voterRule, voterItem)
 	}
 
-	logs, sub, err := _Abigen.contract.WatchLogs(opts, "Voted", proposalIDRule, voterRule)
+	logs, sub, err := _IDAO.contract.WatchLogs(opts, "Voted", proposalIDRule, voterRule)
 	if err != nil {
 		return nil, err
 	}
@@ -677,8 +677,8 @@ func (_Abigen *AbigenFilterer) WatchVoted(opts *bind.WatchOpts, sink chan<- *Abi
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(AbigenVoted)
-				if err := _Abigen.contract.UnpackLog(event, "Voted", log); err != nil {
+				event := new(IDAOVoted)
+				if err := _IDAO.contract.UnpackLog(event, "Voted", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -702,9 +702,9 @@ func (_Abigen *AbigenFilterer) WatchVoted(opts *bind.WatchOpts, sink chan<- *Abi
 // ParseVoted is a log parse operation binding the contract event 0x86abfce99b7dd908bec0169288797f85049ec73cbe046ed9de818fab3a497ae0.
 //
 // Solidity: event Voted(uint256 indexed proposalID, bool inSupport, address indexed voter)
-func (_Abigen *AbigenFilterer) ParseVoted(log types.Log) (*AbigenVoted, error) {
-	event := new(AbigenVoted)
-	if err := _Abigen.contract.UnpackLog(event, "Voted", log); err != nil {
+func (_IDAO *IDAOFilterer) ParseVoted(log types.Log) (*IDAOVoted, error) {
+	event := new(IDAOVoted)
+	if err := _IDAO.contract.UnpackLog(event, "Voted", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

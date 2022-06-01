@@ -9,12 +9,14 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+
+	aux "github.com/lukerhoads/trixels/abigen/AuctionHouse"
 )
 
 type AuctionHouse struct {
 	privateKey string
 	*ethclient.Client
-	*TrixelsAuctionHouse
+	*aux.AuctionHouse
 }
 
 func NewAuctionHouse(rpcUrl string, privateKey string) (*AuctionHouse, error) {
@@ -30,7 +32,7 @@ func NewAuctionHouse(rpcUrl string, privateKey string) (*AuctionHouse, error) {
 }
 
 func (a *AuctionHouse) StartAuction() (uint64, error) {
-	_, err := a.TrixelsAuctionHouse.StartAuction(genKeyedTransactor(a.Client, a.privateKey))
+	_, err := a.AuctionHouse.StartAuction(genKeyedTransactor(a.Client, a.privateKey))
 	return 0, err
 }
 

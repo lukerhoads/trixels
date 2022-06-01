@@ -1,6 +1,9 @@
 package server
 
-import "time"
+import (
+	"regexp"
+	"time"
+)
 
 const (
 	IMAGE_PATH       = "image.png"
@@ -11,4 +14,6 @@ const (
 
 var (
 	PixelUpdateTime = 5 * time.Minute
+
+	HexVerificationRegexp = regexp.MustCompile("^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$")
 )
