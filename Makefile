@@ -12,3 +12,7 @@ generate_go_bindings:
 	sh scripts/generate_go_bindings.sh $(ABI_DIR) abigen
 
 build_server:
+
+dev:
+	yarn dev 
+	go run main.go

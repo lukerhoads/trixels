@@ -9,6 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
+	"github.com/ethereum/go-ethereum/common"
 
 	aux "github.com/lukerhoads/trixels/abigen/AuctionHouse"
 )
@@ -19,8 +20,14 @@ type AuctionHouse struct {
 	*aux.AuctionHouse
 }
 
-func NewAuctionHouse(rpcUrl string, privateKey string) (*AuctionHouse, error) {
+func NewAuctionHouse(rpcUrl string, privateKey string, address string) (*AuctionHouse, error) {
 	client, err := ethclient.Dial(rpcUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	addrConv := common.HexToAddress(address)
+	auctionHouse, err := aux.NewAuctionHouse(addrConv, client)
 	if err != nil {
 		return nil, err
 	}
@@ -28,6 +35,7 @@ func NewAuctionHouse(rpcUrl string, privateKey string) (*AuctionHouse, error) {
 	return &AuctionHouse{
 		privateKey: privateKey,
 		Client:     client,
+		AuctionHouse: auctionHouse,
 	}, nil
 }
 

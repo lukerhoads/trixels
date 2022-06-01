@@ -21,8 +21,9 @@ func main() {
 	dsn := os.Getenv("DB_DSN")
 	rpcUrl := os.Getenv("ETH_URL")
 	pk := os.Getenv("GAS_ACCOUNT_PK")
+	auctionHouseAddress := os.Getenv("AUCTION_HOUSE_ADDRESS")
 
-	auctionHouse, err := server.NewAuctionHouse(rpcUrl, pk)
+	auctionHouse, err := server.NewAuctionHouse(rpcUrl, pk, auctionHouseAddress)
 	if err != nil {
 		log.Fatal(err)
 	}

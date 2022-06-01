@@ -7,7 +7,8 @@
     "test": "yarn hardhat test",
     "types": "yarn hardhat typechain",
     "compile": "yarn hardhat compile",
-    "abigen": "yarn truffle compile && yarn truffle run abigen"
+    "abigen": "yarn truffle compile && yarn truffle run abigen",
+    "dev": "npx hardhat node && npx hardhat run --network localhost scripts/deploy.ts"
   },
   "keywords": [],
   "author": "Luke Rhoads",
