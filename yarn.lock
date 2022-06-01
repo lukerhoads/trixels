@@ -11046,7 +11046,7 @@ trim-right@^1.0.1:
   resolved "https://registry.yarnpkg.com/true-case-path/-/true-case-path-2.2.1.tgz#c5bf04a5bbec3fd118be4084461b3a27c4d796bf"
   integrity sha512-0z3j8R7MCjy10kc/g+qg7Ln3alJTodw9aDuVWZa3uiWqfuBMKeAeP2ocWcxoyM3D73yz3Jt/Pu4qPr4wHSdB/Q==
 
-truffle@^5.1.46:
+truffle@^5.1.46, truffle@^5.5.16:
   version "5.5.16"
   resolved "https://registry.yarnpkg.com/truffle/-/truffle-5.5.16.tgz#4c20aface03784c14f0e5134517520480ed28518"
   integrity sha512-N9lF6qvKI+VPY2CjZX82TkjmiGbtnH3U22TCyXIJCjLwVUU9cvJ3atjHVylP9BSF9fUKzJuovHUB7enUKA39IQ==
