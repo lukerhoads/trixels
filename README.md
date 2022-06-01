@@ -17,6 +17,7 @@ Trixels is a semi-decentralized application that brings together the world throu
 - Write tests for server
 - Dockerize server
 - Clean up server error handling and logging
+- Edit makefile, add flags
 
 ## Design Notes
 - Pixel values are stored centrally
