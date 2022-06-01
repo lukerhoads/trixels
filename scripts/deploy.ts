@@ -1,3 +1,5 @@
+import fs from "fs"
+import os from "os"
 import { ethers } from "hardhat"
 
 import { WETH, Token, Distributor, AuctionHouse } from "../typechain-types"
@@ -19,6 +21,23 @@ const main = async () => {
     const auctionHouse = await AuctionHouse.deploy(token.address, dao.address, distributor.address, weth.address, AUCTION_HOUSE_DURATION_SECONDS, AUCTION_HOUSE_MIN_BID_INCREMENT_PERCENT, AUCTION_HOUSE_DAO_CUT) as AuctionHouse
     const setAuctionHouseTx = await token.setAuctionHouse(auctionHouse.address)
     await setAuctionHouseTx.wait()
+    setEnvValue("AUCTION_HOUSE_ADDRESS", auctionHouse.address)
+}
+
+const setEnvValue = (key: string, value: string) => {
+    const ENV_VARS = fs.readFileSync(".env", "utf8").split(os.EOL)
+    const target = ENV_VARS.indexOf(ENV_VARS.find(line => {
+        const keyValRegex = new RegExp(`(?<!#\\s*)${key}(?==)`)
+        return line.match(keyValRegex)
+    }) || "")
+
+    if (target !== -1) {
+        ENV_VARS.splice(target, 1, `${key}=${value}`)
+    } else {
+        ENV_VARS.push(`${key}=${value}`)
+    }
+
+    fs.writeFileSync(".env", ENV_VARS.join(os.EOL))
 }
 
 main()

@@ -14,5 +14,5 @@ generate_go_bindings:
 build_server:
 
 dev:
-	yarn dev 
+	yarn dev:deploy 
 	go run main.go
