@@ -1,8 +1,10 @@
 package main
 
 import (
-	"log"
+	"fmt"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -14,29 +16,39 @@ import (
 func main() {
 	godotenv.Load(".env")
 
-	devChan := make(chan string)
-	quit := make(chan struct{})
-	twoWeekTicker := time.NewTicker(14 * 24 * time.Hour)
+	server.InitLogger()
 
-	dsn := os.Getenv("DB_DSN")
-	rpcUrl := os.Getenv("ETH_URL")
-	pk := os.Getenv("GAS_ACCOUNT_PK")
+	dsn := os.Getenv("DATABASE_DSN")
+	rpcUrl := os.Getenv("ETH_NODE_URL")
+	pk := os.Getenv("PROXY_PRIVATE_KEY")
 	auctionHouseAddress := os.Getenv("AUCTION_HOUSE_ADDRESS")
 
-	auctionHouse, err := server.NewAuctionHouse(rpcUrl, pk, auctionHouseAddress)
-	if err != nil {
-		log.Fatal(err)
-	}
+	devChan := make(chan string)
+	twoWeekTicker := time.NewTicker(14 * 24 * time.Hour)
+	quit := make(chan os.Signal, 1)
+
+	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
+	go func() {
+		<-quit
+		server.Logger.Info("\r- Ctrl+C pressed in Terminal, ending...")
+		os.Exit(0)
+	}()
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatal(err)
+		server.Logger.Fatal(fmt.Sprintf("Could not open database connection @ %s", dsn))
 	}
 
 	db.Table("pixels").AutoMigrate(&server.Pixel{})
 	db.Table("trixels").AutoMigrate(&server.Trixel{})
-	periodic := server.NewDaemon(db, auctionHouse, twoWeekTicker, devChan, quit)
-	go periodic.Start()
+
+	auctionHouse, err := server.NewAuctionHouse(rpcUrl, pk, auctionHouseAddress)
+	if err != nil {
+		server.Logger.Fatal(fmt.Sprintf("Could not open AuctionHouse connection with RPC URL @ %s and address @ %s", rpcUrl, auctionHouseAddress))
+	}
+
+	daemon := server.NewDaemon(db, auctionHouse, twoWeekTicker, devChan, quit)
+	go daemon.Start()
 
 	var app server.App
 	app.Initialize(db, devChan)

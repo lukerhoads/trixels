@@ -15,7 +15,7 @@ const main = async () => {
         value: ethers.utils.parseEther("500.0")
     })
     await tx.wait()
-    setEnvValue("GAS_ACCOUNT_PK", randomWallet.privateKey.slice(2))
+    setEnvValue("PROXY_PK", randomWallet.privateKey.slice(2))
 
     const WETH = await ethers.getContractFactory("WETH")
     const weth = await WETH.deploy()

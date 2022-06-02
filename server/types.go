@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// Pixel represents one pixel on the canvas.
 type Pixel struct {
 	ID          uint   `gorm:"primaryKey"`
 	UpdatedAt 	time.Time `json:"updated_at"`
@@ -55,6 +56,7 @@ func (p *Pixel) validPixel() bool {
 	return p.Color != ""
 }
 
+// Metadata represents a trixel's metadata
 type Metadata struct {
 	Name        string `json:"name"`
 	Image       string `json:"image"`
@@ -69,16 +71,13 @@ func NewMetadata(name string, image string, description string) *Metadata {
 	}
 }
 
+// Trixel represents a minted Trixel, which enables redirects, which can ultimately support on-chain mints.
 type Trixel struct {
 	TokenID     uint `json:"token_id" gorm:"primaryKey"`
 	MetadataUrl string `json:"metadata_url"`
 }
 
 type Trixels []Trixel
-
-func (t *Trixels) GetTrixels(db *gorm.DB) {
-	db.Find(&t)
-}
 
 func NewTrixel(tokenID uint, metadataUrl string) *Trixel {
 	return &Trixel{
@@ -98,4 +97,12 @@ func (t *Trixel) GetTrixel(db *gorm.DB) {
 
 func (t *Trixel) AddTrixel(db *gorm.DB) {
 	db.Create(t)
+}
+
+func (t *Trixels) GetTrixels(db *gorm.DB) {
+	db.Find(&t)
+}
+
+type ServerError struct {
+	Message string `json:"message"`
 }

@@ -14,6 +14,7 @@ import (
 	aux "github.com/lukerhoads/trixels/abigen/AuctionHouse"
 )
 
+// AuctionHouse wraps the AuctionHouse solidity bindings to provide easy access to the AuctionHouse contract.
 type AuctionHouse struct {
 	privateKey string
 	*ethclient.Client
@@ -39,11 +40,23 @@ func NewAuctionHouse(rpcUrl string, privateKey string, address string) (*Auction
 	}, nil
 }
 
+// Starts an auction on chain.
+// Returns the tokenID of the token minted during auction start.
 func (a *AuctionHouse) StartAuction() (uint64, error) {
 	_, err := a.AuctionHouse.StartAuction(genKeyedTransactor(a.Client, a.privateKey))
-	return 0, err
+	if err != nil {
+		return 0, err 
+	}
+
+	auction, err := a.AuctionHouse.Auction(nil)
+	if err != nil {
+		return 0, err 
+	}
+
+	return auction.TokenId.Uint64(), err
 }
 
+// Generates the necessary transactor for on-chain interaction
 func genKeyedTransactor(client *ethclient.Client, pKey string) *bind.TransactOpts {
 	privateKey, err := crypto.HexToECDSA(pKey)
 	if err != nil {

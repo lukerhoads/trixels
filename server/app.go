@@ -20,9 +20,9 @@ type App struct {
 }
 
 func (a *App) Initialize(db *gorm.DB, devChan chan string) {
-	a.devChan = devChan
-	a.DB = db
 	a.Router = mux.NewRouter()
+	a.DB = db
+	a.devChan = devChan
 	a.initializeRoutes()
 }
 
@@ -32,8 +32,8 @@ func (r *App) initializeRoutes() {
 	r.Router.HandleFunc("/pixel/{coord}", r.GetPixel).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.GetPixels).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.UpdatePixel).Methods("POST")
-	r.Router.HandleFunc("/trigger/mint", r.TriggerMint).Methods("GET")
-	r.Router.HandleFunc("/trigger/reset", r.ResetDB).Methods("GET")
+	// r.Router.HandleFunc("/trigger/mint", r.TriggerMint).Methods("GET")
+	// r.Router.HandleFunc("/trigger/reset", r.ResetDB).Methods("GET")
 }
 
 func (a *App) Run(addr string) {
@@ -42,6 +42,27 @@ func (a *App) Run(addr string) {
 	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	log.Fatal(http.ListenAndServe(addr, handlers.CORS(originsOk, headersOk, methodsOk)(a.Router)))
+}
+
+func (r *App) GetTrixels(res http.ResponseWriter, req *http.Request) {
+	var trixels Trixels
+	trixels.GetTrixels(r.DB)
+	json.NewEncoder(res).Encode(trixels)
+}
+
+func (r *App) RedirectTrixel(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	tokenID := vars["trixelID"]
+	toke, err := strconv.ParseUint(tokenID, 10, 64)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+	trixel := &Trixel{
+		TokenID: uint(toke),
+	}
+	trixel.GetTrixel(r.DB)
+	http.Redirect(res, req, trixel.MetadataUrl, http.StatusMovedPermanently)
 }
 
 func (r *App) GetPixel(res http.ResponseWriter, req *http.Request) {
@@ -60,10 +81,6 @@ func (r *App) GetPixels(res http.ResponseWriter, req *http.Request) {
 	var pixels Pixels
 	pixels.GetPixels(r.DB)
 	json.NewEncoder(res).Encode(pixels)
-}
-
-type ServerError struct {
-	Message string `json:"message"`
 }
 
 func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
@@ -104,27 +121,6 @@ func (r *App) TriggerMint(res http.ResponseWriter, req *http.Request) {
 func (r *App) ResetDB(res http.ResponseWriter, req *http.Request) {
 	ClearTable(r.DB)
 	fmt.Fprintf(res, "Success!")
-}
-
-func (r *App) GetTrixels(res http.ResponseWriter, req *http.Request) {
-	var trixels Trixels
-	trixels.GetTrixels(r.DB)
-	json.NewEncoder(res).Encode(trixels)
-}
-
-func (r *App) RedirectTrixel(res http.ResponseWriter, req *http.Request) {
-	vars := mux.Vars(req)
-	tokenID := vars["trixelID"]
-	toke, err := strconv.ParseUint(tokenID, 10, 64)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusBadRequest)
-		return
-	}
-	trixel := &Trixel{
-		TokenID: uint(toke),
-	}
-	trixel.GetTrixel(r.DB)
-	http.Redirect(res, req, trixel.MetadataUrl, http.StatusMovedPermanently)
 }
 
 const tableCreationQuery = `CREATE TABLE IF NOT EXISTS pixels (

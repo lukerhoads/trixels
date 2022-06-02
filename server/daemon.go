@@ -1,9 +1,8 @@
 package server
 
 import (
+	"fmt"
 	"encoding/json"
-	"image"
-	"image/color"
 	"image/png"
 	"io/ioutil"
 	"log"
@@ -12,19 +11,19 @@ import (
 	"strings"
 
 	"gorm.io/gorm"
-
 	"github.com/SkynetLabs/go-skynet/v2"
 )
 
+// Daemon is the process running in the background, waiting on dev/time channels.
 type Daemon struct {
 	*AuctionHouse
 	*gorm.DB
 	twoWeekTicker *time.Ticker
 	devChan       chan string
-	quit          chan struct{}
+	quit          chan os.Signal
 }
 
-func NewDaemon(db *gorm.DB, auctionHouse *AuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan struct{}) *Daemon {
+func NewDaemon(db *gorm.DB, auctionHouse *AuctionHouse, twoWeekTicker *time.Ticker, devChan chan string, quit chan os.Signal) *Daemon {
 	return &Daemon{
 		DB:            db,
 		AuctionHouse:  auctionHouse,
@@ -34,100 +33,75 @@ func NewDaemon(db *gorm.DB, auctionHouse *AuctionHouse, twoWeekTicker *time.Tick
 	}
 }
 
+// Start will start the daemon, listening on the channels it was given during initialization.
 func (p *Daemon) Start() {
 	for {
 		select {
 		case <-p.twoWeekTicker.C:
+			Logger.Info("🔨 Starting auction from twoWeekTicker...")
 			if err := p.MintAndStartAuction(); err != nil {
-				log.Panic(err)
+				Logger.Error(err.Error())
 			}
 		case v := <-p.devChan:
+			Logger.Info("🔨 Starting auction from devChan...")
 			if v == "mint" {
 				if err := p.MintAndStartAuction(); err != nil {
-					log.Panic(err)
+					log.Panic(err.Error())
 				}
 			}
 		case <-p.quit:
+			Logger.Info("Stopping daemon...")
 			p.twoWeekTicker.Stop()
+			return
 		}
 	}
-}
-
-// CreateImage takes pixel hex values and converts them to an image.
-// It returns the image.
-func CreateImage(pixels *Pixels) image.Image {
-	upLeft := image.Point{0, 0}
-	lowRight := image.Point{IMAGE_DIMENSIONS, IMAGE_DIMENSIONS}
-	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
-	for i := 0; i < IMAGE_DIMENSIONS; i++ {
-		for j := 0; j < IMAGE_DIMENSIONS; j++ {
-			img.Set(i, j, color.Black)
-		}
-	}
-
-	for i := 0; i < len(*pixels); i++ {
-		color, err := ParseHexColor((*pixels)[i].Color)
-		if err != nil {
-			continue
-		}
-		img.Set(int((*pixels)[i].X), int((*pixels)[i].Y), color)
-	}
-
-	return img
 }
 
 // MintAndStartAuction takes the pixel color values, constructs an image, and submits it on-chain.
-// It returns an error if something occurs.
+// It returns an error.
 func (p *Daemon) MintAndStartAuction() error {
-	log.Println("Starting auction...")
-
 	var pixels Pixels
 	pixels.GetPixels(p.DB)
 	img := CreateImage(&pixels)
 	f, err := os.Create(IMAGE_PATH)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error creating image file: %s", err)
 	}
 
 	png.Encode(f, img)
 	client := skynet.New()
 	url, err := client.UploadFile(IMAGE_PATH, skynet.DefaultUploadOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error uploading image file to Skynet: %s", err)
 	}
 
-	// Delete image
 	err = os.Remove(IMAGE_PATH)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error removing image file: %s", err)
 	}
 
 	lastPart := strings.Split(url, "//")[1]
 	newUrl := strings.Join([]string{"https://siasky.net/", lastPart}, "")
 	metadata := NewMetadata(time.Now().String(), newUrl, "Trixels NFT")
-	file, err := json.MarshalIndent(metadata, "", " ")
-	if err != nil {
-		return err
-	}
-
+	file, _ := json.MarshalIndent(metadata, "", " ")
 	err = ioutil.WriteFile(METADATA_PATH, file, 0644)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error writing to metadata file: %s", err)
 	}
 
 	metaUrl, err := client.UploadFile(METADATA_PATH, skynet.DefaultUploadOptions)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error uploading metadata url to Skynet: %s", err)
 	}
 
 	err = os.Remove(METADATA_PATH)
 	if err != nil {
-		return err
+		return fmt.Errorf("Error removing metadata file: %s", err)
 	}
 
 	tokenID, err := p.AuctionHouse.StartAuction()
 	if err != nil {
-		return err
+		return fmt.Errorf("Error starting auction: %s", err)
 	}
 
 	metaLastPart := strings.Split(metaUrl, "//")[1]
