@@ -34,6 +34,7 @@ func main() {
 	}
 
 	db.Table("pixels").AutoMigrate(&server.Pixel{})
+	db.Table("trixels").AutoMigrate(&server.Trixel{})
 	periodic := server.NewDaemon(db, auctionHouse, twoWeekTicker, devChan, quit)
 	go periodic.Start()
 

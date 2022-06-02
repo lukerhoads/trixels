@@ -27,7 +27,8 @@ func (a *App) Initialize(db *gorm.DB, devChan chan string) {
 }
 
 func (r *App) initializeRoutes() {
-	r.Router.HandleFunc("/trixel/{trixelId}", r.RedirectTrixel).Methods("GET")
+	r.Router.HandleFunc("/trixels", r.GetTrixels).Methods("GET")
+	r.Router.HandleFunc("/trixel/{trixelID}", r.RedirectTrixel).Methods("GET")
 	r.Router.HandleFunc("/pixel/{coord}", r.GetPixel).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.GetPixels).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.UpdatePixel).Methods("POST")
@@ -105,16 +106,22 @@ func (r *App) ResetDB(res http.ResponseWriter, req *http.Request) {
 	fmt.Fprintf(res, "Success!")
 }
 
+func (r *App) GetTrixels(res http.ResponseWriter, req *http.Request) {
+	var trixels Trixels
+	trixels.GetTrixels(r.DB)
+	json.NewEncoder(res).Encode(trixels)
+}
+
 func (r *App) RedirectTrixel(res http.ResponseWriter, req *http.Request) {
 	vars := mux.Vars(req)
-	tokenID := vars["tokenID"]
+	tokenID := vars["trixelID"]
 	toke, err := strconv.ParseUint(tokenID, 10, 64)
 	if err != nil {
 		http.Error(res, err.Error(), http.StatusBadRequest)
 		return
 	}
 	trixel := &Trixel{
-		TokenID: toke,
+		TokenID: uint(toke),
 	}
 	trixel.GetTrixel(r.DB)
 	http.Redirect(res, req, trixel.MetadataUrl, http.StatusMovedPermanently)

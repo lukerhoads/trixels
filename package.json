@@ -8,7 +8,7 @@
     "types": "yarn hardhat typechain",
     "compile": "yarn hardhat compile",
     "abigen": "yarn truffle compile && yarn truffle run abigen",
-    "dev": "npx hardhat node",
+    "dev:start": "npx hardhat node",
     "dev:deploy": "npx hardhat run --network localhost scripts/deploy.ts"
   },
   "keywords": [],

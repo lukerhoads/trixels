@@ -70,11 +70,17 @@ func NewMetadata(name string, image string, description string) *Metadata {
 }
 
 type Trixel struct {
-	TokenID     uint64 `json:"token_id"`
+	TokenID     uint `json:"token_id" gorm:"primaryKey"`
 	MetadataUrl string `json:"metadata_url"`
 }
 
-func NewTrixel(tokenID uint64, metadataUrl string) *Trixel {
+type Trixels []Trixel
+
+func (t *Trixels) GetTrixels(db *gorm.DB) {
+	db.Find(&t)
+}
+
+func NewTrixel(tokenID uint, metadataUrl string) *Trixel {
 	return &Trixel{
 		TokenID:     tokenID,
 		MetadataUrl: metadataUrl,
@@ -90,6 +96,6 @@ func (t *Trixel) GetTrixel(db *gorm.DB) {
 	db.First(&t, "token_id = ?", t.TokenID)
 }
 
-func (t *Trixel) AddTrixel(db *gorm.DB) error {
-	return db.Create(t).Error
+func (t *Trixel) AddTrixel(db *gorm.DB) {
+	db.Create(t)
 }

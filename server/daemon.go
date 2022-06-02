@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"strings"
 
 	"gorm.io/gorm"
 
@@ -56,7 +57,7 @@ func (p *Daemon) Start() {
 // It returns the image.
 func CreateImage(pixels *Pixels) image.Image {
 	upLeft := image.Point{0, 0}
-	lowRight := image.Point{500, 500}
+	lowRight := image.Point{IMAGE_DIMENSIONS, IMAGE_DIMENSIONS}
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
 	for i := 0; i < IMAGE_DIMENSIONS; i++ {
 		for j := 0; j < IMAGE_DIMENSIONS; j++ {
@@ -101,7 +102,9 @@ func (p *Daemon) MintAndStartAuction() error {
 		return err
 	}
 
-	metadata := NewMetadata(time.Now().String(), url, "Trixels NFT")
+	lastPart := strings.Split(url, "//")[1]
+	newUrl := strings.Join([]string{"https://siasky.net/", lastPart}, "")
+	metadata := NewMetadata(time.Now().String(), newUrl, "Trixels NFT")
 	file, err := json.MarshalIndent(metadata, "", " ")
 	if err != nil {
 		return err
@@ -127,9 +130,11 @@ func (p *Daemon) MintAndStartAuction() error {
 		return err
 	}
 
+	metaLastPart := strings.Split(metaUrl, "//")[1]
+	newMetaUrl := strings.Join([]string{"https://siasky.net/", metaLastPart}, "")
 	newTrixel := &Trixel{
-		TokenID:     tokenID,
-		MetadataUrl: metaUrl,
+		TokenID:     uint(tokenID),
+		MetadataUrl: newMetaUrl,
 	}
 
 	newTrixel.AddTrixel(p.DB)
