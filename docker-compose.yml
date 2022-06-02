@@ -10,3 +10,21 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATABASE=trixels
+    networks:
+      - backend
+    restart: unless-stopped
+  trixels-server:
+    build: .
+    depends_on:
+      - mysql
+    ports:
+      - 8080:8080
+    env_file:
+      - .env
+    networks:
+      - backend
+    restart: unless-stopped
+
+networks:
+  backend:
+    driver: bridge
