@@ -1,0 +1,9 @@
+.pixel {
+    width: 10px;
+    height: 10px;
+
+    &:hover {
+        cursor: pointer;
+        border: 1px solid white;
+    }
+}
