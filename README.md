@@ -12,10 +12,7 @@ Trixels is a semi-decentralized application that brings together the world throu
 - https://www.reddit.com/r/place/
 
 ## Todo
-- Figure out a way to store onchain
 - Make a good GUI
-- Write tests for server
-- Dockerize server
 - Edit makefile, add flags
 
 ## Design Notes
