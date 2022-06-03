@@ -6,6 +6,7 @@ import { Haptics } from './Haptics'
 
 // TODO:
 // - On load, need a gradient zoom into the canvas
+// - Listen to page resize, redraw
 
 let scale = 1
 let pixelLength = 10

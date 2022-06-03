@@ -6,7 +6,7 @@ export const Header = () => {
         <div className="header">
             <div className="header-content">
                 <div className="header-logo">
-                    Trixels
+                    <h2>Trixels</h2>
                 </div>
                 <div className="header-spacer" />
                 <div className="header-links">

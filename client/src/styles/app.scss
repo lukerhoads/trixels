@@ -1,0 +1,71 @@
+@import "variables.scss";
+
+@font-face {
+    font-family: PlusJakartaSans, sans-serif;
+    src: url(../../assets/fonts/PlusJakartaSans-Regular.ttf);
+    font-weight: 400;
+}
+
+@font-face {
+    font-family: PlusJakartaSans, sans-serif;
+    src: url(../../assets/fonts/PlusJakartaSans-SemiBold.ttf);
+    font-weight: 500;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    background-color: $background-color;
+    height: 100%;
+    overflow: hidden;
+}
+
+h1, h2, h3, h4, p {
+    font-family: PlusJakartaSans, sans-serif;
+    margin: 0;
+    color: $text-color;
+}
+
+h1, h2, h3, h4 {
+    font-weight: 400
+}
+
+p {
+    font-weight: 300;
+}
+
+a {
+    font-family: PlusJakartaSans, sans-serif;
+    color: $text-color;
+    text-decoration: none;
+}
+
+a:hover {
+    color: $link-hover-color;
+}
+
+input, button {
+    font-family: PlusJakartaSans, sans-serif;
+    border: none;
+    border-radius: 20px;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+    color: $text-color;
+}
+
+.grid-1 {
+    height: 100vh;
+    background-size: 10px 10px;
+    background-image: 
+        linear-gradient(to right, $grid-1-color 1px, transparent 1px),
+        linear-gradient(to bottom, $grid-1-color 1px, transparent 1px);
+}
+
+.grid-2 {
+    height: 100%;
+    background-size: 50px 50px;
+    background-image: 
+        linear-gradient(to right, $grid-2-color 1px, transparent 1px),
+        linear-gradient(to bottom, $grid-2-color 1px, transparent 1px);
+}
