@@ -3,5 +3,10 @@ export type Pixel = {
     y: number 
     color: string 
     editor: string
-    editedTime: string
+    updatedAt: string
+}
+
+export type SimplePixel = {
+    x: number 
+    y: number
 }

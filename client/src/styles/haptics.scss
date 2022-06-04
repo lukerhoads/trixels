@@ -1,3 +1,5 @@
+@import "variables.scss";
+
 .haptics {
     width: 100%;
     height: 100%;
@@ -6,6 +8,31 @@
     svg {
         width: 20px;
         color: #435F66;
+    }
+
+    .extra-info {
+        position: absolute;
+        left: 5%;
+        bottom: 0;
+        margin-bottom: 50px;
+
+        p {
+            opacity: 0.5;
+            font-size: 12px;
+        }
+
+        .coords {
+            margin-bottom: 5px;
+        }
+
+        .web3-status {
+            display: flex;
+            align-items: center;
+
+            p {
+                margin-left: 3px;
+            }
+        }
     }
 
     .zoom {
@@ -20,6 +47,7 @@
         border-radius: 25px;
         display: flex;
         flex-direction: column;
+        box-shadow: $shadow-color 0px 8px 24px;
     
         .plus {
             border-bottom: 0.1px solid #DCE4E6;
@@ -46,7 +74,8 @@
         height: 60px;
         width: 150px;
         border-radius: 30px;
-        transition: 300ms;
+        transition: opacity 300ms ease-in;
+        box-shadow: $shadow-color 0px 8px 24px;
 
         .information {
             padding: 10px;
@@ -61,12 +90,18 @@
 
             .editor {
                 input {
-                    border: 1px solid #DCE4E6;
+                    border: 1px solid $input-border-color;
                     margin-bottom: 5px;
                 }
 
                 button {
-                    background-color: #DCE4E6;
+                    background-color: $button-color;
+                    transition: 0.2s ease;
+                }
+
+                button:hover {
+                    background-color: $button-hover-color;
+                    cursor: pointer;
                 }
 
                 .metamask-button {
@@ -126,7 +161,7 @@
         }
     }
 
-    .context-active {
+    .context-expanded {
         width: 250px;
         height: 210px;
         display: flex;
@@ -145,5 +180,20 @@
             }
         }
     }
+
+    .context-inactive {
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: opacity 300ms ease-in;
+    }
 }
 
+.fadeOut {
+    opacity: 0;
+    transition: opacity 300ms ease-in;
+}
+
+.fadeIn {
+    opacity: 1;
+    transition: opacity 300ms ease-in;
+}

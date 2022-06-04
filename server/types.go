@@ -7,13 +7,13 @@ import (
 
 // Pixel represents one pixel on the canvas.
 type Pixel struct {
-	ID          uint   `gorm:"primaryKey"`
-	UpdatedAt 	time.Time `json:"updated_at"`
+	ID          uint   `gorm:"primaryKey" json:"id"`
+	UpdatedAt 	time.Time `json:"updatedAt"`
 	Hash        string `json:"hash" gorm:"type:varchar(64);"`
 	X           uint16 `json:"x"`
 	Y           uint16 `json:"y"`
 	Color       string `json:"color" gorm:"type:varchar(8);"`
-	LastAddress string `json:"last_address" gorm:"type:varchar(64);"`
+	Editor string `json:"editor" gorm:"type:varchar(64);"`
 }
 
 type Pixels []Pixel
@@ -24,7 +24,7 @@ func NewPixel(x, y uint16) *Pixel {
 		X:           x,
 		Y:           y,
 		Color:       "#000000",
-		LastAddress: "0x0000000000000000000000000000000000000000",
+		Editor: "0x0000000000000000000000000000000000000000",
 	}
 }
 

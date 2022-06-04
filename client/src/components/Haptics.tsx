@@ -2,6 +2,9 @@ import { useEthers } from '@usedapp/core'
 import React, { ReactChild, useEffect, useRef, useState } from 'react'
 import 'styles/haptics.scss'
 import { Spinner } from './Spinner'
+import { observer } from 'mobx-react'
+import store from '../store'
+import Status from './StatusIcon'
 
 export type HapticsProps = {
     children: ReactChild
@@ -12,20 +15,32 @@ export type HapticsProps = {
 // - Add metamask icon to button
 // - Add tooltips for addresses
 // - Add a direct color palette to edit
-// - Add loading to metamask sign in button
+// - Add countdown to editable
 
-export const Haptics = ({ children }: HapticsProps) => {
+const Haptics = ({ children }: HapticsProps) => {
     const { activateBrowserWallet, account } = useEthers()
     const [isAuthenticating, setIsAuthenticating] = useState(false)
     const [isChangingColor, setIsChangingColor] = useState(false)
     const [contextActive, setContextActive] = useState(false)
     const [canEditColor, setCanEditColor] = useState(false)
-    const [lastEditor, setLastEditor] = useState("")
-    const [lastEditedTime, setLastEditedTime] = useState("")
     const inputRef = useRef<HTMLInputElement>(null)
 
+    useEffect(() => {
+        // Set canEditColor based on store.activePixel.editedTime
+        if (!store.activePixel) {
+            return
+        }
+
+        const lastEdited = new Date(store.activePixel.updatedAt)
+        const today = new Date()
+        today.setTime(today.getTime() - (5 * 60))
+        if (today.getTime() > lastEdited.getTime()) {
+            setCanEditColor(true)
+        }
+    }, [])
+
     const changeZoom = (factor: number) => {
-        console.log("Changing zoom by ", factor)
+        store.setScale(store.scale + factor)
     }
 
     const web3SignIn = () => {
@@ -49,6 +64,29 @@ export const Haptics = ({ children }: HapticsProps) => {
 
     return (
         <div className="haptics">
+            <div className="extra-info">
+                <div className="coords">
+                    {store.activePixel ? (
+                        <p>Active X: {store.activePixel.x} - Active Y: {store.activePixel.y}</p>
+                    ) : null}
+                    {store.hoverPixel ? (
+                        <p>Hover X: {store.hoverPixel.x} - Hover Y: {store.hoverPixel.y}</p>
+                    ) : null}
+                </div>
+                <div className="web3-status">
+                    {account ? (
+                        <>
+                            <Status width={20} height={20} green={true} />
+                            <p>Web3 connected</p>
+                        </>
+                    ) : (
+                        <>
+                            <Status width={20} height={20} green={false} />
+                            <p>Web3 disconnected</p>
+                        </> 
+                    )}
+                </div>
+            </div>
             <div className="zoom">
                 <div className="plus" onClick={() => changeZoom(0.2)}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="ionicon" viewBox="0 0 512 512"><title>Add</title><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M256 112v288M400 256H112"/></svg>
@@ -57,32 +95,35 @@ export const Haptics = ({ children }: HapticsProps) => {
                     <svg xmlns="http://www.w3.org/2000/svg" className="ionicon" viewBox="0 0 512 512"><title>Remove</title><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M400 256H112"/></svg>
                 </div>
             </div>
-            <div className={"context" + (contextActive ? " context-active" : "")} onClick={() => setContextActive(true)}>
+            <div className={"context" + (contextActive ? " context-expanded" : "") + (store.activePixel ? "" : " context-inactive")} onClick={() => setContextActive(true)}>
                 <div className="mini-header">
                     <div className="color">
-                        <div className="color-circle"></div>
+                        <div className="color-circle" style={{
+                            backgroundColor: store.activePixel?.color
+                        }}></div>
                     </div>
                     <div className="color-description">
                         <div className="text">
-                            <p>#000000</p>
+                            <p>{store.activePixel ? store.activePixel.color : "No pixel selected"}</p>
                         </div>
                     </div>
-                    {contextActive ? (
-                        <div className="close" onClick={() => setContextActive(false)}>
-                            <svg xmlns="http://www.w3.org/2000/svg" className="ionicon" viewBox="0 0 512 512"><title>Close</title><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"/></svg>
-                        </div>
-                    ) : null}
+                    <div className={"close" + (contextActive ? " fadeIn" : " fadeOut")} onClick={() => setContextActive(false)}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="ionicon" viewBox="0 0 512 512"><title>Close</title><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 368L144 144M368 144L144 368"/></svg>
+                    </div>
+                    {/* {contextActive ? (
+                        
+                    ) : null} */}
                 </div>
-                {contextActive ? (
+                {(contextActive && store.activePixel) ? (
                     <div className="information">
                         <div className="more-info">
-                            <p>Last editor: {lastEditor}</p>
-                            <p>Last edited time: {lastEditedTime}</p>
+                            <p>Last editor: {store.activePixel.editor}</p>
+                            <p>Last edited time: {store.activePixel.updatedAt}</p>
                         </div>
                         <div className="editor">
-                            <input placeholder="New Color" disabled={canEditColor} ref={inputRef} />
+                            <input placeholder="New Color" ref={inputRef} />
                             {account ? (
-                                <button onClick={() => changeColor()}>
+                                <button onClick={() => changeColor()} disabled={canEditColor}>
                                     {isChangingColor ? (
                                         <Spinner width={20} height={20} />
                                     ) : null}
@@ -115,3 +156,5 @@ export const Haptics = ({ children }: HapticsProps) => {
         </div>
     )
 }
+
+export default observer(Haptics)
