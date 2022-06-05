@@ -1,14 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react'
-import "styles/home.scss"
+import React, { useEffect, useRef, useState } from 'react';
+import 'styles/home.scss';
 
-import { Header } from 'layout/header'
-import { Canvas } from 'components/Canvas'
+import Header from 'layout/header';
+import Canvas from 'components/Canvas';
+import { Link } from 'react-router-dom';
 
-export const Home = () => {
-    return (
-        <div className="home">
-            <Header />
-            <Canvas />
-        </div>
-    )
-}
+const Home = () => {
+  return (
+    <div className='home'>
+      <Canvas />
+      <Header>
+        <Link to='/auction'>Auction</Link>
+      </Header>
+    </div>
+  );
+};
+
+export default Home;

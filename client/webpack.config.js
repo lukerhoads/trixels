@@ -7,6 +7,7 @@ const mode = process.env.NODE_ENV || 'development';
 module.exports = {
   devServer: {
     port: 3010,
+    historyApiFallback: true,
   },
   mode,
   entry: {
@@ -15,6 +16,7 @@ module.exports = {
   output: {
     filename: '[name].js',
     path: path.join(__dirname, 'dist'),
+    publicPath: '/',
   },
   devtool: 'eval-source-map',
   resolve: {
@@ -36,7 +38,7 @@ module.exports = {
         test: /\.(png|jp(e*)g|svg|gif)$/,
         use: [
           {
-            loader: 'file-loader'
+            loader: 'file-loader',
           },
         ],
       },

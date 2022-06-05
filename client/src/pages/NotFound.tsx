@@ -1,16 +1,19 @@
 import React from 'react';
 import Header from 'layout/header';
-import '../styles/auction.scss';
+import '../styles/notfound.scss';
 import { Link } from 'react-router-dom';
 
-const Auction = () => {
+const NotFound = () => {
   return (
-    <div className='auction'>
+    <div className='not-found'>
       <Header>
         <Link to='/'>Home</Link>
       </Header>
+      <h1>
+        Page not found! Return <Link to='/'>home</Link>.
+      </h1>
     </div>
   );
 };
 
-export default Auction;
+export default NotFound;
