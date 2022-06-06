@@ -84,7 +84,17 @@ func (r *App) GetPixels(res http.ResponseWriter, req *http.Request) {
 }
 
 func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
-	var getPixel Pixel
+	var pixel Pixel
+	err := json.NewDecoder(req.Body).Decode(&pixel)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	getPixel := Pixel{
+		X: pixel.X,
+		Y: pixel.Y,
+	}
 	getPixel.GetPixel(r.DB)
 	validUpdate := getPixel.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
 	if !validUpdate {
@@ -93,14 +103,7 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 		})
 		return
 	}
-
-	var pixel Pixel
-	err := json.NewDecoder(req.Body).Decode(&pixel)
-	if err != nil {
-		http.Error(res, err.Error(), http.StatusBadRequest)
-		return
-	}
-
+	
 	matched := HexVerificationRegexp.MatchString(pixel.Color)
 	if !matched {
 		json.NewEncoder(res).Encode(ServerError{

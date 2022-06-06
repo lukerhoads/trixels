@@ -4,18 +4,20 @@ import 'styles/haptics.scss';
 import { Spinner } from './Spinner';
 import { observer } from 'mobx-react';
 import store from '../store';
-import Status from './StatusIcon';
+import Status from './Status';
+import config from 'config'
 
 export type HapticsProps = {
   children: React.ReactNode;
 };
 
 // TODO:
-// - Have close button actually work
+// - Get metamask working
 // - Have inputs and text fade in
 // - Add tooltips for addresses
 // - Add a direct color palette to edit
 // - Add countdown to editable
+// - Make logs fade in/out
 
 const Haptics = ({ children }: HapticsProps) => {
   const { activateBrowserWallet, account } = useEthers();
@@ -23,46 +25,103 @@ const Haptics = ({ children }: HapticsProps) => {
   const [isChangingColor, setIsChangingColor] = useState(false);
   const [contextActive, setContextActive] = useState(false);
   const [canEditColor, setCanEditColor] = useState(false);
+  const [isPreview, setIsPreview] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    // Set canEditColor based on store.activePixel.editedTime
-    if (!store.activePixel) {
-      return;
-    }
-
-    const lastEdited = new Date(store.activePixel.updatedAt);
-    const today = new Date();
-    today.setTime(today.getTime() - 5 * 60);
-    if (today.getTime() > lastEdited.getTime()) {
-      setCanEditColor(true);
+    if (!store.activePixel) return;
+    let diff = computeDifference()
+    if (!diff) return 
+    if (diff[0] > 0 || diff[1] > 0) {
+      setCanEditColor(false)
+    } else {
+      setCanEditColor(true)
     }
   }, []);
+
+  const computeDifference = (): number[] | undefined => {
+    if (!store.activePixel || store.activePixel.updatedAt == 'Never') return undefined;
+    let nextEditableTime = new Date(store.activePixel.updatedAt)
+    nextEditableTime.setSeconds(nextEditableTime.getSeconds() + config.editTimeoutSeconds)
+    let now = new Date()
+    let numMins = nextEditableTime.getMinutes() - now.getMinutes()
+    let numSecs = nextEditableTime.getSeconds() - now.getSeconds()
+    return [numMins, numSecs]
+  }
+
+  useEffect(() => {
+    let diff = computeDifference()
+    if (!diff) return
+    setTimeLeft(`${diff[0]}m${diff[1]}s`)
+    if (diff[0] > 0 || diff[1] > 0) {
+      setCanEditColor(false)
+    } else {
+      setCanEditColor(true)
+    }
+  }, [store.activePixel])
+
+  useEffect(() => {
+    const timer = setTimeout(() => store.popFromLogs(), 10000)
+    return () => clearTimeout(timer)
+  }, [store.logs])
 
   const changeZoom = (factor: number) => {
     store.setScale(store.scale + factor);
   };
 
   const web3SignIn = () => {
-    if (isAuthenticating || account) {
-      return;
-    }
-
+    if (isAuthenticating || account) return;
     setIsAuthenticating(true);
     activateBrowserWallet();
   };
 
-  const changeColor = () => {
-    if (!canEditColor) {
-      return;
+  const resetPreviewColor = () => {
+    store.pushToLogs({
+      mood: 'success',
+      message: 'Reset preview.',
+    });
+    store.setActiveColor(store.activePixelOriginalColor);
+  };
+
+  const changePreviewColor = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let newColor = e.target.value;
+    if (!newColor) return;
+    if (!newColor.match('^#')) {
+      store.pushToLogs({
+        mood: 'warning',
+        message: 'Pixel color does not start with a pound sign.',
+      });
     }
 
+    setIsPreview(true);
+    if (newColor == store.activePixelOriginalColor) {
+      setIsPreview(false);
+    }
+
+    store.setActiveColor(newColor);
+  };
+
+  const changeColor = async () => {
+    if (!canEditColor) return;
     setIsChangingColor(true);
-    let newColor = inputRef.current?.value;
+    store.setActivePixelColor().then(() => {
+      setIsChangingColor(false);
+    });
   };
 
   return (
     <div className='haptics'>
+      { store.logs.length ? (
+        <div className='logs'>
+          {store.logs.slice(0, 2).map((log, idx) => (
+            <div className={"log" + (idx == 0 ? ' top' : '')} key={idx}>
+              <Status mood={log.mood} height={20} width={20} />
+              <p>{log.message}</p>
+            </div>
+          ))}
+        </div>
+      ) : null}
       <div className='extra-info'>
         <div className='coords'>
           {store.activePixel ? (
@@ -79,12 +138,12 @@ const Haptics = ({ children }: HapticsProps) => {
         <div className='web3-status'>
           {account ? (
             <>
-              <Status width={20} height={20} green={true} />
+              <Status width={20} height={20} mood='success' />
               <p>Web3 connected</p>
             </>
           ) : (
             <>
-              <Status width={20} height={20} green={false} />
+              <Status width={20} height={20} mood='error' />
               <p>Web3 disconnected</p>
             </>
           )}
@@ -106,7 +165,7 @@ const Haptics = ({ children }: HapticsProps) => {
       </div>
       <div
         className={'context' + (contextActive ? ' context-expanded' : '') + (store.activePixel ? '' : ' context-inactive')}
-        onClick={() => setContextActive(true)}
+        onClick={!contextActive ? () => setContextActive(true) : () => null}
       >
         <div className='mini-header'>
           <div className='color'>
@@ -114,7 +173,7 @@ const Haptics = ({ children }: HapticsProps) => {
               <div
                 className='color-circle'
                 style={{
-                  backgroundColor: store.activePixel?.color,
+                  backgroundColor: store.activePixel?.color ? store.activePixel.color : '#FFFFFF',
                 }}
               />
             </div>
@@ -124,7 +183,7 @@ const Haptics = ({ children }: HapticsProps) => {
               <p>{store.activePixel ? store.activePixel.color : 'No pixel selected'}</p>
             </div>
           </div>
-          <div className={'close' + (contextActive ? ' fadeIn' : ' fadeOut')}>
+          <div onClick={() => setContextActive(false)} className={'close' + (contextActive ? ' fadeIn' : ' fadeOut')}>
             <svg xmlns='http://www.w3.org/2000/svg' className='ionicon' viewBox='0 0 512 512'>
               <title>Close</title>
               <path fill='none' stroke='currentColor' stroke-linecap='round' stroke-linejoin='round' stroke-width='32' d='M368 368L144 144M368 144L144 368' />
@@ -138,9 +197,14 @@ const Haptics = ({ children }: HapticsProps) => {
               <p className='value'>{store.activePixel.editor}</p>
               <p className='caption'>Last edited time: </p>
               <p className='value'>{store.activePixel.updatedAt}</p>
+              <p className='caption'>Countdown: </p>
+              <p className='value'>{timeLeft ? timeLeft : 'None'}</p>
             </div>
             <div className='editor'>
-              <input placeholder='New Color' ref={inputRef} />
+              <div className='input-container'>
+                <input placeholder='New Color' ref={inputRef} onChange={changePreviewColor} value={store.activePixel.color} />
+                {isPreview ? <button onClick={() => resetPreviewColor()}>Reset</button> : null}
+              </div>
               {account ? (
                 <button onClick={() => changeColor()} disabled={canEditColor}>
                   {isChangingColor ? <Spinner width={20} height={20} /> : null}

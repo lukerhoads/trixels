@@ -11,6 +11,7 @@
     }
 
     .extra-info {
+        z-index: 1;
         position: absolute;
         left: 5%;
         bottom: 0;
@@ -48,6 +49,7 @@
         display: flex;
         flex-direction: column;
         box-shadow: $shadow-color 0px 8px 24px;
+        z-index: 4;
     
         .plus {
             border-bottom: 0.1px solid #DCE4E6;
@@ -66,6 +68,7 @@
     }
 
     .context {
+        z-index: 5;
         background-color: white;
         position: absolute;
         right: 5%;
@@ -84,8 +87,10 @@
             flex-direction: column;
 
             .more-info {
-
+                white-space: nowrap;
                 text-overflow: ellipsis;
+                overflow: hidden;
+                width: 100%;
 
                 .caption {
                     font-size: 11px;
@@ -93,8 +98,6 @@
                 }
 
                 .value {
-                    // overflow: hidden;
-                    white-space: nowrap;
                     margin-bottom: 5px;
                 }
             }
@@ -102,25 +105,35 @@
             .editor {
                 margin-top: auto;
 
-                input {
-                    border: 1px solid $input-border-color;
+
+                .input-container {
                     margin-bottom: 5px;
+
+
+                    position: relative;
+
+                    button {
+                        position: absolute;
+                        max-height: 80%;
+                        top: 0;
+                        bottom: 0;
+                        margin: auto;
+                        right: 5px;
+                        width: 30%;
+                        padding: 2px;
+                        background-color: transparent;
+                    }
                 }
 
                 button {
-                    background-color: $button-color;
                     transition: 0.2s ease;
-                }
-
-                button:hover {
-                    background-color: $button-hover-color;
-                    cursor: pointer;
                 }
 
                 .metamask-button {
                     display: flex;
                     align-items: center;
                     justify-content: center;
+
                     svg {
                         height: 20px;
                         margin-right: 10px;
@@ -182,7 +195,7 @@
 
     .context-expanded {
         width: 250px;
-        height: 250px;
+        height: 270px;
         display: flex;
         flex-direction: column;
 
@@ -204,6 +217,35 @@
         opacity: 0;
         transform: translateY(-10px);
         transition: opacity 300ms ease-in;
+    }
+
+    .logs {
+        z-index: 3;
+        position: absolute;
+        right: 5%;
+        top: 0;
+        margin-top: 100px;
+        width: 250px;
+
+        .top {
+            opacity: 1 !important;
+        }
+
+        .log {
+            text-overflow: ellipsis;
+            overflow: hidden;
+            opacity: 0.5;
+            display: flex;
+            flex-direction: row;
+            padding: 5px;
+            border-radius: 25px;
+            background-color: white;
+            box-shadow: $shadow-color 0px 8px 24px;
+
+            p {
+                margin-left: 5px;
+            }
+        }
     }
 }
 

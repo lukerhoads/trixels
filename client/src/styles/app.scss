@@ -54,6 +54,23 @@ input, button {
     color: $text-color;
 }
 
+input {
+    border: 1px solid $input-border-color;
+}
+
+button {
+    background-color: $button-color;
+}
+
+input:focus, button:focus {
+    border: none;
+}
+
+button:hover {
+    background-color: $button-hover-color;
+    cursor: pointer;
+}
+
 .grid-1 {
     height: 100vh;
     background-size: 10px 10px;

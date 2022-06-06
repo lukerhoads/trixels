@@ -97,7 +97,7 @@ const Canvas = () => {
       y: store.yOffset,
     };
 
-    let scaledCanvasLength = CANVAS_LENGTH * store.scale
+    let scaledCanvasLength = CANVAS_LENGTH * store.scale;
     let topLeft: SimplePixel = {
       x: middle.x - scaledCanvasLength / 2,
       y: middle.y - scaledCanvasLength / 2,
@@ -112,7 +112,7 @@ const Canvas = () => {
       return undefined;
     }
 
-    let scaledPixelLength = PIXEL_LENGTH * store.scale
+    let scaledPixelLength = PIXEL_LENGTH * store.scale;
     return {
       x: Math.floor((coord.x - topLeft.x) / scaledPixelLength),
       y: Math.floor((coord.y - topLeft.y) / scaledPixelLength),
@@ -125,7 +125,6 @@ const Canvas = () => {
       if (!eventLocation) return;
       let pixel = getPixelFromCoordinate(eventLocation);
       if (!pixel) return;
-      console.log("pixel: ", pixel)
       let fullPixel = await store.fetchPixel(pixel.x, pixel.y);
       if (fullPixel.color != '') {
         store.setActivePixel(fullPixel);

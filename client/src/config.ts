@@ -5,6 +5,7 @@ const config = {
   rpcUrl: 'http://127.0.0.1:8545',
   imageDimensions: 30,
   apiUrl: 'http://localhost:8080',
+  editTimeoutSeconds: 300
 };
 
 export default config;

@@ -1,17 +1,29 @@
 import React, { CSSProperties } from 'react';
 import GreenStatus from '../../assets/icons/GreenStatus.svg';
 import RedStatus from '../../assets/icons/RedStatus.svg';
+import OrangeStatus from '../../assets/icons/OrangeStatus.svg';
 import 'styles/status-icon.scss';
+import { Mood } from 'types/log';
 
 export type StatusProps = {
   width: number;
   height: number;
-  green: boolean;
+  mood: Mood;
 };
 
-const Status = ({ width, height, green }: StatusProps) => {
-  const alt = green ? 'Green Status' : 'Red Status';
-  const src = green ? GreenStatus : RedStatus;
+const Status = ({ width, height, mood }: StatusProps) => {
+  let alt;
+  let src;
+  if (mood == 'error') {
+    alt = 'Red Status'
+    src = RedStatus
+  } else if (mood == 'success') {
+    alt = 'Green Status'
+    src = GreenStatus
+  } else {
+    alt = 'Orange Status'
+    src = OrangeStatus
+  }
 
   return (
     <img
