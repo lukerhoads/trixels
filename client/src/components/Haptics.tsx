@@ -6,6 +6,7 @@ import { observer } from 'mobx-react';
 import store from '../store';
 import Status from './Status';
 import config from 'config'
+import { validateHexCode } from '../util'
 
 export type HapticsProps = {
   children: React.ReactNode;
@@ -17,6 +18,9 @@ export type HapticsProps = {
 // - Add tooltips for addresses
 // - Add a direct color palette to edit
 // - Make logs fade in/out
+// - Fix why logs aren't autoremoving
+// - Find out why we are fetching data twice
+// - convert times to local zone
 
 const Haptics = ({ children }: HapticsProps) => {
   const { activateBrowserWallet, account } = useEthers();
@@ -29,36 +33,33 @@ const Haptics = ({ children }: HapticsProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!store.activePixel) return;
-    let diff = computeDifference()
-    if (!diff) return 
-    if (diff[0] > 0 || diff[1] > 0) {
-      setCanEditColor(false)
-    } else {
-      setCanEditColor(true)
-    }
+    applyTimer()
   }, []);
 
-  const computeDifference = (): number[] | undefined => {
-    if (!store.activePixel || store.activePixel.updatedAt == 'Never') return undefined;
+  useEffect(() => {
+    applyTimer()
+  }, [store.activePixel])
+
+  const applyTimer = () => {
+    if (!store.activePixel) return;
+    if (!store.activePixel.updatedAt) {
+      setCanEditColor(true)
+      return
+    }
+
     let nextEditableTime = new Date(store.activePixel.updatedAt)
     nextEditableTime.setSeconds(nextEditableTime.getSeconds() + config.editTimeoutSeconds)
     let now = new Date()
     let numMins = nextEditableTime.getMinutes() - now.getMinutes()
     let numSecs = nextEditableTime.getSeconds() - now.getSeconds()
-    return [numMins, numSecs]
-  }
-
-  useEffect(() => {
-    let diff = computeDifference()
-    if (!diff) return
-    setTimeLeft(`${diff[0]}m${diff[1]}s`)
-    if (diff[0] > 0 || diff[1] > 0) {
+    if (numMins >= 0 && numSecs >= 0) {
+      setTimeLeft(`${numMins}m${numSecs}s`)
       setCanEditColor(false)
     } else {
+      setTimeLeft(`0m0s, can edit`)
       setCanEditColor(true)
     }
-  }, [store.activePixel])
+  }
 
   useEffect(() => {
     const timer = setTimeout(() => store.popFromLogs(), 10000)
@@ -91,6 +92,7 @@ const Haptics = ({ children }: HapticsProps) => {
         mood: 'warning',
         message: 'Pixel color does not start with a pound sign.',
       });
+      return
     }
 
     setIsPreview(true);
@@ -102,12 +104,18 @@ const Haptics = ({ children }: HapticsProps) => {
   };
 
   const changeColor = async () => {
-    if (!canEditColor) return;
+    if (!canEditColor || !account) return;
     setIsChangingColor(true);
-    store.setActivePixelColor().then(() => {
+    store.setActivePixelColor(account).then(() => {
       setIsChangingColor(false);
+      store.fetchPixels()
     });
   };
+
+  const parseDate = (dateStr: string) => {
+    let date = new Date(dateStr)
+    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+  }
 
   return (
     <div className='haptics'>
@@ -191,7 +199,7 @@ const Haptics = ({ children }: HapticsProps) => {
           </div>
           <div className='color-description'>
             <div className='text'>
-              <p>{store.activePixel ? store.activePixel.color : 'No pixel selected'}</p>
+              <p>{store.activePixel ? validateHexCode(store.activePixel.color) ? store.activePixel.color : 'Invalid hex' : 'No pixel selected'}</p>
             </div>
           </div>
           <div onClick={() => setContextActive(false)} className={'close' + (contextActive ? ' fadeIn' : ' fadeOut')}>
@@ -205,9 +213,9 @@ const Haptics = ({ children }: HapticsProps) => {
           <div className='information'>
             <div className='more-info'>
               <p className='caption'>Last editor: </p>
-              <p className='value'>{store.activePixel.editor}</p>
+              <p className='value'>{store.activePixel.editor ? store.activePixel.editor : 'None'}</p>
               <p className='caption'>Last edited time: </p>
-              <p className='value'>{store.activePixel.updatedAt}</p>
+              <p className='value'>{store.activePixel.updatedAt ? parseDate(store.activePixel.updatedAt) : 'None'}</p>
               <p className='caption'>Countdown: </p>
               <p className='value'>{timeLeft ? timeLeft : 'None'}</p>
             </div>
@@ -217,7 +225,7 @@ const Haptics = ({ children }: HapticsProps) => {
                 {isPreview ? <button onClick={() => resetPreviewColor()}>Reset</button> : null}
               </div>
               {account ? (
-                <button onClick={() => changeColor()} disabled={canEditColor}>
+                <button onClick={() => changeColor()} disabled={!canEditColor}>
                   {isChangingColor ? <Spinner width={20} height={20} /> : null}
                   Change Color
                 </button>

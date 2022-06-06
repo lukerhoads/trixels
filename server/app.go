@@ -73,8 +73,19 @@ func (r *App) GetPixel(res http.ResponseWriter, req *http.Request) {
 		X: xCoord,
 		Y: yCoord,
 	}
-	pixel.GetPixel(r.DB)
-	json.NewEncoder(res).Encode(pixel)
+	found := pixel.GetPixel(r.DB)
+	if found {
+		log.Println("found, returning")
+		json.NewEncoder(res).Encode(pixel)
+	} else {
+		json.NewEncoder(res).Encode(Pixel{
+			X: xCoord,
+			Y: yCoord,
+			Color: "#FFFFFF",
+			Editor: "",
+			UpdatedAt: nil,
+		})
+	}
 }
 
 func (r *App) GetPixels(res http.ResponseWriter, req *http.Request) {
@@ -91,19 +102,12 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	getPixel := Pixel{
-		X: pixel.X,
-		Y: pixel.Y,
-	}
-	getPixel.GetPixel(r.DB)
-	validUpdate := getPixel.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
-	if !validUpdate {
+	if pixel.X > IMAGE_DIMENSIONS || pixel.Y > IMAGE_DIMENSIONS {
 		json.NewEncoder(res).Encode(ServerError{
-			Message: "Cannot update, pixel has been updated in the last 5 minutes",
+			Message: "Invalid coordinates",
 		})
-		return
 	}
-	
+
 	matched := HexVerificationRegexp.MatchString(pixel.Color)
 	if !matched {
 		json.NewEncoder(res).Encode(ServerError{
@@ -112,7 +116,25 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	pixel.UpdatePixel(r.DB)
+	getPixel := Pixel{
+		X: pixel.X,
+		Y: pixel.Y,
+	}
+	found := getPixel.GetPixel(r.DB)
+	if !found {
+		pixel.CreatePixel(r.DB)
+	} else {
+		validUpdate := getPixel.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
+		if !validUpdate {
+			json.NewEncoder(res).Encode(ServerError{
+				Message: "Cannot update, pixel has been updated in the last 5 minutes",
+			})
+			return
+		}
+	
+		pixel.UpdateExistingPixel(r.DB, getPixel.validPixel())
+	}
+
 	fmt.Fprintf(res, "Success!")
 }
 

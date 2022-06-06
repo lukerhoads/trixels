@@ -6,3 +6,4 @@
 - Have grid move with scroll
 - Add mobile support
 - Add spot for social media
+- Setup import aliasing

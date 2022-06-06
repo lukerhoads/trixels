@@ -7,12 +7,12 @@ import config from './config';
 const container = document.getElementById('root')!;
 const root = createRoot(container);
 root.render(
-  // <DAppProvider config={{
-  //     readOnlyChainId: config.chainId,
-  //     readOnlyUrls: {
-  //         [config.chainId]: config.rpcUrl,
-  //     },
-  // }}>
-  <App />
-  // </DAppProvider>,
+  <DAppProvider config={{
+      readOnlyChainId: config.chainId,
+      readOnlyUrls: {
+          [config.chainId]: config.rpcUrl,
+      },
+  }}>
+    <App />
+  </DAppProvider>,
 );

@@ -124,7 +124,10 @@ const Canvas = () => {
       let eventLocation = getEventLocation(e);
       if (!eventLocation) return;
       let pixel = getPixelFromCoordinate(eventLocation);
-      if (!pixel) return;
+      if (!pixel) {
+        store.setActivePixel(undefined)
+        return
+      }
       let fullPixel = await store.fetchPixel(pixel.x, pixel.y);
       if (fullPixel.color != '') {
         store.setActivePixel(fullPixel);
@@ -132,9 +135,7 @@ const Canvas = () => {
         store.setActivePixel({
           x: pixel.x,
           y: pixel.y,
-          color: '#FFFFFF',
-          editor: ethers.constants.AddressZero.toString(),
-          updatedAt: 'Never',
+          color: '#FFFFFF'
         });
       }
     }

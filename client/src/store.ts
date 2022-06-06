@@ -29,12 +29,15 @@ class Store {
   async fetchPixels() {
     fetch(config.apiUrl + '/pixels')
       .then((resp) => resp.json())
-      .then((data) => (this.pixels = data.data))
+      .then((data) => {
+        this.pixels = data
+      })
       .catch((err) => console.error(err));
   }
 
   async fetchPixel(x: number, y: number): Promise<Pixel> {
-    return fetch(config.apiUrl + `/pixel/${x}-${y}`)
+    const apiUrl = config.apiUrl + `/pixel/${x}-${y}`
+    return fetch(apiUrl)
       .then((resp) => resp.json())
       .then((data) => data)
       .catch((err) => console.error(err));
@@ -63,7 +66,6 @@ class Store {
   }
 
   popFromLogs() {
-    console.log("Popping")
     this.logs.shift()
   }
 
@@ -76,8 +78,10 @@ class Store {
     this.activePixel.color = newColor;
   }
 
-  setActivePixel(pixel: Pixel) {
-    this.activePixelOriginalColor = pixel.color;
+  setActivePixel(pixel: Pixel | undefined) {
+    if (pixel) {
+      this.activePixelOriginalColor = pixel.color;
+    }
     this.activePixel = pixel;
   }
 
@@ -89,20 +93,25 @@ class Store {
     this.scale = newScale;
   }
 
-  async setActivePixelColor() {
+  async setActivePixelColor(editor: string) {
     if (!this.activePixel) return;
-
     if (!this.activePixel.color.match('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$')) {
-      // Push to errors
       this.pushToLogs({
         mood: 'error',
         message: 'New pixel color is not a valid hex code.',
       });
     }
 
-    return fetch(config.apiUrl + `/pixel`, {
+    const newActivePixel: Pixel = {
+      x: this.activePixel.x,
+      y: this.activePixel.y,
+      color: this.activePixel.color,
+      editor: editor,
+    }
+
+    return fetch(config.apiUrl + `/pixels`, {
       method: 'POST',
-      body: JSON.stringify(this.activePixel),
+      body: JSON.stringify(newActivePixel),
     })
       .then((resp) => resp.json())
       .then((data) => data)

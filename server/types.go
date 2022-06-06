@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"time"
 	"gorm.io/gorm"
 )
@@ -8,7 +9,7 @@ import (
 // Pixel represents one pixel on the canvas.
 type Pixel struct {
 	ID          uint   `gorm:"primaryKey" json:"id"`
-	UpdatedAt 	time.Time `json:"updatedAt"`
+	UpdatedAt 	*time.Time `json:"updatedAt"`
 	Hash        string `json:"hash" gorm:"type:varchar(64);"`
 	X           uint16 `json:"x"`
 	Y           uint16 `json:"y"`
@@ -24,27 +25,48 @@ func NewPixel(x, y uint16) *Pixel {
 		X:           x,
 		Y:           y,
 		Color:       "#000000",
-		Editor: "0x0000000000000000000000000000000000000000",
+		Editor: "",
 	}
 }
 
-func (p *Pixel) GetPixel(db *gorm.DB) {
+func (p *Pixel) GetPixel(db *gorm.DB) bool {
 	if p.Hash == "" {
 		p.Hash = ComputePixelHash(p.X, p.Y)
+		log.Println("Computed hash: ", p.Hash)
 	}
 
-	db.First(&p, "hash = ?", p.Hash)
+	return db.First(&p, "hash = ?", p.Hash).Error != gorm.ErrRecordNotFound
 }
 
 func (p *Pixels) GetPixels(db *gorm.DB) {
 	db.Find(&p)
 }
 
-func (p *Pixel) UpdatePixel(db *gorm.DB) {
+func (p *Pixel) CreateDefaultPixel(db *gorm.DB) error {
+	return db.Create(NewPixel(p.X, p.Y)).Error
+}
+
+func (p *Pixel) CreatePixel(db *gorm.DB) error {
+	p.Hash = ComputePixelHash(p.X, p.Y)
+	return db.Create(p).Error
+}
+
+// func (p *Pixel) UpdatePixel(db *gorm.DB) {
+// 	pixelHash := ComputePixelHash(p.X, p.Y)
+// 	destPixel := Pixel{}
+// 	db.First(&destPixel, "hash = ?", pixelHash)
+// 	if destPixel.validPixel() {
+// 		db.Model(Pixel{}).Where("hash = ?", pixelHash).Updates(p)
+// 	} else {
+// 		log.Println("creating")
+// 		newPixel := NewPixel(p.X, p.Y)
+// 		db.Create(newPixel)
+// 	}
+// }
+
+func (p *Pixel) UpdateExistingPixel(db *gorm.DB, valid bool) {
 	pixelHash := ComputePixelHash(p.X, p.Y)
-	destPixel := Pixel{}
-	db.First(&destPixel, "hash = ?", pixelHash)
-	if destPixel.validPixel() {
+	if valid {
 		db.Model(Pixel{}).Where("hash = ?", pixelHash).Updates(p)
 	} else {
 		newPixel := NewPixel(p.X, p.Y)
