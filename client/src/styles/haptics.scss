@@ -247,6 +247,25 @@
             }
         }
     }
+
+    .socials {
+        position: absolute;
+        left: 5%;
+        top: 50%;
+        transform: translateY(-50%);
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+
+        .social {
+            color: $text-color;
+            opacity: 0.1;
+        }
+
+        .social:hover {
+            opacity: 0.2;
+        }
+    }
 }
 
 .fadeOut {
