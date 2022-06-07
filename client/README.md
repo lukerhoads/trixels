@@ -5,5 +5,7 @@
 - Add gradient zooming to the zoom switch
 - Have grid move with scroll
 - Add mobile support
-- Add spot for social media
 - Setup import aliasing
+- Add outline to active pixel
+- Fix pixel color preview
+- Setup auction ID routing

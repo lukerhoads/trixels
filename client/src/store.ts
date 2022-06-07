@@ -2,6 +2,7 @@ import { makeAutoObservable } from 'mobx';
 import { SimplePixel, Pixel } from 'types/pixel';
 import { Log } from 'types/log';
 import config from './config';
+import { Auction } from 'types/auction';
 
 class Store {
   // Haptics state
@@ -19,11 +20,34 @@ class Store {
   dragStartX: number = 0;
   dragStartY: number = 0;
 
+  // Account state
+  activeAccount: string | undefined = undefined 
+
+  // Auction state
+  activeAuction: Auction | undefined = {
+    tokenID: 1,
+    metadataUrl: 'https://penis.com',
+    imageUrl: 'https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60',
+    createdAt: '',
+    saleValue: 10
+  }
+  pastAuctions: Auction[] = [{
+    tokenID: 1,
+    metadataUrl: 'https://penis.com',
+    imageUrl: 'https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60',
+    createdAt: '',
+    saleValue: 10
+  }]
+
   // Other state
   logs: Log[] = [];
 
   constructor() {
     makeAutoObservable(this);
+  }
+
+  setActiveAccount(newActiveAccount: string) {
+    this.activeAccount = newActiveAccount
   }
 
   async fetchPixels() {
@@ -40,6 +64,17 @@ class Store {
     return fetch(apiUrl)
       .then((resp) => resp.json())
       .then((data) => data)
+      .catch((err) => console.error(err));
+  }
+
+  async fetchPastAuctions() {
+    fetch(config.apiUrl + '/trixels')
+      .then((resp) => resp.json())
+      .then((data) => {
+        this.pastAuctions = data.map(async (auction: Auction) => {
+          auction.imageUrl = await fetch(auction.metadataUrl).then(resp => resp.json()).then(data => data.image)
+        })
+      })
       .catch((err) => console.error(err));
   }
 
@@ -75,6 +110,7 @@ class Store {
 
   setActiveColor(newColor: string) {
     if (!this.activePixel) return;
+    console.log("setting new color ", newColor)
     this.activePixel.color = newColor;
   }
 

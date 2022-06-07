@@ -60,7 +60,7 @@ func CreateImage(pixels *Pixels) image.Image {
 	img := image.NewRGBA(image.Rectangle{upLeft, lowRight})
 	for i := 0; i < IMAGE_DIMENSIONS; i++ {
 		for j := 0; j < IMAGE_DIMENSIONS; j++ {
-			img.Set(i, j, color.Black)
+			img.Set(i, j, color.White)
 		}
 	}
 

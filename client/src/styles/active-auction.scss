@@ -1,0 +1,26 @@
+.active-auction {
+    flex: 1;
+
+    .auc-wrap {
+        border-radius: 20px;
+        background-color: white;
+        padding: 20px;
+
+        .active-auction-image {
+            width: 100%;
+            border-radius: 20px;
+            max-height: 500px;
+            object-fit: cover;
+        }
+    
+        .active-auction-data {
+            display: flex;
+            flex-direction: row;
+            margin-top: 20px;
+
+            .section {
+                flex: 1;
+            }
+        }
+    }
+}

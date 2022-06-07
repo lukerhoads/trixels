@@ -11,8 +11,9 @@
     "moduleResolution": "node",
     "sourceMap": true,
     "baseUrl": "./src",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": ["./src", "./test"],
+  "exclude": ["./node_modules"]
 }

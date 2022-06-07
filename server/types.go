@@ -1,7 +1,6 @@
 package server
 
 import (
-	"log"
 	"time"
 	"gorm.io/gorm"
 )
@@ -32,7 +31,6 @@ func NewPixel(x, y uint16) *Pixel {
 func (p *Pixel) GetPixel(db *gorm.DB) bool {
 	if p.Hash == "" {
 		p.Hash = ComputePixelHash(p.X, p.Y)
-		log.Println("Computed hash: ", p.Hash)
 	}
 
 	return db.First(&p, "hash = ?", p.Hash).Error != gorm.ErrRecordNotFound
@@ -95,8 +93,9 @@ func NewMetadata(name string, image string, description string) *Metadata {
 
 // Trixel represents a minted Trixel, which enables redirects, which can ultimately support on-chain mints.
 type Trixel struct {
-	TokenID     uint `json:"token_id" gorm:"primaryKey"`
-	MetadataUrl string `json:"metadata_url"`
+	TokenID     uint `json:"tokenID" gorm:"primaryKey"`
+	MetadataUrl string `json:"metadataUrl"`
+	CreatedAt *time.Time `json:"createdAt"`
 }
 
 type Trixels []Trixel

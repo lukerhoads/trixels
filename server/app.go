@@ -75,7 +75,6 @@ func (r *App) GetPixel(res http.ResponseWriter, req *http.Request) {
 	}
 	found := pixel.GetPixel(r.DB)
 	if found {
-		log.Println("found, returning")
 		json.NewEncoder(res).Encode(pixel)
 	} else {
 		json.NewEncoder(res).Encode(Pixel{

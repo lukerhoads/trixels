@@ -94,14 +94,14 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover, IERC721Receiver {
             require(_safeTransferETH(address(dao), daoAmount), "Could not transfer to DAO contract");
         }
 
-        emit AuctionEnded(_auction.highestBidder, _auction.highestBid);
+        emit AuctionEnded(_auction.tokenId, _auction.highestBidder, _auction.highestBid);
     }
 
     /*
      * @notice enables anyone to bid on an active auction.
      * @param _tokenID  the recipient of the proposal transaction
      */
-    function placeBid(uint256 _tokenID) external override payable {
+    function placeBid(uint _tokenID) external override payable {
         IAuctionHouse.Auction memory _auction = auction;
         require(_tokenID == _auction.tokenId, "Token not up for auction");
         require(msg.value > reservePrice, "Bid does not meet reserve price");
@@ -120,7 +120,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover, IERC721Receiver {
 
         auction.highestBid = msg.value;
         auction.highestBidder = payable(msg.sender);
-        emit BidPlaced(msg.sender, msg.value);
+        emit BidPlaced(_tokenID, msg.sender, msg.value);
     }
 
     /*

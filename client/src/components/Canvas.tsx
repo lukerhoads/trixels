@@ -4,7 +4,8 @@ import { SimplePixel } from 'types/pixel';
 import '../styles/canvas.scss';
 import Haptics from './Haptics';
 import store from '../store';
-import { ethers } from 'ethers';
+import { observer } from 'mobx-react'
+import { validateHexCode } from '../util';
 
 const PIXEL_LENGTH = 10;
 const CANVAS_LENGTH = PIXEL_LENGTH * config.imageDimensions;
@@ -26,6 +27,39 @@ const Canvas = () => {
     canvasRef.current?.addEventListener('click', onClick);
     draw();
   }, [canvasRef.current]);
+
+  useEffect(() => {
+    if (store.activePixel && validateHexCode(store.activePixel.color)) {
+      redrawActivePixel()
+    }
+  }, [store.activePixel?.color])
+
+  // Debug this idk why not working
+  const redrawActivePixel = () => {
+    if (!canvasRef || !canvasRef.current || !ctx || !store.activePixel) return;
+
+    ctx.translate(window.innerWidth / 2, window.innerHeight / 2);
+    ctx.scale(store.scale, store.scale);
+    ctx.translate(-window.innerWidth / 2 + store.xOffset, -window.innerHeight / 2 + store.yOffset);
+
+    let middle: SimplePixel = {
+      x: store.xOffset,
+      y: store.yOffset,
+    };
+
+    let scaledCanvasLength = CANVAS_LENGTH * store.scale;
+    let scaledPixelLength = PIXEL_LENGTH * store.scale;
+    let topLeft: SimplePixel = {
+      x: Math.floor(middle.x - scaledCanvasLength / 2),
+      y: Math.floor(middle.y - scaledCanvasLength / 2),
+    };
+
+    const x = topLeft.x + store.activePixel.x * scaledPixelLength;
+    const y = topLeft.y + store.activePixel.y * scaledPixelLength;
+    console.log("Drawing at: ", x, y)
+    ctx.fillStyle = store.activePixel.color;
+    ctx.fillRect(x, y, scaledPixelLength, scaledPixelLength);
+  }
 
   const draw = () => {
     if (!canvasRef || !canvasRef.current || !ctx) return;
@@ -148,4 +182,4 @@ const Canvas = () => {
   );
 };
 
-export default Canvas;
+export default observer(Canvas);

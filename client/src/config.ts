@@ -5,7 +5,9 @@ const config = {
   apiUrl: 'http://localhost:8080',
   editTimeoutSeconds: 300,
   facebookUser: '',
-  instagramUser: ''
+  instagramUser: '',
+  auctionHouseAddress: '',
+  tokenAddress: ''
 };
 
 export default config;

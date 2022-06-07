@@ -1,0 +1,33 @@
+@import "variables.scss";
+
+.past-auctions {
+    flex: 1;
+    
+    .past-auction {
+        display: flex;
+        flex-direction: row;
+        background-color: white;
+        box-shadow: $shadow-color 0px 8px 24px;
+        border-radius: 20px;
+        padding: 10px;
+        
+        .thumbnail {
+            border-radius: 20px;
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+        }
+
+        .description {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            margin-left: 20px;
+        }
+    }
+
+    .past-auction:hover {
+        border: 1px solid $text-color;
+    }
+}

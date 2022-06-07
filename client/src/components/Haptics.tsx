@@ -7,6 +7,7 @@ import store from '../store';
 import Status from './Status';
 import config from 'config'
 import { validateHexCode } from '../util'
+import { ethers } from 'ethers';
 
 export type HapticsProps = {
   children: React.ReactNode;
@@ -23,7 +24,6 @@ export type HapticsProps = {
 // - convert times to local zone
 
 const Haptics = ({ children }: HapticsProps) => {
-  const { activateBrowserWallet, account } = useEthers();
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isChangingColor, setIsChangingColor] = useState(false);
   const [contextActive, setContextActive] = useState(false);
@@ -37,8 +37,26 @@ const Haptics = ({ children }: HapticsProps) => {
   }, []);
 
   useEffect(() => {
-    applyTimer()
+    const timer = setInterval(applyTimer, 1000)
+    return () => clearInterval(timer)
   }, [store.activePixel])
+
+  const connectToMetamask = async () => {
+    if (!window.ethereum) {
+      store.pushToLogs({
+        mood: 'error',
+        message: 'Please install Metamask.',
+      });
+      return
+    }
+
+    const provider = new ethers.providers.Web3Provider(window.ethereum)
+    provider.send("eth_requestAccounts", []).then(accounts => {
+      if (accounts.length > 0) {
+        store.setActiveAccount(accounts[0])
+      }
+    })
+  }
 
   const applyTimer = () => {
     if (!store.activePixel) return;
@@ -50,10 +68,9 @@ const Haptics = ({ children }: HapticsProps) => {
     let nextEditableTime = new Date(store.activePixel.updatedAt)
     nextEditableTime.setSeconds(nextEditableTime.getSeconds() + config.editTimeoutSeconds)
     let now = new Date()
-    let numMins = nextEditableTime.getMinutes() - now.getMinutes()
-    let numSecs = nextEditableTime.getSeconds() - now.getSeconds()
-    if (numMins >= 0 && numSecs >= 0) {
-      setTimeLeft(`${numMins}m${numSecs}s`)
+    let msDiff = new Date(nextEditableTime.getUTCMilliseconds() - now.getUTCMilliseconds())
+    if (msDiff.getMinutes() >= 0 && msDiff.getSeconds() >= 0) {
+      setTimeLeft(`${msDiff.getMinutes()}m${msDiff.getSeconds()}s`)
       setCanEditColor(false)
     } else {
       setTimeLeft(`0m0s, can edit`)
@@ -71,9 +88,10 @@ const Haptics = ({ children }: HapticsProps) => {
   };
 
   const web3SignIn = () => {
-    if (isAuthenticating || account) return;
+    if (isAuthenticating || store.activeAccount) return;
     setIsAuthenticating(true);
-    activateBrowserWallet();
+    connectToMetamask();
+    setIsAuthenticating(false)
   };
 
   const resetPreviewColor = () => {
@@ -104,17 +122,17 @@ const Haptics = ({ children }: HapticsProps) => {
   };
 
   const changeColor = async () => {
-    if (!canEditColor || !account) return;
+    if (!canEditColor || !store.activeAccount) return;
     setIsChangingColor(true);
-    store.setActivePixelColor(account).then(() => {
-      setIsChangingColor(false);
-      store.fetchPixels()
-    });
+    await store.setActivePixelColor(store.activeAccount)
+    await store.fetchPixels()
+    store.setActivePixel(await store.fetchPixel(store.activePixel!.x, store.activePixel!.y))
+    setIsChangingColor(false);
   };
 
   const parseDate = (dateStr: string) => {
     let date = new Date(dateStr)
-    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+    return `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()} Central`
   }
 
   return (
@@ -155,7 +173,7 @@ const Haptics = ({ children }: HapticsProps) => {
           ) : null}
         </div>
         <div className='web3-status'>
-          {account ? (
+          {store.activeAccount ? (
             <>
               <Status width={20} height={20} mood='success' />
               <p>Web3 connected</p>
@@ -224,7 +242,7 @@ const Haptics = ({ children }: HapticsProps) => {
                 <input placeholder='New Color' ref={inputRef} onChange={changePreviewColor} value={store.activePixel.color} />
                 {isPreview ? <button onClick={() => resetPreviewColor()}>Reset</button> : null}
               </div>
-              {account ? (
+              {store.activeAccount ? (
                 <button onClick={() => changeColor()} disabled={!canEditColor}>
                   {isChangingColor ? <Spinner width={20} height={20} /> : null}
                   Change Color

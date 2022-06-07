@@ -15,11 +15,11 @@ interface IAuctionHouse {
 
     function endAuction() external;
 
-    function placeBid(uint256 _tokenId) external payable;
+    function placeBid(uint _tokenId) external payable;
 
-    event AuctionStarted(uint256 tokenId, uint startDate, uint endDate);
+    event AuctionStarted(uint indexed tokenId, uint startDate, uint endDate);
 
-    event AuctionEnded(address winner, uint256 amount);
+    event AuctionEnded(uint indexed tokenId, address winner, uint256 amount);
 
-    event BidPlaced(address bidder, uint256 amount);
+    event BidPlaced(uint indexed tokenId, address bidder, uint256 amount);
 }
