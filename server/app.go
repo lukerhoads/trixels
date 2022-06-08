@@ -28,6 +28,7 @@ func (a *App) Initialize(db *gorm.DB, devChan chan string) {
 
 func (r *App) initializeRoutes() {
 	r.Router.HandleFunc("/trixels", r.GetTrixels).Methods("GET")
+	r.Router.HandleFunc("/trixels/find/{trixelID}", r.GetTrixel).Methods("GET")
 	r.Router.HandleFunc("/trixel/{trixelID}", r.RedirectTrixel).Methods("GET")
 	r.Router.HandleFunc("/pixel/{coord}", r.GetPixel).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.GetPixels).Methods("GET")
@@ -48,6 +49,28 @@ func (r *App) GetTrixels(res http.ResponseWriter, req *http.Request) {
 	var trixels Trixels
 	trixels.GetTrixels(r.DB)
 	json.NewEncoder(res).Encode(trixels)
+}
+
+func (r *App) GetTrixel(res http.ResponseWriter, req *http.Request) {
+	vars := mux.Vars(req)
+	tokenID := vars["trixelID"]
+	toke, err := strconv.ParseUint(tokenID, 10, 64)
+	if err != nil {
+		http.Error(res, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	trixel := Trixel{
+		TokenID: uint(toke),
+	}
+	found := trixel.GetTrixel(r.DB)
+	if found {
+		json.NewEncoder(res).Encode(trixel)
+	} else {
+		json.NewEncoder(res).Encode(ServerError{
+			Message: "Trixel not found",
+		})
+	}
 }
 
 func (r *App) RedirectTrixel(res http.ResponseWriter, req *http.Request) {

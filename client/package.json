@@ -8,10 +8,14 @@
     "build": "NODE_ENV=production npx webpack --mode production --progress",
     "build:dev": "npx webpack --mode development",
     "prettify": "yarn prettier \"**/*.*(js|ts|tsx)\" --ignore-path=.prettierignore --write",
-    "test": "jest --coverage"
+    "test": "jest --coverage",
+    "jsonabi": "yarn hardhat export-abi --no-compile",
+    "types": "yarn hardhat typechain"
   },
   "dependencies": {
     "@usedapp/core": "^1.0.7",
+    "@web3-react/core": "^6.1.9",
+    "@web3-react/injected-connector": "^6.0.7",
     "mobx": "^6.6.0",
     "mobx-react": "^7.5.0",
     "react": "^18.1.0",
@@ -21,6 +25,7 @@
     "sass": "^1.51.0"
   },
   "devDependencies": {
+    "@types/node": "^17.0.41",
     "@types/react": "^18.0.11",
     "@types/react-dom": "^18.0.5",
     "@types/react-router-dom": "^5.3.3",

@@ -10,7 +10,7 @@ const Home = () => {
     <div className='home'>
       <Canvas />
       <Header>
-        <Link to='/auction'>Auction</Link>
+        <Link to='/auction/current'>Auction</Link>
       </Header>
     </div>
   );

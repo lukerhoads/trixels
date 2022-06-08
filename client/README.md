@@ -8,4 +8,5 @@
 - Setup import aliasing
 - Add outline to active pixel
 - Fix pixel color preview
-- Setup auction ID routing
+- Add background blur warning component z-index 1000
+- Organize components by category (maybe by page)

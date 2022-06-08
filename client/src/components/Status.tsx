@@ -15,14 +15,14 @@ const Status = ({ width, height, mood }: StatusProps) => {
   let alt;
   let src;
   if (mood == 'error') {
-    alt = 'Red Status'
-    src = RedStatus
+    alt = 'Red Status';
+    src = RedStatus;
   } else if (mood == 'success') {
-    alt = 'Green Status'
-    src = GreenStatus
+    alt = 'Green Status';
+    src = GreenStatus;
   } else {
-    alt = 'Orange Status'
-    src = OrangeStatus
+    alt = 'Orange Status';
+    src = OrangeStatus;
   }
 
   return (

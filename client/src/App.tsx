@@ -12,7 +12,7 @@ export const App = () => {
         <Router>
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='auction' element={<Auction />} />
+            <Route path='/auction/:tokenID' element={<Auction />} />
             <Route path='/*' element={<NotFound />} />
           </Routes>
         </Router>

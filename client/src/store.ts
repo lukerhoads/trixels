@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { makeAutoObservable } from 'mobx';
 import { SimplePixel, Pixel } from 'types/pixel';
 import { Log } from 'types/log';
@@ -20,24 +21,23 @@ class Store {
   dragStartX: number = 0;
   dragStartY: number = 0;
 
-  // Account state
-  activeAccount: string | undefined = undefined 
-
   // Auction state
   activeAuction: Auction | undefined = {
     tokenID: 1,
     metadataUrl: 'https://penis.com',
     imageUrl: 'https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60',
     createdAt: '',
-    saleValue: 10
-  }
-  pastAuctions: Auction[] = [{
-    tokenID: 1,
-    metadataUrl: 'https://penis.com',
-    imageUrl: 'https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60',
-    createdAt: '',
-    saleValue: 10
-  }]
+    saleValue: 10,
+  };
+  pastAuctions: Auction[] = [
+    {
+      tokenID: 1,
+      metadataUrl: 'https://penis.com',
+      imageUrl: 'https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60',
+      createdAt: '',
+      saleValue: 10,
+    },
+  ];
 
   // Other state
   logs: Log[] = [];
@@ -46,21 +46,17 @@ class Store {
     makeAutoObservable(this);
   }
 
-  setActiveAccount(newActiveAccount: string) {
-    this.activeAccount = newActiveAccount
-  }
-
   async fetchPixels() {
-    fetch(config.apiUrl + '/pixels')
+    fetch(config.alt.apiUrl + '/pixels')
       .then((resp) => resp.json())
       .then((data) => {
-        this.pixels = data
+        this.pixels = data;
       })
       .catch((err) => console.error(err));
   }
 
   async fetchPixel(x: number, y: number): Promise<Pixel> {
-    const apiUrl = config.apiUrl + `/pixel/${x}-${y}`
+    const apiUrl = config.alt.apiUrl + `/pixel/${x}-${y}`;
     return fetch(apiUrl)
       .then((resp) => resp.json())
       .then((data) => data)
@@ -68,12 +64,14 @@ class Store {
   }
 
   async fetchPastAuctions() {
-    fetch(config.apiUrl + '/trixels')
+    fetch(config.alt.apiUrl + '/trixels')
       .then((resp) => resp.json())
       .then((data) => {
         this.pastAuctions = data.map(async (auction: Auction) => {
-          auction.imageUrl = await fetch(auction.metadataUrl).then(resp => resp.json()).then(data => data.image)
-        })
+          auction.imageUrl = await fetch(auction.metadataUrl)
+            .then((resp) => resp.json())
+            .then((data) => data.image);
+        });
       })
       .catch((err) => console.error(err));
   }
@@ -101,7 +99,7 @@ class Store {
   }
 
   popFromLogs() {
-    this.logs.shift()
+    this.logs.shift();
   }
 
   setIsDragging(newIsDragging: boolean) {
@@ -110,7 +108,6 @@ class Store {
 
   setActiveColor(newColor: string) {
     if (!this.activePixel) return;
-    console.log("setting new color ", newColor)
     this.activePixel.color = newColor;
   }
 
@@ -143,9 +140,9 @@ class Store {
       y: this.activePixel.y,
       color: this.activePixel.color,
       editor: editor,
-    }
+    };
 
-    return fetch(config.apiUrl + `/pixels`, {
+    return fetch(config.alt.apiUrl + `/pixels`, {
       method: 'POST',
       body: JSON.stringify(newActivePixel),
     })

@@ -4,11 +4,11 @@ import { SimplePixel } from 'types/pixel';
 import '../styles/canvas.scss';
 import Haptics from './Haptics';
 import store from '../store';
-import { observer } from 'mobx-react'
+import { observer } from 'mobx-react';
 import { validateHexCode } from '../util';
 
 const PIXEL_LENGTH = 10;
-const CANVAS_LENGTH = PIXEL_LENGTH * config.imageDimensions;
+const CANVAS_LENGTH = PIXEL_LENGTH * config.params.imageDimensions;
 const SCROLL_SENSITIVITY = 0.0005;
 const MAX_ZOOM = 5;
 const MIN_ZOOM = 0.1;
@@ -30,9 +30,9 @@ const Canvas = () => {
 
   useEffect(() => {
     if (store.activePixel && validateHexCode(store.activePixel.color)) {
-      redrawActivePixel()
+      redrawActivePixel();
     }
-  }, [store.activePixel?.color])
+  }, [store.activePixel?.color]);
 
   // Debug this idk why not working
   const redrawActivePixel = () => {
@@ -56,10 +56,9 @@ const Canvas = () => {
 
     const x = topLeft.x + store.activePixel.x * scaledPixelLength;
     const y = topLeft.y + store.activePixel.y * scaledPixelLength;
-    console.log("Drawing at: ", x, y)
     ctx.fillStyle = store.activePixel.color;
     ctx.fillRect(x, y, scaledPixelLength, scaledPixelLength);
-  }
+  };
 
   const draw = () => {
     if (!canvasRef || !canvasRef.current || !ctx) return;
@@ -159,8 +158,8 @@ const Canvas = () => {
       if (!eventLocation) return;
       let pixel = getPixelFromCoordinate(eventLocation);
       if (!pixel) {
-        store.setActivePixel(undefined)
-        return
+        store.setActivePixel(undefined);
+        return;
       }
       let fullPixel = await store.fetchPixel(pixel.x, pixel.y);
       if (fullPixel.color != '') {
@@ -169,7 +168,7 @@ const Canvas = () => {
         store.setActivePixel({
           x: pixel.x,
           y: pixel.y,
-          color: '#FFFFFF'
+          color: '#FFFFFF',
         });
       }
     }

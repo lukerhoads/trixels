@@ -43,7 +43,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover, IERC721Receiver {
             highestBid: 0,
             highestBidder: payable(0),
             tokenId: 0,
-            settled: true
+            settled: true,
         });
     }
 
@@ -64,7 +64,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover, IERC721Receiver {
             highestBid: 0,
             highestBidder: payable(0),
             tokenId: tokenID,
-            settled: false
+            settled: false,
         });
 
         emit AuctionStarted(tokenID, startDate, endDate);

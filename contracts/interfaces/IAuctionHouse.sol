@@ -9,6 +9,7 @@ interface IAuctionHouse {
         address payable highestBidder;
         uint256 tokenId;
         bool settled;
+        bool live;
     }
 
     function startAuction() external returns (uint);

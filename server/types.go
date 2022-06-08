@@ -112,8 +112,8 @@ func (t *Trixel) GetTrixelCount(db *gorm.DB) (count int64) {
 	return
 }
 
-func (t *Trixel) GetTrixel(db *gorm.DB) {
-	db.First(&t, "token_id = ?", t.TokenID)
+func (t *Trixel) GetTrixel(db *gorm.DB) bool {
+	return db.First(&t, "token_id = ?", t.TokenID).Error != gorm.ErrRecordNotFound
 }
 
 func (t *Trixel) AddTrixel(db *gorm.DB) {

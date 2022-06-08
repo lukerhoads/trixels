@@ -1,68 +1,63 @@
-import React, { useEffect, useState } from 'react'
-import { observer } from 'mobx-react'
-import store from '../store'
-import '../styles/active-auction.scss'
-import { ethers } from 'ethers'
-import config from '../config'
+import React, { useEffect, useState } from 'react';
+import '../styles/active-auction.scss';
 
-import Token  from '../../../artifacts/contracts/Token.sol/Token.json'
-import AuctionHouse  from '../../../artifacts/contracts/AuctionHouse.sol/AuctionHouse.json'
+import { useAuction } from 'hooks/useAuction';
+
+// TODO:
+// - Figure out how to do typed contracts
+// - Add the bid button with a warning that a bid is non-retractable
+// - Add footer
+// - Make auction image square
+// - Have invalid tokenIDs route to current auction
+// - Catch metamask decline transaction
 
 const ActiveAuction = () => {
-    const [auctionHighestBidder, setAuctionHighestBidder] = useState("")
-    const [currentOwner, setCurrentOwner] = useState("")
+  const { auction, placeBid, subscribeToNewBid } = useAuction();
+  const [isLiveAuction, setIsLiveAuction] = useState(false);
 
-    useEffect(() => {
-        findTokenCurrentOwner()
-
-        // Setup listener to update auction highest bidder
-    }, [])
-
-    const findTokenCurrentOwner = async () => {
-        if (!store.activeAuction) return 
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const token = new ethers.Contract(config.tokenAddress, Token.abi, provider)
-        const tokenOwner = await token.ownerOf(store.activeAuction.tokenID)
-        setCurrentOwner(tokenOwner)
+  useEffect(() => {
+    if (!auction) return;
+    if (auction && !auction.settled) {
+      setIsLiveAuction(true);
     }
 
-    const findAuctionHighestBidder = async () => {
-        if (!store.activeAuction) return 
-        const provider = new ethers.providers.Web3Provider(window.ethereum)
-        const auctionHouse = new ethers.Contract(config.auctionHouseAddress, AuctionHouse.abi, provider)
-        const auction = await auctionHouse.auction() 
-        setAuctionHighestBidder(auction.highestBidder)
-    }
+    // Setup listener to update auction highest bidder
+    subscribeToNewBid((highestBidder, highestBid) => {
+      auction.highestBidder = highestBidder;
+      auction.highestBid = highestBid;
+    });
+  }, [auction]);
 
-    return (
-        <div className='active-auction'>
-            { store.activeAuction ? (
-                <div className='auc-wrap'>
-                    <img className='active-auction-image' src={"https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60"}  />
-                    <div className='active-auction-data'>
-                        <div className="section">
-                            <p className="caption">Trixel ID:</p>
-                            <p className='value'>#{store.activeAuction.tokenID}</p>
-                            <p className="caption">Sale price:</p>
-                            <p className='value'>{store.activeAuction.saleValue} ETH</p>
-                            <p className="caption">Highest bidder:</p>
-                            <p className='value'>{auctionHighestBidder}</p>
-                        </div>
-                        <div className="section">
-                            <p className="caption">Sale date:</p>
-                            <p className='value'>{store.activeAuction.createdAt}</p>
-                            <p className="caption">Current owner:</p>
-                            <p className='value'>{currentOwner}</p>
-                        </div>
-                    </div>
-                </div>
-            ) : (
-                <>
-                    <p>No currently active auction</p>
-                </>
-            )}
-        </div>
-    )
-}
+  return (
+    <div className='active-auction'>
+      <div className='auc-wrap'>
+        {auction && isLiveAuction ? (
+          <>
+            <img className='active-image' src={'https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60'} />
+            <div className='active-data'>
+              <div className='section'>
+                <p className='caption'>Trixel ID:</p>
+                <p className='value'>{auction.tokenId.toString()}</p>
+                <p className='caption'>Highest bid:</p>
+                <p className='value'>{auction.highestBid.toString()}</p>
+              </div>
+              <div className='section'>
+                <p className='caption'>Ending date:</p>
+                <p className='value'>{auction.endDate.toString()}</p>
+                <p className='caption'>Minimum bid increment:</p>
+                <p className='value'></p>
+              </div>
+            </div>
+            <p className='caption'>Highest bidder:</p>
+            <p className='value'>{auction.highestBidder}</p>
+            <button onClick={() => placeBid(auction.tokenId)}>Bid</button>
+          </>
+        ) : (
+          <p>No active auction, come back in</p>
+        )}
+      </div>
+    </div>
+  );
+};
 
-export default observer(ActiveAuction)
+export default ActiveAuction;
