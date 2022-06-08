@@ -21,6 +21,8 @@ const ActiveAuction = () => {
       setIsLiveAuction(true);
     }
 
+    // Find a way to do this directly with the contract 
+    // unless it works by default, I doubt it will though
     // Setup listener to update auction highest bidder
     subscribeToNewBid((highestBidder, highestBid) => {
       auction.highestBidder = highestBidder;

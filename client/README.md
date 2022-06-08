@@ -10,3 +10,4 @@
 - Fix pixel color preview
 - Add background blur warning component z-index 1000
 - Organize components by category (maybe by page)
+- Seperate out mapped items into their own components (ex. past auctions)

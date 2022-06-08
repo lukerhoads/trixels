@@ -9,6 +9,7 @@ import config from 'config';
 import { validateHexCode } from '../util';
 import { ethers } from 'ethers';
 import { InjectedConnector } from '@web3-react/injected-connector';
+import { useWeb3Auth } from 'hooks/useWeb3Auth';
 
 export type HapticsProps = {
   children: React.ReactNode;
@@ -25,13 +26,14 @@ export type HapticsProps = {
 // - convert times to local zone
 
 const Haptics = ({ children }: HapticsProps) => {
-  const { activateBrowserWallet, account, error } = useEthers();
+  const { account, error } = useEthers();
   const [isChangingColor, setIsChangingColor] = useState(false);
   const [contextActive, setContextActive] = useState(false);
   const [canEditColor, setCanEditColor] = useState(false);
   const [isPreview, setIsPreview] = useState(false);
   const [timeLeft, setTimeLeft] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { authenticating, authenticate } = useWeb3Auth()
 
   useEffect(() => {
     if (error) {
@@ -46,11 +48,6 @@ const Haptics = ({ children }: HapticsProps) => {
     const timer = setInterval(applyTimer, 1000);
     return () => clearInterval(timer);
   }, [store.activePixel]);
-
-  const handleConnectWallet = () => {
-    console.log('Connecting...');
-    activateBrowserWallet();
-  };
 
   const applyTimer = () => {
     if (!store.activePixel) return;
@@ -241,7 +238,7 @@ const Haptics = ({ children }: HapticsProps) => {
               ) : (
                 <button onClick={handleConnectWallet}>
                   <div className='metamask-button'>
-                    {false ? (
+                    {authenticating ? (
                       <>
                         <Spinner
                           width={20}
