@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 
 // - Trixel ID (complete)
 // - Sale price (source from distributor contract)
-// - Sale date (event in auctionHouse contract)
 // - Auction winner (event in auctionHouse contract)
 // - Current owner (source from token contract)
 

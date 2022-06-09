@@ -8,5 +8,6 @@
 - Setup import aliasing
 - Add outline to active pixel
 - Fix pixel color preview
-- Add background blur warning component z-index 1000
+- Add background blur warning component z-index 1000 (this will be used for color editor as well)
 - Organize components by category (maybe by page)
+- Review use of hooks to access contracts in singular components
