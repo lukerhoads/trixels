@@ -11,3 +11,7 @@
 - Add background blur warning component z-index 1000 (this will be used for color editor as well)
 - Organize components by category (maybe by page)
 - Review use of hooks to access contracts in singular components
+
+## Please read
+- https://dev.to/rounakbanik/building-a-web3-frontend-with-react-340c
+- https://consensys.net/blog/developers/how-to-fetch-and-update-data-from-ethereum-with-react-and-swr/ (again)

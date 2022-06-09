@@ -18,7 +18,7 @@ export const useWeb3Auth = (): Web3AuthInfo => {
                 window.ethereum.request({
                     method: 'wallet_switchEthereumChain',
                     params: [{ chainId: "" }]
-                }).catch(err => {
+                }).catch((err: any) => {
                     if (err.code === 4902) {
                         window.ethereum.request({
                             method: 'wallet_addEthereumChain',
@@ -26,7 +26,9 @@ export const useWeb3Auth = (): Web3AuthInfo => {
                                 chainId: "",
                                 rpcUrl: ""
                             }]
-                        }).catch(error => console.error(error))
+                        }).catch((error: any) => console.error(error))
+                    } else {
+                        console.error(err)
                     }
                 })
             } else {

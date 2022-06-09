@@ -1,4 +1,5 @@
 import React from 'react'
+import '../styles/past-auction.scss'
 
 type PastAuctionProps = {
     tokenID: number
@@ -7,10 +8,10 @@ type PastAuctionProps = {
     active: boolean
 }
 
-const PastAuction = ({ tokenID, saleValue }: PastAuctionProps) => {
+const PastAuction = ({ tokenID, saleValue, imageUrl, active }: PastAuctionProps) => {
     return (
         <a href={`/auction/${tokenID}`}>
-          <div className={'past-auction' + (active && ' active')}>
+          <div className={'past-auction' + (active ? ' active' : '')}>
             <img className='thumbnail' src={imageUrl} />
             <div className='description'>
               <b>Trixel #{tokenID}</b>

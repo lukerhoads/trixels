@@ -236,7 +236,7 @@ const Haptics = ({ children }: HapticsProps) => {
                   Change Color
                 </button>
               ) : (
-                <button onClick={handleConnectWallet}>
+                <button onClick={authenticate}>
                   <div className='metamask-button'>
                     {authenticating ? (
                       <>
