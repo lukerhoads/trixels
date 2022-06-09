@@ -1,8 +1,8 @@
 declare module '*.svg' {
-  const content: string;
-  export default content;
+    const content: string;
+    export default content;
 }
 
 interface Window {
-  ethereum: any;
+    ethereum: any;
 }

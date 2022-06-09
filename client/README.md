@@ -11,6 +11,7 @@
 - Add background blur warning component z-index 1000 (this will be used for color editor as well)
 - Organize components by category (maybe by page)
 - Review use of hooks to access contracts in singular components
+- Make a single wrapper for the entire api
 
 ## Please read
 - https://dev.to/rounakbanik/building-a-web3-frontend-with-react-340c

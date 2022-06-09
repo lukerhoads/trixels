@@ -6,36 +6,36 @@ import 'styles/status-icon.scss';
 import { Mood } from 'types/log';
 
 export type StatusProps = {
-  width: number;
-  height: number;
-  mood: Mood;
+    width: number;
+    height: number;
+    mood: Mood;
 };
 
 const Status = ({ width, height, mood }: StatusProps) => {
-  let alt;
-  let src;
-  if (mood == 'error') {
-    alt = 'Red Status';
-    src = RedStatus;
-  } else if (mood == 'success') {
-    alt = 'Green Status';
-    src = GreenStatus;
-  } else {
-    alt = 'Orange Status';
-    src = OrangeStatus;
-  }
+    let alt;
+    let src;
+    if (mood == 'error') {
+        alt = 'Red Status';
+        src = RedStatus;
+    } else if (mood == 'success') {
+        alt = 'Green Status';
+        src = GreenStatus;
+    } else {
+        alt = 'Orange Status';
+        src = OrangeStatus;
+    }
 
-  return (
-    <img
-      className='status-icon'
-      src={src}
-      alt={alt}
-      style={{
-        width: width,
-        height: height,
-      }}
-    />
-  );
+    return (
+        <img
+            className='status-icon'
+            src={src}
+            alt={alt}
+            style={{
+                width: width,
+                height: height,
+            }}
+        />
+    );
 };
 
 export default Status;

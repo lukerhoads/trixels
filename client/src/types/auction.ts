@@ -1,23 +1,22 @@
-export type Auction = {
-  tokenID: number;
-  metadataUrl: string;
-  imageUrl: string;
-  createdAt: string;
-  saleValue: number;
+interface BaseAuction {
+    tokenID: number 
+    imageUrl: string
+}
+
+export type LiveAuction = BaseAuction & {
+    endingDate: string;
+    highestBid: number;
+    highestBidder: string;
+    minBidIncrement: number;
 };
 
-export type PastAuction = {
-  tokenID: number;
-  salePrice: number;
-  saleDate: string;
-  winner: string;
-  currentOwner: string;
-};
+export type PastAuctionPreview = BaseAuction & {
+    mintDate: string
+}
 
-export type LiveAuction = {
-  tokenID: number;
-  endingDate: string;
-  highestBid: number;
-  highestBidder: string;
-  minBidIncrement: number;
+export type PastAuction = BaseAuction & {
+    salePrice: number;
+    mintDate: string;
+    winner: string;
+    currentOwner: string;
 };

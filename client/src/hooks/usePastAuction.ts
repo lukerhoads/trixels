@@ -6,7 +6,7 @@ import AuctionHouseABI from '../abi/contracts/AuctionHouse.sol/AuctionHouse.json
 import DistributorABI from '../abi/contracts/Distributor.sol/Distributor.json';
 import TokenABI from '../abi/contracts/Token.sol/Token.json';
 
-const { addresses } = config
+const { addresses } = config;
 const auctionHouseInterface = new utils.Interface(AuctionHouseABI);
 const distributorInterface = new utils.Interface(DistributorABI);
 const tokenInterface = new utils.Interface(TokenABI);
@@ -16,57 +16,56 @@ export type PastAuction = {
     salePrice: number;
     winner: string;
     owner: string;
-  };
-  
-  export type PastAuctionInfo = {
+};
+
+export type PastAuctionInfo = {
     auction?: PastAuction;
-  };
-  
-  export const usePastAuction = (tokenID: number): PastAuctionInfo => {
+};
+
+export const usePastAuction = (tokenID: number): PastAuctionInfo => {
     const { library } = useEthers();
-  
+
     const [auction, setAuction] = useState<PastAuction | undefined>(undefined);
-  
+
     const auctionHouseContract = useMemo((): Contract | undefined => {
-      if (!library || !addresses.auctionHouse) return;
-      // return AuctionHouse__factory.connect(addresses.auctionHouse, library);
-      return new Contract(addresses.auctionHouse, auctionHouseInterface, library);
+        if (!library || !addresses.auctionHouse) return;
+        // return AuctionHouse__factory.connect(addresses.auctionHouse, library);
+        return new Contract(addresses.auctionHouse, auctionHouseInterface, library);
     }, [library]);
-  
+
     const distributorContract = useMemo((): Contract | undefined => {
-      if (!library || !addresses.auctionHouse) return;
-      // return AuctionHouse__factory.connect(addresses.auctionHouse, library);
-      return new Contract(addresses.distributor, distributorInterface, library);
+        if (!library || !addresses.auctionHouse) return;
+        // return AuctionHouse__factory.connect(addresses.auctionHouse, library);
+        return new Contract(addresses.distributor, distributorInterface, library);
     }, [library]);
-  
+
     const tokenContract = useMemo((): Contract | undefined => {
-      if (!library || !addresses.auctionHouse) return;
-      // return AuctionHouse__factory.connect(addresses.auctionHouse, library);
-      return new Contract(addresses.token, tokenInterface, library);
+        if (!library || !addresses.auctionHouse) return;
+        // return AuctionHouse__factory.connect(addresses.auctionHouse, library);
+        return new Contract(addresses.token, tokenInterface, library);
     }, [library]);
-  
+
     useEffect(() => {
-      if (!auctionHouseContract || !tokenContract || !distributorContract) return;
-      let resAuction: PastAuction = {
-          trixelId: tokenID,
-          salePrice: 0,
-          winner: "",
-          owner: ""
-      };
-      distributorContract.sales(tokenID).then((salePrice: BigNumber) => (resAuction.salePrice = salePrice.toNumber()));
-      // Source auction winner from the event
-        const event = auctionHouseContract.filters.AuctionEnded(tokenID, null, null)
+        if (!auctionHouseContract || !tokenContract || !distributorContract) return;
+        let resAuction: PastAuction = {
+            trixelId: tokenID,
+            salePrice: 0,
+            winner: '',
+            owner: '',
+        };
+        distributorContract.sales(tokenID).then((salePrice: BigNumber) => (resAuction.salePrice = salePrice.toNumber()));
+        // Source auction winner from the event
+        const event = auctionHouseContract.filters.AuctionEnded(tokenID, null, null);
         if (event.topics) {
-          console.log("Sourced event topics: ", event.topics)
-          resAuction.winner = event.topics[2][0];
+            console.log('Sourced event topics: ', event.topics);
+            resAuction.winner = event.topics[2][0];
         }
-      // Source the current owner from the token contract
-      tokenContract.ownerOf(tokenID).then((ownerAddress: string) => resAuction.owner = ownerAddress)
-      setAuction(resAuction)
+        // Source the current owner from the token contract
+        tokenContract.ownerOf(tokenID).then((ownerAddress: string) => (resAuction.owner = ownerAddress));
+        setAuction(resAuction);
     }, [auctionHouseContract, distributorContract, tokenContract]);
-  
+
     return {
-      auction,
+        auction,
     };
-  };
-  
+};
