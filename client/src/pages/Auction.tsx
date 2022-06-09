@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from 'layout/header';
 import '../styles/auction.scss';
 import { Link, useParams } from 'react-router-dom';

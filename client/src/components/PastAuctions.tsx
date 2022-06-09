@@ -19,7 +19,7 @@ const PastAuctions = ({ selectedAuction }: PastAuctionsProps) => {
     <div className='past-auctions'>
       {store.pastAuctions.map((auction, idx) => (
         <a href={`/auction/${auction.tokenID}`}>
-          <div key={idx} className={'past-auction' + (auction.tokenID == selectedAuction ? ' active' : '')}>
+          <div key={idx} className={'past-auction' + (auction.tokenID.toString() == selectedAuction ? ' active' : '')}>
             <img className='thumbnail' src={auction.imageUrl} />
             <div className='description'>
               <b>Trixel #{auction.tokenID}</b>
