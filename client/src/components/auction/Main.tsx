@@ -15,8 +15,20 @@ type MainProps = {
 }
 
 const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
+    const [bothUndefined, setBothUndefined] = useState(false)
+
+    useEffect(() => {
+        if (!liveAuction && !pastAuction) {
+            setBothUndefined(true)
+        }
+    }, [])
+
+    if (bothUndefined) {
+        return <p>No live or past auction</p>
+    }
+
     return (
-        <div className='auction-wrapper'>
+        <div>
             <img className='active-image' src={live ? liveAuction?.imageUrl : pastAuction?.imageUrl} />
             <div className='active-data'>
                 <div className='split'>

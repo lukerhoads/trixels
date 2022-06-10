@@ -55,12 +55,15 @@ const Auction = () => {
         }
         
         fetchPastAuctions()
+    }, [])
+
+    useEffect(() => {
         if (isLive) {
             fetchActiveAuction()
         } else {
 
         }
-    }, [])
+    }, [isLive])
 
     useEffect(() => {
         if (!auctionHouseContract) return
@@ -82,11 +85,15 @@ const Auction = () => {
         })
 
         setPastAuctions(pastAuctions)
+        setIsLoading(false)
     }
 
     const fetchActiveAuction = async () => {
         if (!auctionHouseContract) return 
-        setLiveAuction(await auctionHouseContract.auction())
+        const auction = await auctionHouseContract.auction()
+        console.log("Auction: ", auction)
+        if (auction.settled) return
+        setLiveAuction(auction)
     }
 
     const fetchPastAuction = async () => {
@@ -116,7 +123,7 @@ const Auction = () => {
                 <p>Loading...</p>
             ) : (
                 <div className='auction-wrapper'>
-                    <div className='auction'>
+                    <div className='active-auction'>
                         <Main live={isLive} liveAuction={isLive ? liveAuction : undefined} pastAuction={isLive ? undefined : passedAuction} placeBid={placeBid} />
                     </div>
                     <div className='auction-spacer' />
@@ -132,6 +139,7 @@ const Auction = () => {
                                 </div>
                             </a>
                         ))}
+                        {pastAuctions.length ? null : <p>No past auctions</p>}
                     </div>
                 </div>
             )}

@@ -10,7 +10,15 @@
     flex-direction: row;
 }
 
+.active-auction {
+    flex: 1;
+}
+
 .auction-spacer {
     flex: 1;
     max-width: 60px;
+}
+
+.past-auctions {
+    flex: 1;
 }

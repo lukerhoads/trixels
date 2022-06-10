@@ -3,7 +3,6 @@ import { makeAutoObservable } from 'mobx';
 import { SimplePixel, Pixel } from 'types/pixel';
 import { Log } from 'types/log';
 import config from './config';
-import { Auction } from 'types/auction';
 import ApiClient from 'api-client';
 
 class Store {
@@ -24,24 +23,6 @@ class Store {
     yOffset: number = window.innerHeight / 2;
     dragStartX: number = 0;
     dragStartY: number = 0;
-
-    // Auction state
-    activeAuction: Auction | undefined = {
-        tokenID: 1,
-        metadataUrl: 'https://penis.com',
-        imageUrl: 'https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60',
-        createdAt: '',
-        saleValue: 10,
-    };
-    pastAuctions: Auction[] = [
-        {
-            tokenID: 1,
-            metadataUrl: 'https://penis.com',
-            imageUrl: 'https://cdn.britannica.com/91/181391-050-1DA18304/cat-toes-paw-number-paws-tiger-tabby.jpg?q=60',
-            createdAt: '',
-            saleValue: 10,
-        },
-    ];
 
     // Other state
     logs: Log[] = [];
