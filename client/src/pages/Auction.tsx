@@ -53,19 +53,14 @@ const Auction = () => {
     useEffect(() => {
         if (tokenID === 'current') {
             setIsLive(true)
+            fetchActiveAuction()
+        } else {
+            fetchPastAuction()
         }
         
         fetchPastAuctions()
         fetchTokenQuantity()
     }, [])
-
-    useEffect(() => {
-        if (isLive) {
-            fetchActiveAuction()
-        } else {
-            fetchPastAuction()
-        }
-    }, [isLive])
 
     useEffect(() => {
         if (!auctionHouseContract) return
@@ -113,8 +108,10 @@ const Auction = () => {
         if (!auctionHouseContract) return 
         const auction = await auctionHouseContract.auction()
         console.log("Auction: ", auction)
+        console.log("Auction startDate: ", auction.startDate.toNumber())
         if (auction.settled) return
         setLiveAuction(auction)
+        setIsLoading(false)
     }
 
     const fetchPastAuction = async () => {
@@ -133,6 +130,7 @@ const Auction = () => {
             winner: "",
             currentOwner: currentOwner,
         })
+        setIsLoading(false)
     }
 
     const placeBid = useCallback(async () => {
@@ -156,8 +154,8 @@ const Auction = () => {
                     </div>
                     <div className='auction-spacer' />
                     <div className='past-auctions'>
-                        {pastAuctions.map(pastAuction => (
-                            <a href={`/auction/${pastAuction.tokenID}`}>
+                        {pastAuctions.map((pastAuction, idx) => (
+                            <a key={idx} href={`/auction/${pastAuction.tokenID}`}>
                                 <div className="past-auction">
                                     <img className="thumbnail" src={pastAuction.imageUrl} />
                                     <div className="description">

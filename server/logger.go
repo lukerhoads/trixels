@@ -8,15 +8,17 @@ import (
 
 var Logger *zap.Logger 
 
-func InitLogger() (*zap.Logger, error) {
+func InitLogger() error {
 	prod, err := strconv.ParseBool(os.Getenv("PROD"))
 	if err != nil {
-		return nil, err 
+		return err 
 	}
 
 	if prod {
-		return zap.NewProduction()
+		Logger, err = zap.NewProduction()
+		return err
 	}
 
-	return zap.NewDevelopment()
+	Logger, err = zap.NewDevelopment()
+	return err
 }

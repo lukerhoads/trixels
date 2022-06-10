@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"image/png"
 	"io/ioutil"
-	"log"
 	"os"
 	"time"
 	"strings"
@@ -46,7 +45,7 @@ func (p *Daemon) Start() {
 			Logger.Info("🔨 Starting auction from devChan...")
 			if v == "mint" {
 				if err := p.MintAndStartAuction(); err != nil {
-					log.Panic(err.Error())
+					Logger.Error(err.Error())
 				}
 			}
 		case <-p.quit:

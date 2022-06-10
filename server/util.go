@@ -1,6 +1,7 @@
 package server
 
 import (
+	"log"
 	"crypto/sha256"
     "image"
 	"image/color"
@@ -73,4 +74,12 @@ func CreateImage(pixels *Pixels) image.Image {
 	}
 
 	return img
+}
+
+func PanicOrReturn(env string) string {
+	if env == "" {
+		log.Panic("Env not defined")
+	}
+
+	return env
 }

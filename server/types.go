@@ -49,19 +49,6 @@ func (p *Pixel) CreatePixel(db *gorm.DB) error {
 	return db.Create(p).Error
 }
 
-// func (p *Pixel) UpdatePixel(db *gorm.DB) {
-// 	pixelHash := ComputePixelHash(p.X, p.Y)
-// 	destPixel := Pixel{}
-// 	db.First(&destPixel, "hash = ?", pixelHash)
-// 	if destPixel.validPixel() {
-// 		db.Model(Pixel{}).Where("hash = ?", pixelHash).Updates(p)
-// 	} else {
-// 		log.Println("creating")
-// 		newPixel := NewPixel(p.X, p.Y)
-// 		db.Create(newPixel)
-// 	}
-// }
-
 func (p *Pixel) UpdateExistingPixel(db *gorm.DB, valid bool) {
 	pixelHash := ComputePixelHash(p.X, p.Y)
 	if valid {

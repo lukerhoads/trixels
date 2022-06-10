@@ -56,6 +56,15 @@ func (a *AuctionHouse) StartAuction() (uint64, error) {
 	return auction.TokenId.Uint64(), err
 }
 
+func (a *AuctionHouse) PrintAuction() {
+	auction, err := a.AuctionHouse.Auction(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println(auction)
+}
+
 // Generates the necessary transactor for on-chain interaction
 func genKeyedTransactor(client *ethclient.Client, pKey string) *bind.TransactOpts {
 	privateKey, err := crypto.HexToECDSA(pKey)

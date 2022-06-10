@@ -33,8 +33,8 @@ func (r *App) initializeRoutes() {
 	r.Router.HandleFunc("/pixel/{coord}", r.GetPixel).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.GetPixels).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.UpdatePixel).Methods("POST")
-	// r.Router.HandleFunc("/trigger/mint", r.TriggerMint).Methods("GET")
-	// r.Router.HandleFunc("/trigger/reset", r.ResetDB).Methods("GET")
+	r.Router.HandleFunc("/trigger/mint", r.TriggerMint).Methods("GET")
+	r.Router.HandleFunc("/trigger/reset", r.ResetDB).Methods("GET")
 }
 
 func (a *App) Run(addr string) {

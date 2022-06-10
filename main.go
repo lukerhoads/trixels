@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"log"
 	"os/signal"
 	"syscall"
 	"time"
@@ -17,11 +18,14 @@ func main() {
 	godotenv.Load(".env")
 
 	server.InitLogger()
+	if server.Logger == nil {
+		log.Panic("Logger not defined")
+	}
 
-	dsn := os.Getenv("DATABASE_DSN")
-	rpcUrl := os.Getenv("ETH_NODE_URL")
-	pk := os.Getenv("PROXY_PRIVATE_KEY")
-	auctionHouseAddress := os.Getenv("AUCTION_HOUSE_ADDRESS")
+	dsn := server.PanicOrReturn(os.Getenv("DATABASE_DSN"))
+	rpcUrl := server.PanicOrReturn(os.Getenv("ETH_NODE_URL"))
+	pk := server.PanicOrReturn(os.Getenv("PROXY_PRIVATE_KEY"))
+	auctionHouseAddress := server.PanicOrReturn(os.Getenv("AUCTION_HOUSE_ADDRESS"))
 
 	devChan := make(chan string)
 	twoWeekTicker := time.NewTicker(14 * 24 * time.Hour)
