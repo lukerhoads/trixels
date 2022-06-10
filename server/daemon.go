@@ -56,6 +56,7 @@ func (p *Daemon) Start() {
 				}
 			} else if v == "end" {
 				Logger.Info("🔨 Ending auction from devChan...")
+				p.auctionDayTicker = nil
 				if err := p.EndAuction(); err != nil {
 					Logger.Error(err.Error())
 				}
