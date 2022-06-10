@@ -20,8 +20,12 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
     useEffect(() => {
         if (!liveAuction && !pastAuction) {
             setBothUndefined(true)
+        } else {
+            setBothUndefined(false)
         }
-    }, [])
+
+        console.log(liveAuction?.imageUrl)
+    }, [liveAuction, pastAuction])
 
     if (bothUndefined) {
         return <p>No live or past auction</p>

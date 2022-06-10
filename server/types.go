@@ -3,6 +3,7 @@ package server
 import (
 	"time"
 	"gorm.io/gorm"
+	"errors"
 )
 
 // Pixel represents one pixel on the canvas.
@@ -78,11 +79,14 @@ func NewMetadata(name string, image string, description string) *Metadata {
 	}
 }
 
+
+
 // Trixel represents a minted Trixel, which enables redirects, which can ultimately support on-chain mints.
 type Trixel struct {
 	TokenID     uint `json:"tokenID" gorm:"primaryKey"`
 	MetadataUrl string `json:"metadataUrl"`
 	CreatedAt *time.Time `json:"createdAt"`
+	live bool
 }
 
 type Trixels []Trixel
@@ -101,6 +105,26 @@ func (t *Trixel) GetTrixelCount(db *gorm.DB) (count int64) {
 
 func (t *Trixel) GetTrixel(db *gorm.DB) bool {
 	return db.First(&t, "token_id = ?", t.TokenID).Error != gorm.ErrRecordNotFound
+}
+
+func (t *Trixel) GetLiveTrixel(db *gorm.DB) bool {
+	return db.First(&t, "token_id = ?", t.TokenID).Error != gorm.ErrRecordNotFound
+}
+
+func (t *Trixel) AddLiveTrixel(db *gorm.DB) error {
+	var trixel []Trixel
+	var count int64
+	db.First(&trixel, "live = ?", true).Count(&count)
+	if count > 1 {
+		return errors.New("Cannot add another live auction")
+	}
+
+	db.Create(t)
+	return nil
+}
+
+func (t *Trixel) DeleteLiveTrixel(db *gorm.DB) {
+	db.Exec("DELETE FROM trixels WHERE live = ?", true)
 }
 
 func (t *Trixel) AddTrixel(db *gorm.DB) {

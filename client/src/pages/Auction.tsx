@@ -85,6 +85,14 @@ const Auction = () => {
         setValidTokenID(parseInt(tokenID) < tokenQuantity)
     }, [tokenQuantity])
 
+    useEffect(() => {
+        if (isLive && !loading) {
+            console.log("live auction", liveAuction)
+        } else {
+            console.log("past auction", passedAuction)
+        }
+    }, [isLive])
+
     const fetchTokenQuantity = async () => {
         if (!tokenContract) return
         const tokenQuantity = await tokenContract.tokenQuantity()
@@ -150,21 +158,12 @@ const Auction = () => {
             ) : (
                 <div className='auction-wrapper'>
                     <div className='active-auction'>
-                        <Main live={isLive} liveAuction={isLive ? liveAuction : undefined} pastAuction={isLive ? undefined : passedAuction} placeBid={placeBid} />
+                        <Main live={isLive} liveAuction={liveAuction ? liveAuction : undefined} pastAuction={passedAuction ? passedAuction : undefined} placeBid={placeBid} />
                     </div>
                     <div className='auction-spacer' />
                     <div className='past-auctions'>
                         {pastAuctions.map((pastAuction, idx) => (
-                            <a key={idx} href={`/auction/${pastAuction.tokenID}`}>
-                                <Card tokenID={pastAuction.tokenID} imageUrl={pastAuction.imageUrl} mintDate={pastAuction.mintDate} active={false} />
-                                <div className="past-auction">
-                                    <img className="thumbnail" src={pastAuction.imageUrl} />
-                                    <div className="description">
-                                        <p>Trixel #{pastAuction.tokenID}</p>
-                                        <p>Minted on {pastAuction.mintDate}</p>
-                                    </div>
-                                </div>
-                            </a>
+                            <Card key={idx} tokenID={pastAuction.tokenID} imageUrl={pastAuction.imageUrl} mintDate={pastAuction.mintDate} active={false} /> 
                         ))}
                         {pastAuctions.length ? null : <p>No past auctions</p>}
                     </div>

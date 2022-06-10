@@ -27,8 +27,10 @@ func (a *App) Initialize(db *gorm.DB, devChan chan string) {
 }
 
 func (r *App) initializeRoutes() {
+	r.Router.HandleFunc("/trixel/live", r.GetLiveTrixel).Methods("GET")
 	r.Router.HandleFunc("/trixels", r.GetTrixels).Methods("GET")
 	r.Router.HandleFunc("/trixels/find/{trixelID}", r.GetTrixel).Methods("GET")
+
 	r.Router.HandleFunc("/trixel/{trixelID}", r.RedirectTrixel).Methods("GET")
 	r.Router.HandleFunc("/pixel/{coord}", r.GetPixel).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.GetPixels).Methods("GET")
@@ -71,6 +73,19 @@ func (r *App) GetTrixel(res http.ResponseWriter, req *http.Request) {
 			Message: "Trixel not found",
 		})
 	}
+}
+
+func (r *App) GetLiveTrixel(res http.ResponseWriter, req *http.Request) {
+	trixel := Trixel{}
+	found := trixel.GetLiveTrixel(r.DB)
+	if !found {
+		json.NewEncoder(res).Encode(ServerError{
+			Message: "Trixel not found",
+		})
+		return
+	}
+
+	json.NewEncoder(res).Encode(trixel)
 }
 
 func (r *App) RedirectTrixel(res http.ResponseWriter, req *http.Request) {

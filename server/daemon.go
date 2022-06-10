@@ -108,8 +108,23 @@ func (p *Daemon) MintAndStartAuction() error {
 	newTrixel := &Trixel{
 		TokenID:     uint(tokenID),
 		MetadataUrl: newMetaUrl,
+		live: true,
 	}
 
+	newTrixel.AddLiveTrixel(p.DB)
+	Logger.Info("🔨 Started auction...")
+	return nil
+}
+
+func (p *Daemon) EndAuction() error {
+	var newTrixel Trixel
+	found := newTrixel.GetLiveTrixel(p.DB)
+	if !found {
+		return nil
+	}
+
+	newTrixel.DeleteLiveTrixel(p.DB)
+	newTrixel.live = false
 	newTrixel.AddTrixel(p.DB)
 	return nil
 }
