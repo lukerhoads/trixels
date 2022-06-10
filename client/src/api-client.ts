@@ -24,6 +24,12 @@ class ApiClient {
         this.url = url;
     }
 
+    async getLiveTrixel(): Promise<Trixel> {
+        return fetch(this.url + '/trixel/live')
+            .then(res => res.json())
+            .then(trixel => trixel as Trixel)
+    }
+
     async getTrixels(): Promise<Trixel[]> {
         return fetch(this.url + '/trixels')
             .then((res) => res.json())

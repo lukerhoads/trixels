@@ -119,7 +119,18 @@ const Auction = () => {
         if (!auctionHouseContract) return 
         const auction = await auctionHouseContract.auction()
         if (auction.settled) return
-        setLiveAuction(auction)
+        const liveAuction = await apiClient.getLiveTrixel()
+        const metadata = await apiClient.getMetadata(liveAuction.metadataUrl)
+        const bidIncrementPercentage = await auctionHouseContract.minBidIncrementPercentage()
+        const minBidIncrement = auction.highestBid.toNumber() + (1 + bidIncrementPercentage.toNumber() / 100)
+        setLiveAuction({
+            tokenID: tokenID,
+            imageUrl: metadata.image,
+            endingDate: auction.endingDate.toString(),
+            highestBid: auction.highestBid.toNumber(),
+            highestBidder: auction.highestBidder,
+            minBidIncrement: minBidIncrement,
+        })
         setIsLoading(false)
     }
 

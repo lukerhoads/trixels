@@ -18,6 +18,7 @@ type Daemon struct {
 	*AuctionHouse
 	*gorm.DB
 	twoWeekTicker *time.Ticker
+	auctionDayTicker *time.Ticker
 	devChan       chan string
 	quit          chan os.Signal
 }
@@ -27,6 +28,7 @@ func NewDaemon(db *gorm.DB, auctionHouse *AuctionHouse, twoWeekTicker *time.Tick
 		DB:            db,
 		AuctionHouse:  auctionHouse,
 		twoWeekTicker: twoWeekTicker,
+		auctionDayTicker: nil,
 		devChan:       devChan,
 		quit:          quit,
 	}
@@ -41,10 +43,20 @@ func (p *Daemon) Start() {
 			if err := p.MintAndStartAuction(); err != nil {
 				Logger.Error(err.Error())
 			}
+		case <-p.auctionDayTicker.C:
+			Logger.Info("Ending auction")
+			if err := p.EndAuction(); err != nil {
+				Logger.Error(err.Error())
+			}
 		case v := <-p.devChan:
-			Logger.Info("🔨 Starting auction from devChan...")
 			if v == "mint" {
+				Logger.Info("🔨 Starting auction from devChan...")
 				if err := p.MintAndStartAuction(); err != nil {
+					Logger.Error(err.Error())
+				}
+			} else if v == "end" {
+				Logger.Info("🔨 Ending auction from devChan...")
+				if err := p.EndAuction(); err != nil {
 					Logger.Error(err.Error())
 				}
 			}
@@ -113,6 +125,7 @@ func (p *Daemon) MintAndStartAuction() error {
 
 	newTrixel.AddLiveTrixel(p.DB)
 	Logger.Info("🔨 Started auction...")
+	p.auctionDayTicker.Reset(time.Day)
 	return nil
 }
 

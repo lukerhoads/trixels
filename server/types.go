@@ -132,7 +132,7 @@ func (t *Trixel) AddTrixel(db *gorm.DB) {
 }
 
 func (t *Trixels) GetTrixels(db *gorm.DB) {
-	db.Find(&t)
+	db.Find(&t).Where("live = ?", false)
 }
 
 type ServerError struct {
