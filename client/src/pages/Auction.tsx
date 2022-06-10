@@ -24,6 +24,7 @@ const Auction = () => {
     const [validTokenID, setValidTokenID] = useState(true)
     const [isLive, setIsLive] = useState(false)
 
+    const [tokenQuantity, setTokenQuantity] = useState(0)
     const [liveAuction, setLiveAuction] = useState<LiveAuction | undefined>(undefined)
     const [passedAuction, setPassedAuction] = useState<PastAuction | undefined>(undefined)
     const [pastAuctions, setPastAuctions] = useState<PastAuctionPreview[]>([])
@@ -55,13 +56,14 @@ const Auction = () => {
         }
         
         fetchPastAuctions()
+        fetchTokenQuantity()
     }, [])
 
     useEffect(() => {
         if (isLive) {
             fetchActiveAuction()
         } else {
-
+            fetchPastAuction()
         }
     }, [isLive])
 
@@ -70,7 +72,26 @@ const Auction = () => {
         auctionHouseContract.on("BidPlaced", () => {
             console.log("Bid placed")
         })
+
+        return () => {
+            auctionHouseContract.removeAllListeners("BidPlaced")
+        }
     }, [auctionHouseContract])
+
+    useEffect(() => {
+        if (!tokenID) {
+            setValidTokenID(false)
+            return
+        }
+
+        setValidTokenID(parseInt(tokenID) < tokenQuantity)
+    }, [tokenQuantity])
+
+    const fetchTokenQuantity = async () => {
+        if (!tokenContract) return
+        const tokenQuantity = await tokenContract.tokenQuantity()
+        setTokenQuantity(tokenQuantity.toNumber())
+    }
 
     const fetchPastAuctions = async () => {
         let trixels = await apiClient.getTrixels()
@@ -97,7 +118,21 @@ const Auction = () => {
     }
 
     const fetchPastAuction = async () => {
-        
+        if (!tokenID || !tokenContract || !auctionHouseContract) return
+        let trixel = await apiClient.getTrixelById(parseInt(tokenID))
+        let metadata = await apiClient.getMetadata(trixel.metadataUrl)
+        let currentOwner = await tokenContract.ownerOf(tokenID)
+        // Need to get the sale value along with the winner (event filter)
+        let filteredEvent = auctionHouseContract.filters.AuctionEnded(tokenID, null, null)
+        console.log("Filtered event: ", filteredEvent)
+        setPassedAuction({
+            tokenID: parseInt(tokenID),
+            imageUrl: metadata.image,
+            salePrice: 0,
+            mintDate: trixel.createdAt,
+            winner: "",
+            currentOwner: currentOwner,
+        })
     }
 
     const placeBid = useCallback(async () => {
@@ -106,13 +141,6 @@ const Auction = () => {
         const tx = await auctionHouseConnected.placeBid(BigNumber.from(tokenID).toString());
         await tx.wait();
     }, [auctionHouseContract])
-
-    // Here is the plan:
-    // Load data in here. Data we need is:
-    // - Past auctions (tokenId, saleValue, winner)
-    // - Active auction (stuff in contract)
-    // - Past auction, but more in depth (sale date, current owner along with original data)
-    // - and of course, the image url.
 
     return (
         <div className='auction'>

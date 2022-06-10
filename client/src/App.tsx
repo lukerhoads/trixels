@@ -4,6 +4,7 @@ import Home from 'pages/Home';
 import NotFound from 'pages/NotFound';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import './styles/app.scss';
+import Dao from 'pages/DAO';
 
 export const App = () => {
     return (
@@ -12,6 +13,7 @@ export const App = () => {
                 <Router>
                     <Routes>
                         <Route path='/' element={<Home />} />
+                        <Route path='/dao' element={<Dao />} />
                         <Route path='/auction/:tokenID' element={<Auction />} />
                         <Route path='/*' element={<NotFound />} />
                     </Routes>
