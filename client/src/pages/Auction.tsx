@@ -12,6 +12,8 @@ import AuctionHouseABI from '../abi/contracts/AuctionHouse.sol/AuctionHouse.json
 import DistributorABI from '../abi/contracts/Distributor.sol/Distributor.json';
 import TokenABI from '../abi/contracts/Token.sol/Token.json';
 import Main from 'components/auction/Main';
+import { useWeb3Auth } from 'hooks/useWeb3Auth';
+import Card from 'components/auction/Card';
 
 const { addresses } = config;
 const auctionHouseInterface = new utils.Interface(AuctionHouseABI);
@@ -30,6 +32,7 @@ const Auction = () => {
     const [pastAuctions, setPastAuctions] = useState<PastAuctionPreview[]>([])
 
     const { library } = useEthers()
+    const { authenticate } = useWeb3Auth()
 
     const auctionHouseContract = useMemo((): Contract | undefined => {
         if (!library || !addresses.auctionHouse) return;
@@ -96,7 +99,7 @@ const Auction = () => {
             pastAuctions.push({
                 tokenID: trixel.tokenID,
                 imageUrl: metadata.image,
-                mintDate: trixel.createdAt // This is the mint date, not create date
+                mintDate: trixel.createdAt
             })
         })
 
@@ -107,8 +110,6 @@ const Auction = () => {
     const fetchActiveAuction = async () => {
         if (!auctionHouseContract) return 
         const auction = await auctionHouseContract.auction()
-        console.log("Auction: ", auction)
-        console.log("Auction startDate: ", auction.startDate.toNumber())
         if (auction.settled) return
         setLiveAuction(auction)
         setIsLoading(false)
@@ -119,7 +120,6 @@ const Auction = () => {
         let trixel = await apiClient.getTrixelById(parseInt(tokenID))
         let metadata = await apiClient.getMetadata(trixel.metadataUrl)
         let currentOwner = await tokenContract.ownerOf(tokenID)
-        // Need to get the sale value along with the winner (event filter)
         let filteredEvent = auctionHouseContract.filters.AuctionEnded(tokenID, null, null)
         console.log("Filtered event: ", filteredEvent)
         setPassedAuction({
@@ -156,6 +156,7 @@ const Auction = () => {
                     <div className='past-auctions'>
                         {pastAuctions.map((pastAuction, idx) => (
                             <a key={idx} href={`/auction/${pastAuction.tokenID}`}>
+                                <Card tokenID={pastAuction.tokenID} imageUrl={pastAuction.imageUrl} mintDate={pastAuction.mintDate} active={false} />
                                 <div className="past-auction">
                                     <img className="thumbnail" src={pastAuction.imageUrl} />
                                     <div className="description">

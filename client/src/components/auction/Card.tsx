@@ -1,21 +1,21 @@
 import React from 'react';
-import '../styles/auction-card.scss';
+import '../../styles/auction-card.scss';
 
 type CardProps = {
     tokenID: number;
-    saleValue: number;
+    mintDate: string;
     imageUrl: string;
     active: boolean;
 };
 
-const Card = ({ tokenID, saleValue, imageUrl, active }: CardProps) => {
+const Card = ({ tokenID, mintDate, imageUrl, active }: CardProps) => {
     return (
         <a href={`/auction/${tokenID}`}>
             <div className={'past-auction' + (active ? ' active' : '')}>
                 <img className='thumbnail' src={imageUrl} />
                 <div className='description'>
                     <b>Trixel #{tokenID}</b>
-                    <p>Sold for {saleValue} ETH to </p>
+                    <p>Minted on {mintDate}</p>
                 </div>
             </div>
         </a>
