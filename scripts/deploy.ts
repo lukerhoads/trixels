@@ -32,6 +32,8 @@ const main = async () => {
     const AuctionHouse = await ethers.getContractFactory("AuctionHouse")
     const auctionHouse = await AuctionHouse.deploy(token.address, dao.address, distributor.address, weth.address, AUCTION_HOUSE_DURATION_SECONDS, AUCTION_HOUSE_MIN_BID_INCREMENT_PERCENT, AUCTION_HOUSE_DAO_CUT)
     await auctionHouse.deployed()
+    const setReservePriceTx = await auctionHouse.setReservePrice(1)
+    await setReservePriceTx.wait()
     const setNewOwnerTx = await auctionHouse.transferOwnership(randomWallet.address)
     await setNewOwnerTx.wait()
     const setAuctionHouseTx = await token.setAuctionHouse(auctionHouse.address)

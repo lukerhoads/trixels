@@ -12,6 +12,7 @@ import (
 	"github.com/lukerhoads/trixels/server"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"github.com/ethereum/go-ethereum/ethclient"
 )
 
 func main() {
@@ -37,6 +38,11 @@ func main() {
 		server.Logger.Info("\r- Ctrl+C pressed in Terminal, ending...")
 		os.Exit(0)
 	}()
+
+	_, err := ethclient.Dial(rpcUrl)
+	if err != nil {
+		server.Logger.Fatal(err.Error())
+	}
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {

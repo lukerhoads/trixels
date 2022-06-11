@@ -8,17 +8,42 @@
     width: 90%;
     display: flex;
     flex-direction: row;
+
+    .active-auction {
+        flex: 1;
+        border-radius: 20px;
+        background-color: white;
+        padding: 20px;
+    
+        .active-image {
+            width: 100%;
+            border-radius: 20px;
+            max-height: 500px;
+            object-fit: cover;
+        }
+    
+        .active-data {
+            display: flex;
+            flex-direction: row;
+            margin-top: 10px;
+    
+            .section {
+                flex: 1;
+            }
+        }
+    
+        button {
+            margin-top: 10px;
+        }
+    }
+    
+    .auction-spacer {
+        flex: 1;
+        max-width: 60px;
+    }
+    
+    .past-auctions {
+        flex: 1;
+    }
 }
 
-.active-auction {
-    flex: 1;
-}
-
-.auction-spacer {
-    flex: 1;
-    max-width: 60px;
-}
-
-.past-auctions {
-    flex: 1;
-}

@@ -7,7 +7,7 @@ export type LiveAuction = BaseAuction & {
     endingDate: string;
     highestBid: number;
     highestBidder: string;
-    minBidIncrement: number;
+    minNextBid: number;
 };
 
 export type PastAuctionPreview = BaseAuction & {

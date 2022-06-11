@@ -35,12 +35,12 @@ const altConfig: AltConfig = {
 
 type Params = {
     imageDimensions: number;
-    editTimeoutSeconds: number;
+    editTimeoutMinutes: number;
 };
 
 const params: Params = {
     imageDimensions: 30,
-    editTimeoutSeconds: 300,
+    editTimeoutMinutes: 5,
 };
 
 const config = {

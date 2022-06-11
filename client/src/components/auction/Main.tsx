@@ -23,8 +23,6 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
         } else {
             setBothUndefined(false)
         }
-
-        console.log(liveAuction?.imageUrl)
     }, [liveAuction, pastAuction])
 
     if (bothUndefined) {
@@ -57,9 +55,9 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
                         {live ? (
                             <>
                                 <p className='caption'>Highest Bid:</p>
-                                <p className='value'>{liveAuction?.tokenID}</p>
-                                <p className='caption'>Minimum Bid Increment:</p>
-                                <p className='value'>{liveAuction?.endingDate}</p>
+                                <p className='value'>{liveAuction?.highestBid}</p>
+                                <p className='caption'>Minimum Next Bid:</p>
+                                <p className='value'>{liveAuction?.minNextBid}</p>
                             </>
                         ) : (
                             <>
@@ -69,21 +67,21 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
                         )}
                     </div>
                 </div>
-                { live ? (
-                    <>
-                        <p className='caption'>Highest Bidder: </p>
-                        <p className='value'>{liveAuction?.highestBidder}</p>
-                        <button onClick={() => placeBid()}>Bid</button>
-                    </>
-                ) : (
-                    <>
-                        <p className='caption'>Auction Winner: </p>
-                        <p className='value'>{pastAuction?.winner}</p>
-                        <p className='caption'>Current Owner: </p>
-                        <p className='value'>{pastAuction?.currentOwner}</p>
-                    </>
-                )}
             </div>
+            { live ? (
+                <>
+                    <p className='caption'>Highest Bidder: </p>
+                    <p className='value'>{liveAuction?.highestBidder}</p>
+                    <button onClick={() => placeBid()}>Bid</button>
+                </>
+            ) : (
+                <>
+                    <p className='caption'>Auction Winner: </p>
+                    <p className='value'>{pastAuction?.winner}</p>
+                    <p className='caption'>Current Owner: </p>
+                    <p className='value'>{pastAuction?.currentOwner}</p>
+                </>
+            )}
         </div>
     );
 };

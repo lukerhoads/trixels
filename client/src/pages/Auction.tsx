@@ -85,14 +85,6 @@ const Auction = () => {
         setValidTokenID(parseInt(tokenID) < tokenQuantity)
     }, [tokenQuantity])
 
-    useEffect(() => {
-        if (isLive && !loading) {
-            console.log("live auction", liveAuction)
-        } else {
-            console.log("past auction", passedAuction)
-        }
-    }, [isLive])
-
     const fetchTokenQuantity = async () => {
         if (!tokenContract) return
         const tokenQuantity = await tokenContract.tokenQuantity()
@@ -116,20 +108,27 @@ const Auction = () => {
     }
 
     const fetchActiveAuction = async () => {
-        if (!auctionHouseContract) return 
+        if (!auctionHouseContract || !tokenID) return 
         const auction = await auctionHouseContract.auction()
         if (auction.settled) return
         const liveAuction = await apiClient.getLiveTrixel()
         const metadata = await apiClient.getMetadata(liveAuction.metadataUrl)
         const bidIncrementPercentage = await auctionHouseContract.minBidIncrementPercentage()
-        const minBidIncrement = auction.highestBid.toNumber() + (1 + bidIncrementPercentage.toNumber() / 100)
+        let minNextBid;
+        const reservePrice = await auctionHouseContract.reservePrice()
+        if (auction.highestBid.toNumber() < reservePrice) {
+            minNextBid = reservePrice + ((1 + bidIncrementPercentage / 100) * reservePrice)
+        } else {
+            minNextBid = auction.highestBid.toNumber() + ((1 + bidIncrementPercentage / 100) * auction.highestBid.toNumber())
+        }
+        const trixel = await apiClient.getLiveTrixel()
         setLiveAuction({
-            tokenID: tokenID,
+            tokenID: trixel.tokenID,
             imageUrl: metadata.image,
-            endingDate: auction.endingDate.toString(),
+            endingDate: auction.endDate.toString(),
             highestBid: auction.highestBid.toNumber(),
             highestBidder: auction.highestBidder,
-            minBidIncrement: minBidIncrement,
+            minNextBid: minNextBid,
         })
         setIsLoading(false)
     }

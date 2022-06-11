@@ -86,7 +86,7 @@ type Trixel struct {
 	TokenID     uint `json:"tokenID" gorm:"primaryKey"`
 	MetadataUrl string `json:"metadataUrl"`
 	CreatedAt *time.Time `json:"createdAt"`
-	live bool
+	Live bool `json:"live"`
 }
 
 type Trixels []Trixel
@@ -108,7 +108,7 @@ func (t *Trixel) GetTrixel(db *gorm.DB) bool {
 }
 
 func (t *Trixel) GetLiveTrixel(db *gorm.DB) bool {
-	return db.First(&t, "token_id = ?", t.TokenID).Error != gorm.ErrRecordNotFound
+	return db.First(&t, "live = ?", true).Error != gorm.ErrRecordNotFound
 }
 
 func (t *Trixel) AddLiveTrixel(db *gorm.DB) error {
@@ -132,7 +132,7 @@ func (t *Trixel) AddTrixel(db *gorm.DB) {
 }
 
 func (t *Trixels) GetTrixels(db *gorm.DB) {
-	db.Find(&t).Where("live = ?", false)
+	db.Where("live = false").Find(&t)
 }
 
 type ServerError struct {

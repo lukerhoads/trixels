@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react';
 import store from '../store';
 import Status from './Status';
 import config from 'config';
-import { validateHexCode } from '../util';
+import { addDays, getDateDiff, validateHexCode } from '../util';
 import { ethers } from 'ethers';
 import { InjectedConnector } from '@web3-react/injected-connector';
 import { useWeb3Auth } from 'hooks/useWeb3Auth';
@@ -56,15 +56,15 @@ const Haptics = ({ children }: HapticsProps) => {
             return;
         }
 
-        let nextEditableTime = new Date(store.activePixel.updatedAt);
-        nextEditableTime.setSeconds(nextEditableTime.getSeconds() + config.params.editTimeoutSeconds);
+        let editedAt = new Date(store.activePixel.updatedAt);
+        let nextEditableTime = addDays(editedAt, 1);
         let now = new Date();
-        let msDiff = new Date(nextEditableTime.getUTCMilliseconds() - now.getUTCMilliseconds());
-        if (msDiff.getMinutes() >= 0 && msDiff.getSeconds() >= 0) {
-            setTimeLeft(`${msDiff.getMinutes()}m${msDiff.getSeconds()}s`);
+        if (now < nextEditableTime) {
+            let diff = getDateDiff(nextEditableTime, now)
+            setTimeLeft(`${diff.getMinutes()}m${diff.getSeconds()}s`);
             setCanEditColor(false);
         } else {
-            setTimeLeft(`0m0s, can edit`);
+            setTimeLeft(`Can edit`);
             setCanEditColor(true);
         }
     };

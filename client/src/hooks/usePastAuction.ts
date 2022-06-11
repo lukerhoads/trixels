@@ -57,7 +57,6 @@ export const usePastAuction = (tokenID: number): PastAuctionInfo => {
         // Source auction winner from the event
         const event = auctionHouseContract.filters.AuctionEnded(tokenID, null, null);
         if (event.topics) {
-            console.log('Sourced event topics: ', event.topics);
             resAuction.winner = event.topics[2][0];
         }
         // Source the current owner from the token contract

@@ -43,11 +43,6 @@ func (p *Daemon) Start() {
 			if err := p.MintAndStartAuction(); err != nil {
 				Logger.Error(err.Error())
 			}
-		case <-p.auctionDayTicker.C:
-			Logger.Info("Ending auction")
-			if err := p.EndAuction(); err != nil {
-				Logger.Error(err.Error())
-			}
 		case v := <-p.devChan:
 			if v == "mint" {
 				Logger.Info("🔨 Starting auction from devChan...")
@@ -65,6 +60,16 @@ func (p *Daemon) Start() {
 			Logger.Info("Stopping daemon...")
 			p.twoWeekTicker.Stop()
 			return
+		}
+		
+		if p.auctionDayTicker != nil {
+			select {
+				case <-p.auctionDayTicker.C:
+					Logger.Info("Ending auction")
+					if err := p.EndAuction(); err != nil {
+						Logger.Error(err.Error())
+					}
+			}
 		}
 	}
 }
@@ -121,12 +126,16 @@ func (p *Daemon) MintAndStartAuction() error {
 	newTrixel := &Trixel{
 		TokenID:     uint(tokenID),
 		MetadataUrl: newMetaUrl,
-		live: true,
+		Live: true,
 	}
 
 	newTrixel.AddLiveTrixel(p.DB)
 	Logger.Info("🔨 Started auction...")
-	p.auctionDayTicker.Reset(time.Day)
+	if p.auctionDayTicker == nil {
+		p.auctionDayTicker = time.NewTicker(24 * time.Hour)
+	} else {
+		p.auctionDayTicker.Reset(24 * time.Hour)
+	}
 	return nil
 }
 
@@ -138,7 +147,7 @@ func (p *Daemon) EndAuction() error {
 	}
 
 	newTrixel.DeleteLiveTrixel(p.DB)
-	newTrixel.live = false
+	newTrixel.Live = false
 	newTrixel.AddTrixel(p.DB)
 	return nil
 }

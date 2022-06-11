@@ -79,9 +79,7 @@ func (r *App) GetLiveTrixel(res http.ResponseWriter, req *http.Request) {
 	trixel := Trixel{}
 	found := trixel.GetLiveTrixel(r.DB)
 	if !found {
-		json.NewEncoder(res).Encode(ServerError{
-			Message: "Trixel not found",
-		})
+		http.Error(res, "Trixel not found", http.StatusNotFound)
 		return
 	}
 
@@ -201,4 +199,5 @@ func EnsureTableExists(db *gorm.DB) {
 
 func ClearTable(db *gorm.DB) {
 	db.Exec("DELETE FROM pixels")
+	db.Exec("DELETE FROM trixels")
 }
