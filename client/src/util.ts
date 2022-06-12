@@ -1,5 +1,5 @@
 import addresses from '../addresses.json';
-import config from './config'
+import config from './config';
 
 export const validateHexCode = (hex: string) => {
     return hex.match('^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$');
@@ -23,8 +23,8 @@ export const getContractAddressesForChain = (chainId: number) => {
 
 export const addDays = (date1: Date, numMinutes: number): Date => {
     return new Date(date1.getTime() + config.params.editTimeoutMinutes * 60000);
-}
+};
 
 export const getDateDiff = (date1: Date, date2: Date) => {
     return new Date(date1.getTime() - date2.getTime());
-}
+};

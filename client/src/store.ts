@@ -1,13 +1,13 @@
-import { ethers } from 'ethers';
-import { makeAutoObservable } from 'mobx';
-import { SimplePixel, Pixel } from 'types/pixel';
-import { Log } from 'types/log';
-import config from './config';
 import ApiClient from 'api-client';
+import { makeAutoObservable } from 'mobx';
+import { Log } from 'types/log';
+import { OverlayInfo } from 'types/overlay';
+import { Pixel, SimplePixel } from 'types/pixel';
+import config from './config';
 
 class Store {
     // Client
-    client: ApiClient
+    client: ApiClient;
 
     // Haptics state
     pixels: Pixel[] = [];
@@ -24,21 +24,35 @@ class Store {
     dragStartX: number = 0;
     dragStartY: number = 0;
 
+    // Overlay state
+    overlayInfo: OverlayInfo | undefined = undefined;
+
     // Other state
     logs: Log[] = [];
 
     constructor(apiUrl: string) {
         makeAutoObservable(this);
-        this.client = new ApiClient(apiUrl)
+        this.client = new ApiClient(apiUrl);
     }
 
     async fetchPixels() {
-        let pixels = await this.client.getPixels()
-        this.pixels = pixels
+        let pixels = await this.client.getPixels();
+        this.pixels = pixels;
     }
 
     async fetchPixel(x: number, y: number): Promise<Pixel> {
-        return this.client.getPixelByCoord({ x: x, y: y })
+        return this.client.getPixelByCoord({ x: x, y: y });
+    }
+
+    setOverlayInfo(newInfo: OverlayInfo | undefined) {
+        if (!newInfo) {
+            this.overlayInfo = undefined;
+            return;
+        }
+        this.overlayInfo = {
+            ...newInfo,
+            ...this.overlayInfo,
+        };
     }
 
     setXOffset(xOff: number) {
@@ -105,7 +119,7 @@ class Store {
             editor: editor,
         };
 
-        return this.client.updatePixel(newActivePixel)
+        return this.client.updatePixel(newActivePixel);
     }
 }
 

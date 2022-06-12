@@ -1,5 +1,7 @@
-import { BigNumber } from 'ethers';
-import React, { useState, useEffect } from 'react';
+import { useEthers } from '@usedapp/core';
+import { observer } from 'mobx-react';
+import { useEffect, useState } from 'react';
+import store from 'store';
 import { LiveAuction, PastAuction } from 'types/auction';
 
 // - Trixel ID (complete)
@@ -8,26 +10,33 @@ import { LiveAuction, PastAuction } from 'types/auction';
 // - Current owner (source from token contract)
 
 type MainProps = {
-    live: boolean
-    liveAuction?: LiveAuction
-    pastAuction?: PastAuction
-    placeBid: () => void
-}
+    live: boolean;
+    liveAuction?: LiveAuction;
+    pastAuction?: PastAuction;
+    placeBid: () => void;
+};
 
 const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
-    const [bothUndefined, setBothUndefined] = useState(false)
+    const { account, deactivate } = useEthers();
+    const [bothUndefined, setBothUndefined] = useState(false);
 
     useEffect(() => {
         if (!liveAuction && !pastAuction) {
-            setBothUndefined(true)
+            setBothUndefined(true);
         } else {
-            setBothUndefined(false)
+            setBothUndefined(false);
         }
-    }, [liveAuction, pastAuction])
+    }, [liveAuction, pastAuction]);
 
     if (bothUndefined) {
-        return <p>No live or past auction</p>
+        return <p>No live or past auction</p>;
     }
+
+    const authClick = () => {
+        store.setOverlayInfo({
+            type: 'auth-modal',
+        });
+    };
 
     return (
         <div>
@@ -68,11 +77,12 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
                     </div>
                 </div>
             </div>
-            { live ? (
+            {live ? (
                 <>
                     <p className='caption'>Highest Bidder: </p>
                     <p className='value'>{liveAuction?.highestBidder}</p>
-                    <button onClick={() => placeBid()}>Bid</button>
+                    {account ? <button onClick={() => placeBid()}>Bid</button> : <button onClick={() => authClick()}>Sign in</button>}
+                    <p onClick={() => deactivate()}>Disconnect</p>
                 </>
             ) : (
                 <>
@@ -86,4 +96,4 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
     );
 };
 
-export default Main;
+export default observer(Main);

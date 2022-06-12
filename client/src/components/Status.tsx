@@ -1,9 +1,8 @@
-import React, { CSSProperties } from 'react';
-import GreenStatus from '../../assets/icons/GreenStatus.svg';
-import RedStatus from '../../assets/icons/RedStatus.svg';
-import OrangeStatus from '../../assets/icons/OrangeStatus.svg';
 import 'styles/status-icon.scss';
 import { Mood } from 'types/log';
+import GreenStatus from '../../assets/icons/GreenStatus.svg';
+import OrangeStatus from '../../assets/icons/OrangeStatus.svg';
+import RedStatus from '../../assets/icons/RedStatus.svg';
 
 export type StatusProps = {
     width: number;

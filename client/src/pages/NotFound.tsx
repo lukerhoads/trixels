@@ -1,7 +1,6 @@
-import React from 'react';
 import Header from 'layout/header';
-import '../styles/notfound.scss';
 import { Link } from 'react-router-dom';
+import '../styles/notfound.scss';
 
 const NotFound = () => {
     return (

@@ -1,6 +1,6 @@
 interface BaseAuction {
-    tokenID: number 
-    imageUrl: string
+    tokenID: number;
+    imageUrl: string;
 }
 
 export type LiveAuction = BaseAuction & {
@@ -11,8 +11,8 @@ export type LiveAuction = BaseAuction & {
 };
 
 export type PastAuctionPreview = BaseAuction & {
-    mintDate: string
-}
+    mintDate: string;
+};
 
 export type PastAuction = BaseAuction & {
     salePrice: number;

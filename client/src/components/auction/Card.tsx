@@ -1,4 +1,3 @@
-import React from 'react';
 import '../../styles/auction-card.scss';
 
 type CardProps = {

@@ -1,8 +1,8 @@
 import { useEthers } from '@usedapp/core';
 import { BigNumber, Contract, utils } from 'ethers';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import config from '../config';
 import AuctionHouseABI from '../abi/contracts/AuctionHouse.sol/AuctionHouse.json';
+import config from '../config';
 
 // import { AuctionHouse__factory, AuctionHouse } from '../../typechain-types';
 

@@ -12,10 +12,10 @@ export type Trixel = {
 };
 
 export type Metadata = {
-    name: string 
-    image: string 
-    description: string
-}
+    name: string;
+    image: string;
+    description: string;
+};
 
 class ApiClient {
     private url: string;
@@ -25,12 +25,14 @@ class ApiClient {
     }
 
     async getLiveTrixel(): Promise<Trixel> {
+        console.log('Fetching live trixel');
         return fetch(this.url + '/trixel/live')
-            .then(res => res.json())
-            .then(trixel => trixel as Trixel)
+            .then((res) => res.json())
+            .then((trixel) => trixel as Trixel);
     }
 
     async getTrixels(): Promise<Trixel[]> {
+        console.log('Fetching trixels');
         return fetch(this.url + '/trixels')
             .then((res) => res.json())
             .then((trixels) => trixels as Trixel[]);
@@ -62,7 +64,9 @@ class ApiClient {
     }
 
     async getMetadata(metaUrl: string): Promise<Metadata> {
-        return fetch(metaUrl).then(res => res.json()).then(meta => meta as Metadata)
+        return fetch(metaUrl)
+            .then((res) => res.json())
+            .then((meta) => meta as Metadata);
     }
 }
 

@@ -42,6 +42,10 @@
             p {
                 margin-left: 3px;
             }
+
+            p:hover {
+                cursor: pointer;
+            }
         }
     }
 
@@ -105,11 +109,8 @@
             .editor {
                 margin-top: auto;
 
-
                 .input-container {
                     margin-bottom: 5px;
-
-
                     position: relative;
 
                     button {
@@ -129,15 +130,10 @@
                     transition: 0.2s ease;
                 }
 
-                .metamask-button {
+                .auth-button {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-
-                    svg {
-                        height: 20px;
-                        margin-right: 10px;
-                    }
                 }
             }
         }
@@ -202,13 +198,6 @@
         .mini-header {    
             .color-description {
                 max-width: none; 
-            }
-
-            .close {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-width: 60px;
             }
         }
     }
@@ -276,4 +265,15 @@
 .fadeIn {
     opacity: 1;
     transition: opacity 300ms ease-in;
+}
+
+.close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+}
+
+.close:hover {
+    cursor: pointer;
 }

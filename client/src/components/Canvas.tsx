@@ -1,11 +1,11 @@
-import config from '../config';
-import React, { useEffect, useRef, useState } from 'react';
-import { SimplePixel } from 'types/pixel';
-import '../styles/canvas.scss';
-import Haptics from './Haptics';
-import store from '../store';
 import { observer } from 'mobx-react';
+import { useEffect, useRef, useState } from 'react';
+import { SimplePixel } from 'types/pixel';
+import config from '../config';
+import store from '../store';
+import '../styles/canvas.scss';
 import { validateHexCode } from '../util';
+import Haptics from './Haptics';
 
 const PIXEL_LENGTH = 10;
 const CANVAS_LENGTH = PIXEL_LENGTH * config.params.imageDimensions;
@@ -29,13 +29,14 @@ const Canvas = () => {
     }, [canvasRef.current]);
 
     useEffect(() => {
-        if (store.activePixel && validateHexCode(store.activePixel.color)) {
+        if (store.activePixel && validateHexCode(store.activePixel.color) && store.activePixel.color != store.activePixelOriginalColor) {
             redrawActivePixel();
         }
     }, [store.activePixel?.color]);
 
     // Debug this idk why not working
     const redrawActivePixel = () => {
+        console.log("Redrawing...")
         if (!canvasRef || !canvasRef.current || !ctx || !store.activePixel) return;
 
         ctx.translate(window.innerWidth / 2, window.innerHeight / 2);

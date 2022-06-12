@@ -1,10 +1,10 @@
 import { useEthers } from '@usedapp/core';
 import { BigNumber, Contract, utils } from 'ethers';
 import { useEffect, useMemo, useState } from 'react';
-import config from '../config';
 import AuctionHouseABI from '../abi/contracts/AuctionHouse.sol/AuctionHouse.json';
 import DistributorABI from '../abi/contracts/Distributor.sol/Distributor.json';
 import TokenABI from '../abi/contracts/Token.sol/Token.json';
+import config from '../config';
 
 const { addresses } = config;
 const auctionHouseInterface = new utils.Interface(AuctionHouseABI);

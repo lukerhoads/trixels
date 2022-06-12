@@ -1,0 +1,28 @@
+.overlay {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 500;
+
+    .overlay-header {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        margin-bottom: 10px;
+
+        .close-overlay {
+            min-width: 20px;
+        }
+    }
+
+    .color-picker {
+        position: absolute;
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        right: 5%;
+        bottom: 340px;
+    }
+}
