@@ -81,7 +81,7 @@ contract AuctionHouse is Ownable, IAuctionHouse, ETHMover, IERC721Receiver {
         require(!_auction.settled, "Auction has already been settled");
         require(block.timestamp > _auction.endDate, "Auction cannot be ended yet");
 
-        auction.settled = true;
+        _auction.settled = true;
         if (auction.highestBidder == address(0)) {
             token.burn(_auction.tokenId);
         } else {

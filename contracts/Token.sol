@@ -31,6 +31,7 @@ contract Token is Ownable, ERC721, IToken {
     function mint(address to) external override onlyAuctionHouse returns (uint) {
         tokenQuantity++;
         _safeMint(to, tokenQuantity);
+        emit Mint(to, tokenQuantity);
         return tokenQuantity;
     }
 
@@ -40,7 +41,8 @@ contract Token is Ownable, ERC721, IToken {
      */
     function burn(uint256 tokenId) external override onlyAuctionHouse {
         tokenQuantity--;
-        return _burn(tokenId);
+        _burn(tokenId);
+        emit Burn(tokenId);
     }
 
     function _baseURI() internal pure override returns (string memory) {

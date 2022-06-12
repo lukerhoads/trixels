@@ -158,12 +158,14 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 		Editor: pixel.Editor,
 	}
 	mostRecent := mostRecentPixel.GetMostRecentEdited(r.DB)
-	validUpdate := mostRecent.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
-	if !validUpdate {
-		json.NewEncoder(res).Encode(ServerError{
-			Message: "Cannot update, user has updated another pixel in the last 5 minutes",
-		})
-		return
+	if mostRecent != nil {
+		validUpdate := mostRecent.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
+		if !validUpdate {
+			json.NewEncoder(res).Encode(ServerError{
+				Message: "Cannot update, user has updated another pixel in the last 5 minutes",
+			})
+			return
+		}
 	}
 
 	getPixel := Pixel{

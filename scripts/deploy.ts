@@ -2,7 +2,8 @@ import fs from "fs"
 import { ethers } from "hardhat"
 import os from "os"
 
-const AUCTION_HOUSE_DURATION_SECONDS = 604800
+// TODO: set back to one day (86400)
+const AUCTION_HOUSE_DURATION_SECONDS = 5
 const AUCTION_HOUSE_MIN_BID_INCREMENT_PERCENT = 5
 const AUCTION_HOUSE_DAO_CUT = 10
 

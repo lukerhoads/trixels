@@ -1,3 +1,5 @@
+import { BigNumber } from "ethers";
+
 export type Proposal = {
     proposalID: number;
     proposalHash?: string;
@@ -22,4 +24,5 @@ export type ProposalSubmit = {
 export type DaoStats = {
     numProposals: number;
     votingPeriod: string;
+    etherBalance?: BigNumber
 };

@@ -1,5 +1,7 @@
 import { useWeb3Auth } from 'hooks/useWeb3Auth';
+import { observer } from 'mobx-react';
 import React from 'react';
+import store from 'store';
 import '../styles/auth-modal.scss';
 import Close from './Close';
 import { Spinner } from './Spinner';
@@ -15,6 +17,11 @@ const AuthModal = ({ onExit }: AuthModalProps) => {
         e.stopPropagation();
     };
 
+    const onAuthClick = () => {
+        store.setOverlayInfo(undefined)
+        authenticate()
+    }
+
     return (
         <div className='auth-modal' onClick={onDivClick}>
             <Close onExit={onExit} />
@@ -22,7 +29,7 @@ const AuthModal = ({ onExit }: AuthModalProps) => {
                 {authenticating ? (
                     <Spinner width={30} height={30} />
                 ) : (
-                    <div className='auth-provider' onClick={authenticate}>
+                    <div className='auth-provider' onClick={onAuthClick}>
                         <svg xmlns='http://www.w3.org/2000/svg' width='212' height='189' viewBox='0 0 212 189'>
                             <g fill='none' fill-rule='evenodd'>
                                 <polygon
@@ -90,4 +97,4 @@ const AuthModal = ({ onExit }: AuthModalProps) => {
     );
 };
 
-export default AuthModal;
+export default observer(AuthModal);

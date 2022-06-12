@@ -1,4 +1,5 @@
 import { useEthers } from '@usedapp/core';
+import Address from 'components/Address';
 import { observer } from 'mobx-react';
 import { useEffect, useState } from 'react';
 import store from 'store';
@@ -38,6 +39,11 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
         });
     };
 
+    const parseEthereumDate = (date: string | undefined) => {
+        if (!date) return ""
+        return new Date(parseInt(date) * 1000).toUTCString()
+    }
+
     return (
         <div>
             <img className='active-image' src={live ? liveAuction?.imageUrl : pastAuction?.imageUrl} />
@@ -49,7 +55,7 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
                                 <p className='caption'>Trixel ID:</p>
                                 <p className='value'>{liveAuction?.tokenID}</p>
                                 <p className='caption'>Ending date:</p>
-                                <p className='value'>{liveAuction?.endingDate}</p>
+                                <p className='value'>{parseEthereumDate(liveAuction?.endingDate)}</p>
                             </>
                         ) : (
                             <>
@@ -80,9 +86,9 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
             {live ? (
                 <>
                     <p className='caption'>Highest Bidder: </p>
-                    <p className='value'>{liveAuction?.highestBidder}</p>
+                    <Address className='value'>{liveAuction?.highestBidder}</Address>
                     {account ? <button onClick={() => placeBid()}>Bid</button> : <button onClick={() => authClick()}>Sign in</button>}
-                    <p onClick={() => deactivate()}>Disconnect</p>
+                    <p className="clicktext" onClick={() => deactivate()}>Disconnect</p>
                 </>
             ) : (
                 <>

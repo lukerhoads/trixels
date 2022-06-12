@@ -10,7 +10,6 @@ import { CHAIN_ID, supportedChainUrls } from './config';
 import './styles/app.scss';
 
 export const useDappConfig = {
-    autoConnect: true,
     readOnlyChainId: CHAIN_ID,
     readOnlyUrls: {
         [CHAIN_ID]: supportedChainUrls[CHAIN_ID],

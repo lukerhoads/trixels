@@ -9,4 +9,8 @@ interface IToken is IERC721 {
     function mint(address to) external returns (uint tokenID);
 
     function burn(uint256 tokenId) external;
+
+    event Mint(address indexed to, uint indexed tokenID);
+
+    event Burn(uint indexed tokenID);
 }

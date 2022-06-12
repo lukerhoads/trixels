@@ -56,6 +56,11 @@ func (a *AuctionHouse) StartAuction() (uint64, error) {
 	return auction.TokenId.Uint64(), err
 }
 
+func (a *AuctionHouse) EndAuction() error {
+	_, err := a.AuctionHouse.EndAuction(genKeyedTransactor(a.Client, a.privateKey))
+	return err 
+}
+
 func (a *AuctionHouse) PrintAuction() {
 	auction, err := a.AuctionHouse.Auction(nil)
 	if err != nil {

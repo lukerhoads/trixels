@@ -58,9 +58,7 @@ class ApiClient {
         return fetch(this.url + `/pixels`, {
             method: 'POST',
             body: JSON.stringify(newPixel),
-        }).then(res => {
-            console.log(res)
-        });
+        })
     }
 
     async getMetadata(metaUrl: string): Promise<Metadata> {

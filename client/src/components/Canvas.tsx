@@ -176,7 +176,7 @@ const Canvas = () => {
     };
 
     return (
-        <Haptics>
+        <Haptics type="full">
             <canvas className='canvas' ref={canvasRef}></canvas>
         </Haptics>
     );

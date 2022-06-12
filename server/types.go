@@ -4,7 +4,6 @@ import (
 	"time"
 	"gorm.io/gorm"
 	"errors"
-	"log"
 )
 
 // Pixel represents one pixel on the canvas.

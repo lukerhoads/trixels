@@ -129,6 +129,7 @@ func (p *Daemon) MintAndStartAuction() error {
 		Live: true,
 	}
 
+	newTrixel.DeleteLiveTrixel(p.DB)
 	newTrixel.AddLiveTrixel(p.DB)
 	pixels.ClearPixels(p.DB)
 	Logger.Info("🔨 Started auction...")	
@@ -141,6 +142,11 @@ func (p *Daemon) MintAndStartAuction() error {
 }
 
 func (p *Daemon) EndAuction() error {
+	err := p.AuctionHouse.EndAuction()
+	if err != nil {
+		return err
+	}
+
 	var newTrixel Trixel
 	found := newTrixel.GetLiveTrixel(p.DB)
 	if !found {

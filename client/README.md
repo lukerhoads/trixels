@@ -11,3 +11,6 @@
 - Make logs fade in/out (low priority)
 - Convert times to local (low priority)
 - Add type safe contracts
+- Add logs to auction and dao pages
+- Find out why minted nft is blurred around pixels
+- Add loading placeholders

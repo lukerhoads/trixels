@@ -26,6 +26,7 @@ const Dao = () => {
     const [canExecuteProposal, setCanExecuteProposal] = useState(false);
     const { library } = useEthers();
     const voteCheckboxRef = useRef<HTMLInputElement>(null);
+    const [userIsMember, setUserIsMember] = useState(false)
     const [userVotedForActive, setUserVotedForActive] = useState(false);
     const [validProposalID, setValidProposalID] = useState(false);
 
@@ -38,6 +39,7 @@ const Dao = () => {
         if (proposalID) {
             fetchCanExecuteProposal();
         }
+        fetchUserIsMember()
         fetchStats();
         fetchProposals();
     }, [daoContract]);
@@ -46,6 +48,12 @@ const Dao = () => {
         validateProposalId();
         calculateIfVotedFor();
     }, [account]);
+
+    const fetchUserIsMember = async () => {
+        if (!daoContract) return
+        const isMember = await daoContract.isMember(account)
+        setUserIsMember(isMember)
+    }
 
     const validateProposalId = async () => {
         if (!daoContract || !proposalID) return;
@@ -80,9 +88,11 @@ const Dao = () => {
     const fetchStats = async () => {
         if (!daoContract) return;
         const numProposals = await daoContract.numProposals();
+        const balance = await library?.getBalance(daoContract.address)
         setDaoStats({
             numProposals: numProposals.toNumber(),
             votingPeriod: '2 weeks',
+            etherBalance: balance
         });
     };
 
@@ -115,7 +125,9 @@ const Dao = () => {
         vote(voteCheckboxRef.current.checked);
     };
 
-    const unVoteClick = () => {};
+    const unVoteClick = () => {
+        unVote()
+    };
 
     const fetchCanExecuteProposal = async () => {
         if (!daoContract || !proposalID) return;
@@ -153,10 +165,12 @@ const Dao = () => {
                         <p className='value'>{daoStats?.numProposals}</p>
                         <p className='caption'>Voting period:</p>
                         <p className='value'>{daoStats?.votingPeriod}</p>
-                        <button onClick={() => makeProposalClick()}>Make proposal</button>
+                        <p className='caption'>Balance:</p>
+                        <p className='value'>{daoStats?.etherBalance ? utils.formatEther(daoStats.etherBalance) : "0"} ETH</p>
+                        {userIsMember && <button onClick={() => makeProposalClick()}>Make proposal</button>}
                     </div>
                     <div className='dao-spacer' />
-                    {proposalID && (
+                    {proposalID && userIsMember && (
                         <div className='active-proposal'>
                             Active proposal
                             <input type='checkbox' ref={voteCheckboxRef}>
