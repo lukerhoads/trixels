@@ -6,7 +6,7 @@ import "./interfaces/IDAO.sol";
 import "./utility/ETHMover.sol";
 
 contract DAO is IDAO, ETHMover {
-    uint constant minProposalVotingPeriod = 2 weeks;
+    uint public constant minProposalVotingPeriod = 2 weeks;
 
     IToken public token;
     uint public numProposals;
@@ -20,10 +20,6 @@ contract DAO is IDAO, ETHMover {
     function isMember(address person) public view returns (bool) {
         return token.balanceOf(person) > 0;
     }
-
-    // function proposalCount() external override view returns (uint) {
-    //     return numProposals;
-    // }
 
     /*
      * @notice only allows users who hold a Trixel. 
@@ -91,6 +87,11 @@ contract DAO is IDAO, ETHMover {
             p.nay -= token.balanceOf(msg.sender);
             p.votedAgainst[msg.sender] = false;
         }
+    }
+
+    function canExecuteProposal(uint _proposalID) external override returns (bool) {
+        IDAO.Proposal storage p = proposals[_proposalID];
+        return (p.createdAt + minProposalVotingPeriod < block.timestamp) && (p.yay > p.nay) && !p.passed;
     }
 
     /*

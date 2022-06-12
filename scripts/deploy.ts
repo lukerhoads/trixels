@@ -1,6 +1,6 @@
 import fs from "fs"
-import os from "os"
 import { ethers } from "hardhat"
+import os from "os"
 
 const AUCTION_HOUSE_DURATION_SECONDS = 604800
 const AUCTION_HOUSE_MIN_BID_INCREMENT_PERCENT = 5

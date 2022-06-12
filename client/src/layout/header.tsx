@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children } from 'react';
 import { Link } from 'react-router-dom';
 import '../styles/header.scss';
 
@@ -17,7 +17,9 @@ const Header = ({ children }: HeaderProps) => {
                 </div>
                 <div className='header-spacer' />
                 <div className='header-links'>
-                    <div className='header-link'>{children}</div>
+                    {Children.map(children, (child) => (
+                        <div className='header-link'>{child}</div>
+                    ))}
                 </div>
             </div>
         </div>

@@ -11,12 +11,10 @@ import '../styles/auction.scss';
 import Card from 'components/auction/Card';
 import Main from 'components/auction/Main';
 import AuctionHouseABI from '../abi/contracts/AuctionHouse.sol/AuctionHouse.json';
-import DistributorABI from '../abi/contracts/Distributor.sol/Distributor.json';
 import TokenABI from '../abi/contracts/Token.sol/Token.json';
 
 const { addresses } = config;
 const auctionHouseInterface = new utils.Interface(AuctionHouseABI);
-const distributorInterface = new utils.Interface(DistributorABI);
 const tokenInterface = new utils.Interface(TokenABI);
 
 const Auction = () => {
@@ -30,7 +28,6 @@ const Auction = () => {
     const [liveAuction, setLiveAuction] = useState<LiveAuction | undefined>(undefined);
     const [passedAuction, setPassedAuction] = useState<PastAuction | undefined>(undefined);
     const [pastAuctions, setPastAuctions] = useState<PastAuctionPreview[]>([]);
-
 
     const auctionHouseContract = useMemo((): Contract | undefined => {
         if (!library || !addresses.auctionHouse) return;
@@ -103,6 +100,7 @@ const Auction = () => {
     const fetchActiveAuction = async () => {
         if (!auctionHouseContract || !tokenID) return;
         const auction = await auctionHouseContract.auction();
+        console.log('Auction: ', auction);
         if (auction.settled) return;
         const liveAuction = await apiClient.getLiveTrixel();
         const metadata = await apiClient.getMetadata(liveAuction.metadataUrl);
@@ -114,9 +112,8 @@ const Auction = () => {
         } else {
             minNextBid = auction.highestBid.toNumber() + (1 + bidIncrementPercentage / 100) * auction.highestBid.toNumber();
         }
-        const trixel = await apiClient.getLiveTrixel();
         setLiveAuction({
-            tokenID: trixel.tokenID,
+            tokenID: liveAuction.tokenID,
             imageUrl: metadata.image,
             endingDate: auction.endDate.toString(),
             highestBid: auction.highestBid.toNumber(),
@@ -155,6 +152,7 @@ const Auction = () => {
         <div className='auction'>
             <Header>
                 <Link to='/'>Home</Link>
+                <Link to='/dao'>Dao</Link>
             </Header>
             {loading ? (
                 <p>Loading...</p>

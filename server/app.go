@@ -36,6 +36,7 @@ func (r *App) initializeRoutes() {
 	r.Router.HandleFunc("/pixels", r.GetPixels).Methods("GET")
 	r.Router.HandleFunc("/pixels", r.UpdatePixel).Methods("POST")
 	r.Router.HandleFunc("/trigger/mint", r.TriggerMint).Methods("GET")
+	r.Router.HandleFunc("/trigger/end", r.TriggerEnd).Methods("GET")
 	r.Router.HandleFunc("/trigger/reset", r.ResetDB).Methods("GET")
 }
 
@@ -151,6 +152,20 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 
+	// Get other pixels that the sender has edited and check if the most recent update time is
+	// at least updatetimeinterval ago
+	mostRecentPixel := Pixel {
+		Editor: pixel.Editor,
+	}
+	mostRecent := mostRecentPixel.GetMostRecentEdited(r.DB)
+	validUpdate := mostRecent.UpdatedAt.Add(PixelUpdateTime).Before(time.Now())
+	if !validUpdate {
+		json.NewEncoder(res).Encode(ServerError{
+			Message: "Cannot update, user has updated another pixel in the last 5 minutes",
+		})
+		return
+	}
+
 	getPixel := Pixel{
 		X: pixel.X,
 		Y: pixel.Y,
@@ -175,6 +190,11 @@ func (r *App) UpdatePixel(res http.ResponseWriter, req *http.Request) {
 
 func (r *App) TriggerMint(res http.ResponseWriter, req *http.Request) {
 	r.devChan <- "mint"
+	fmt.Fprintf(res, "Success!")
+}
+
+func (r *App) TriggerEnd(res http.ResponseWriter, req *http.Request) {
+	r.devChan <- "end"
 	fmt.Fprintf(res, "Success!")
 }
 

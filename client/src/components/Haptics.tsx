@@ -111,16 +111,16 @@ const Haptics = ({ children }: HapticsProps) => {
     };
 
     const addressClick = (e: React.MouseEvent<HTMLParagraphElement>) => {
-        navigator.clipboard.writeText(e.currentTarget.innerText)
+        navigator.clipboard.writeText(e.currentTarget.innerText);
         store.pushToLogs({
             mood: 'success',
             message: 'Copied address.',
         });
-    }
+    };
 
     return (
         <div className='haptics'>
-            {store.logs.length ? (
+            {store.logs.length && (
                 <div className='logs'>
                     {store.logs.slice(0, 2).map((log, idx) => (
                         <div className={'log' + (idx == 0 ? ' top' : '')} key={idx}>
@@ -129,7 +129,7 @@ const Haptics = ({ children }: HapticsProps) => {
                         </div>
                     ))}
                 </div>
-            ) : null}
+            )}
             <div className='socials'>
                 <div className='social'>
                     <a href={`https://instagram.com/${config.alt.instagramUser}`} target='_blank'>
@@ -148,16 +148,16 @@ const Haptics = ({ children }: HapticsProps) => {
             </div>
             <div className='extra-info'>
                 <div className='coords'>
-                    {store.activePixel ? (
+                    {store.activePixel && (
                         <p>
                             Active X: {store.activePixel.x} - Active Y: {store.activePixel.y}
                         </p>
-                    ) : null}
-                    {store.hoverPixel ? (
+                    )}
+                    {store.hoverPixel && (
                         <p>
                             Hover X: {store.hoverPixel.x} - Hover Y: {store.hoverPixel.y}
                         </p>
-                    ) : null}
+                    )}
                 </div>
                 <div className='web3-status'>
                     {account ? (
@@ -223,11 +223,13 @@ const Haptics = ({ children }: HapticsProps) => {
                         </svg>
                     </div>
                 </div>
-                {contextActive && store.activePixel ? (
+                {contextActive && store.activePixel && (
                     <div className='information'>
                         <div className='more-info'>
                             <p className='caption'>Last editor: </p>
-                            <p className='value' onClick={addressClick}>{store.activePixel.editor ? store.activePixel.editor : 'None'}</p>
+                            <p className='value' onClick={addressClick}>
+                                {store.activePixel.editor ? store.activePixel.editor : 'None'}
+                            </p>
                             <p className='caption'>Last edited time: </p>
                             <p className='value'>{store.activePixel.updatedAt ? parseDate(store.activePixel.updatedAt) : 'None'}</p>
                             <p className='caption'>Countdown: </p>
@@ -236,11 +238,11 @@ const Haptics = ({ children }: HapticsProps) => {
                         <div className='editor'>
                             <div className='input-container'>
                                 <input placeholder='New Color' ref={inputRef} onChange={changePreviewColor} value={store.activePixel.color} />
-                                {isPreview ? <button onClick={() => resetPreviewColor()}>Reset</button> : null}
+                                {isPreview && <button onClick={() => resetPreviewColor()}>Reset</button>}
                             </div>
                             {account ? (
                                 <button onClick={() => changeColor()} disabled={!canEditColor}>
-                                    {isChangingColor ? <Spinner width={20} height={20} /> : null}
+                                    {isChangingColor && <Spinner width={20} height={20} />}
                                     Change Color
                                 </button>
                             ) : (
@@ -265,7 +267,7 @@ const Haptics = ({ children }: HapticsProps) => {
                             )}
                         </div>
                     </div>
-                ) : null}
+                )}
             </div>
             {children}
         </div>

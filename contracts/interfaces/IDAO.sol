@@ -22,7 +22,9 @@ interface IDAO {
 
     function unVote(uint _proposalID) external;
 
-    function executeProposal(uint proposalID, bytes calldata transactionData) external returns (bool success);
+    function canExecuteProposal(uint _proposalID) external returns (bool);
+
+    function executeProposal(uint _proposalID, bytes calldata transactionData) external returns (bool success);
 
     event ProposalAdded(uint indexed proposalID, address recipient, uint amount, string description);
 

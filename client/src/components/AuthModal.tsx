@@ -11,8 +11,12 @@ export type AuthModalProps = {
 const AuthModal = ({ onExit }: AuthModalProps) => {
     const { authenticate, authenticating } = useWeb3Auth();
 
+    const onDivClick = (e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+    };
+
     return (
-        <div className='auth-modal'>
+        <div className='auth-modal' onClick={onDivClick}>
             <Close onExit={onExit} />
             <div className='auth-modal-wrap'>
                 {authenticating ? (

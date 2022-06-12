@@ -4,6 +4,7 @@ import (
 	"time"
 	"gorm.io/gorm"
 	"errors"
+	"log"
 )
 
 // Pixel represents one pixel on the canvas.
@@ -45,6 +46,16 @@ func (p *Pixel) CreateDefaultPixel(db *gorm.DB) error {
 	return db.Create(NewPixel(p.X, p.Y)).Error
 }
 
+func (p *Pixel) GetMostRecentEdited(db *gorm.DB) *Pixel {
+	var pixels []Pixel
+	db.Where("editor = ?", p.Editor).Order("updated_at desc").Find(&pixels)
+	if len(pixels) > 0 {
+		return &pixels[0]
+	}
+
+	return nil
+}
+
 func (p *Pixel) CreatePixel(db *gorm.DB) error {
 	p.Hash = ComputePixelHash(p.X, p.Y)
 	return db.Create(p).Error
@@ -58,6 +69,10 @@ func (p *Pixel) UpdateExistingPixel(db *gorm.DB, valid bool) {
 		newPixel := NewPixel(p.X, p.Y)
 		db.Create(newPixel)
 	}
+}
+
+func (p *Pixels) ClearPixels(db *gorm.DB) {
+	db.Exec("DELETE FROM pixels")
 }
 
 func (p *Pixel) validPixel() bool {

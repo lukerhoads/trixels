@@ -1,0 +1,14 @@
+@import "variables.scss";
+
+.proposal-modal {
+    background-color: $grid-1-color;
+    box-shadow: $shadow-color 0px 8px 24px;
+    border-radius: 10px;
+    padding: 20px;
+    position: absolute;
+    margin: auto;
+    display: inline-block;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

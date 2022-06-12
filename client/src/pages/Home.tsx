@@ -11,6 +11,7 @@ const Home = () => {
             <Overlay />
             <Canvas />
             <Header>
+                <Link to='/dao'>Dao</Link>
                 <Link to='/auction/current'>Auction</Link>
             </Header>
         </div>

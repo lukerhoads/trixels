@@ -10,4 +10,4 @@
 - Alter haptics to be more smooth experience (low priority)
 - Make logs fade in/out (low priority)
 - Convert times to local (low priority)
-- Add dao functionality
+- Add type safe contracts

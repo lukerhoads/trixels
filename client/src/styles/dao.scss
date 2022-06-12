@@ -1,0 +1,40 @@
+.dao-wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    margin: auto;
+    bottom: 0;
+    height: 90%;
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+
+    .dao-top-section {
+        display: flex;
+        flex-direction: row;
+
+        .dao-stats {
+            background-color: white;
+            flex: 1;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .dao-spacer {
+            flex: 1;
+            max-width: 60px;
+        }
+
+        .active-proposal {
+            background-color: white;
+            flex: 1;
+            padding: 20px;
+            border-radius: 10px;
+        }
+    }
+
+    .proposals {
+        margin-top: 20px;
+    }
+}
+

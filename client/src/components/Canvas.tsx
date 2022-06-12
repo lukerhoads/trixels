@@ -36,7 +36,7 @@ const Canvas = () => {
 
     // Debug this idk why not working
     const redrawActivePixel = () => {
-        console.log("Redrawing...")
+        console.log('Redrawing...');
         if (!canvasRef || !canvasRef.current || !ctx || !store.activePixel) return;
 
         ctx.translate(window.innerWidth / 2, window.innerHeight / 2);

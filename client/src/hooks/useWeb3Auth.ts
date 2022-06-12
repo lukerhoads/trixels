@@ -28,12 +28,10 @@ export const useWeb3Auth = (): Web3AuthInfo => {
     };
 
     const authenticate = async () => {
+        activateBrowserWallet();
         if (chainId != CHAIN_ID) {
-            console.log('Chain ID does not match');
             connectChain();
         }
-
-        activateBrowserWallet();
     };
 
     return {

@@ -25,14 +25,12 @@ class ApiClient {
     }
 
     async getLiveTrixel(): Promise<Trixel> {
-        console.log('Fetching live trixel');
         return fetch(this.url + '/trixel/live')
             .then((res) => res.json())
             .then((trixel) => trixel as Trixel);
     }
 
     async getTrixels(): Promise<Trixel[]> {
-        console.log('Fetching trixels');
         return fetch(this.url + '/trixels')
             .then((res) => res.json())
             .then((trixels) => trixels as Trixel[]);
@@ -60,6 +58,8 @@ class ApiClient {
         return fetch(this.url + `/pixels`, {
             method: 'POST',
             body: JSON.stringify(newPixel),
+        }).then(res => {
+            console.log(res)
         });
     }
 

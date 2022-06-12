@@ -130,7 +130,8 @@ func (p *Daemon) MintAndStartAuction() error {
 	}
 
 	newTrixel.AddLiveTrixel(p.DB)
-	Logger.Info("🔨 Started auction...")
+	pixels.ClearPixels(p.DB)
+	Logger.Info("🔨 Started auction...")	
 	if p.auctionDayTicker == nil {
 		p.auctionDayTicker = time.NewTicker(24 * time.Hour)
 	} else {
