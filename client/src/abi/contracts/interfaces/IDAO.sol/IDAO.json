@@ -78,7 +78,26 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "proposalID",
+        "name": "_proposalID",
+        "type": "uint256"
+      }
+    ],
+    "name": "canExecuteProposal",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_proposalID",
         "type": "uint256"
       },
       {

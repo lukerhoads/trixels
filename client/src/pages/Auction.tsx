@@ -38,7 +38,7 @@ const Auction = () => {
     }, [library]);
 
     const tokenContract = useMemo((): Contract | undefined => {
-        if (!library || !addresses.auctionHouse) return;
+        if (!library || !addresses.token) return;
         return new Contract(addresses.token, tokenInterface, library);
     }, [library]);
 
@@ -104,8 +104,6 @@ const Auction = () => {
         if (!auctionHouseContract || !tokenID) return;
         const auction = await auctionHouseContract.auction();
         if (auction.settled) return;
-        console.log("auction: ", auction)
-        console.log("Getting live")
         const liveAuction = await apiClient.getLiveTrixel();
         const metadata = await apiClient.getMetadata(liveAuction.metadataUrl);
         const bidIncrementPercentage = await auctionHouseContract.minBidIncrementPercentage();
@@ -133,10 +131,13 @@ const Auction = () => {
         let trixel = await apiClient.getTrixelById(parseInt(tokenID));
         let metadata = await apiClient.getMetadata(trixel.metadataUrl);
         let filteredEvent = auctionHouseContract.filters.AuctionEnded(BigNumber.from(tokenID), null, null);
-        console.log('Filtered event: ', filteredEvent);
-        let filteredBurn = tokenContract.filters.Burn(BigNumber.from(1))
-        console.log("burn: ", filteredBurn)
-        let currentOwner = await tokenContract.ownerOf(tokenID);
+        let burnEvent = tokenContract.filters.Burn(BigNumber.from(tokenID))
+        let currentOwner;
+        if (burnEvent.address != "") {
+            currentOwner = "BURNED"
+        } else {
+            currentOwner = await tokenContract.ownerOf(tokenID);
+        }
         setPassedAuction({
             tokenID: parseInt(tokenID),
             imageUrl: metadata.image,
@@ -157,7 +158,7 @@ const Auction = () => {
         } catch (err: any) {
             store.pushToLogs({
                 mood: 'error',
-                message: `Error submitting bid: ${err.message}`
+                message: `Error submitting bid: ${err.data.data.message}`
             })
             return
         }
@@ -192,7 +193,7 @@ const Auction = () => {
                         <div className='auction-spacer' />
                         <div className='past-auctions'>
                             {pastAuctions.map((pastAuction, idx) => (
-                                <Card key={idx} tokenID={pastAuction.tokenID} imageUrl={pastAuction.imageUrl} mintDate={pastAuction.mintDate} active={false} />
+                                <Card key={idx} tokenID={pastAuction.tokenID} imageUrl={pastAuction.imageUrl} mintDate={pastAuction.mintDate} active={tokenID ? parseInt(tokenID) == pastAuction.tokenID : false} />
                             ))}
                             {pastAuctions.length ? null : <p>No past auctions</p>}
                         </div>

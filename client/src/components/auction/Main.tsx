@@ -2,6 +2,7 @@ import { useEthers } from '@usedapp/core';
 import Address from 'components/Address';
 import { observer } from 'mobx-react';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import store from 'store';
 import { LiveAuction, PastAuction } from 'types/auction';
 
@@ -96,6 +97,7 @@ const Main = ({ live, liveAuction, pastAuction, placeBid }: MainProps) => {
                     <p className='value'>{pastAuction?.winner}</p>
                     <p className='caption'>Current Owner: </p>
                     <p className='value'>{pastAuction?.currentOwner}</p>
+                    <Link to="/auction/current">Back to current</Link>
                 </>
             )}
         </div>

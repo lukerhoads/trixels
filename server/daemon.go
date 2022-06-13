@@ -156,5 +156,6 @@ func (p *Daemon) EndAuction() error {
 	newTrixel.DeleteLiveTrixel(p.DB)
 	newTrixel.Live = false
 	newTrixel.AddTrixel(p.DB)
+	Logger.Info("Ended auction.")
 	return nil
 }

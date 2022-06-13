@@ -9,6 +9,7 @@ import '../styles/dao.scss';
 
 const { addresses } = config;
 
+import Haptics from 'components/Haptics';
 import Overlay from 'components/Overlay';
 import { observer } from 'mobx-react';
 import store from 'store';
@@ -151,45 +152,47 @@ const Dao = () => {
     }, [daoContract]);
 
     return (
-        <div className='dao'>
-            <Overlay />
-            <Header>
-                <Link to='/'>Home</Link>
-                <Link to='/auction/current'>Auction</Link>
-            </Header>
-            <div className='dao-wrapper'>
-                <div className='dao-top-section'>
-                    <div className='dao-stats'>
-                        <p>Trixels DAO Stats</p>
-                        <p className='caption'># of Proposals:</p>
-                        <p className='value'>{daoStats?.numProposals}</p>
-                        <p className='caption'>Voting period:</p>
-                        <p className='value'>{daoStats?.votingPeriod}</p>
-                        <p className='caption'>Balance:</p>
-                        <p className='value'>{daoStats?.etherBalance ? utils.formatEther(daoStats.etherBalance) : "0"} ETH</p>
-                        {userIsMember && <button onClick={() => makeProposalClick()}>Make proposal</button>}
-                    </div>
-                    <div className='dao-spacer' />
-                    {proposalID && userIsMember && (
-                        <div className='active-proposal'>
-                            Active proposal
-                            <input type='checkbox' ref={voteCheckboxRef}>
-                                Approve?
-                            </input>
-                            <button onClick={voteClick}>Vote</button>
-                            <button onClick={unVoteClick}>Unvote</button>
-                            <button onClick={executeProposalClick}>Execute proposal</button>
+        <Haptics type="logs">
+            <div className='dao'>
+                <Overlay />
+                <Header>
+                    <Link to='/'>Home</Link>
+                    <Link to='/auction/current'>Auction</Link>
+                </Header>
+                <div className='dao-wrapper'>
+                    <div className='dao-top-section'>
+                        <div className='dao-stats'>
+                            <p>Trixels DAO Stats</p>
+                            <p className='caption'># of Proposals:</p>
+                            <p className='value'>{daoStats?.numProposals}</p>
+                            <p className='caption'>Voting period:</p>
+                            <p className='value'>{daoStats?.votingPeriod}</p>
+                            <p className='caption'>Balance:</p>
+                            <p className='value'>{daoStats?.etherBalance ? utils.formatEther(daoStats.etherBalance) : "0"} ETH</p>
+                            {userIsMember && <button onClick={() => makeProposalClick()}>Make proposal</button>}
                         </div>
-                    )}
-                </div>
+                        <div className='dao-spacer' />
+                        {proposalID && userIsMember && (
+                            <div className='active-proposal'>
+                                Active proposal
+                                <input type='checkbox' ref={voteCheckboxRef}>
+                                    Approve?
+                                </input>
+                                <button onClick={voteClick}>Vote</button>
+                                <button onClick={unVoteClick}>Unvote</button>
+                                <button onClick={executeProposalClick}>Execute proposal</button>
+                            </div>
+                        )}
+                    </div>
 
-                <div className='proposals'>
-                    {proposals.map((proposal, idx) => (
-                        <Card key={idx} proposalID={proposal.proposalID} proposedDate={proposal.createdAt.toString()} active={!proposal.passed} />
-                    ))}
+                    <div className='proposals'>
+                        {proposals.map((proposal, idx) => (
+                            <Card key={idx} proposalID={proposal.proposalID} proposedDate={proposal.createdAt.toString()} active={!proposal.passed} />
+                        ))}
+                    </div>
                 </div>
             </div>
-        </div>
+        </Haptics>
     );
 };
 

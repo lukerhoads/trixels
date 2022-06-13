@@ -24,6 +24,10 @@
     }
 }
 
+.active {
+    border: 1px solid black;
+}
+
 .past-auction:hover {
     border: 1px solid $text-color;
 }

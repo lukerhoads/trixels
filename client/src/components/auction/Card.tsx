@@ -8,6 +8,8 @@ type CardProps = {
 };
 
 const Card = ({ tokenID, mintDate, imageUrl, active }: CardProps) => {
+    console.log("active: ", active)
+
     return (
         <a href={`/auction/${tokenID}`}>
             <div className={'past-auction' + (active ? ' active' : '')}>
